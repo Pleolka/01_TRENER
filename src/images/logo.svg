@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 2360 641" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Artboard2" transform="matrix(0.879365,0,0,0.863144,-1062.725415,-864.693849)">
+        <rect x="1208.515" y="1001.795" width="2683.577" height="741.658" style="fill:none;"/>
+        <clipPath id="_clip1">
+            <rect x="1208.515" y="1001.795" width="2683.577" height="741.658"/>
+        </clipPath>
+        <g clip-path="url(#_clip1)">
+            <g transform="matrix(20.122448,0,0,20.500595,-4107.736995,-3874.498449)">
+                <text x="260.624px" y="273.506px" style="font-family:'AROneSans-Bold', 'AR One Sans';font-weight:700;font-size:50px;fill:rgb(37,16,35);">L<tspan x="286.224px " y="273.506px ">O</tspan></text>
+                <g transform="matrix(50,0,0,50,400.57421,273.506043)">
+                </g>
+                <text x="325.674px" y="273.506px" style="font-family:'AROneSans-Bold', 'AR One Sans';font-weight:700;font-size:50px;fill:rgb(169,54,157);">GO</text>
+            </g>
+        </g>
+    </g>
+</svg>

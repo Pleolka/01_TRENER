@@ -1,16 +1,11 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react()],
-  vite: {
-    resolve: {
-      alias: {
-        'styled-components': 'styled-components/dist/styled-components.esm.js',
-      },
-    },
-  },
+  // TODO: podmień na docelową domenę produkcyjną — używane do sitemap, canonical URL i Open Graph
+  site: 'https://trenershop.pl',
+  integrations: [sitemap()],
 });

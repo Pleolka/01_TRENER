@@ -1,17 +1,11 @@
 ---
-import Home from '../components/Home';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Home from '../components/Home.astro';
 ---
 
-<html lang="pl">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Trener Shop</title>
-	</head>
-	<body>
-		<Home client:load />
-	</body>
-</html>
+<BaseLayout
+	title="Strona główna"
+	description="Trener Shop — sklep i oferta treningowa trenera personalnego: konsultacje, programy online i plany treningowe."
+>
+	<Home />
+</BaseLayout>

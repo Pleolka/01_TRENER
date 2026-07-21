@@ -1,0 +1,107 @@
+---
+import SiteChrome from './SiteChrome.astro';
+
+const offers = [
+	{
+		path: '/konsultacje-z-trenerem-personalnym',
+		title: 'Konsultacje z trenerem personalnym',
+		description: 'Indywidualna konsultacja dopasowana do Twojego celu.',
+	},
+	{
+		path: '/online-coaching',
+		title: 'Online coaching',
+		description: 'Program prowadzony zdalnie, krok po kroku.',
+		badge: 'Wstrzymane',
+	},
+	{
+		path: '/mocny-brzuch-w-6-tygodni',
+		title: 'Mocny brzuch w 6 tygodni',
+		description: 'Sześciotygodniowy plan treningowy na siłę i stabilizację.',
+	},
+	{
+		path: '/lekka-redukcja',
+		title: 'Lekka redukcja',
+		description: 'Łagodny plan redukcji tkanki tłuszczowej bez restrykcji.',
+	},
+];
+---
+
+<SiteChrome>
+	<section class="wrapper">
+		<h1>Sklep</h1>
+		<div class="grid">
+			{
+				offers.map((offer) => (
+					<a class="card" href={offer.path}>
+						{offer.badge && <span class="card-badge">{offer.badge}</span>}
+						<h2>{offer.title}</h2>
+						<p>{offer.description}</p>
+					</a>
+				))
+			}
+		</div>
+	</section>
+</SiteChrome>
+
+<style>
+	.wrapper {
+		flex: 1;
+		padding: 3rem 1.5rem 4rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2.5rem;
+	}
+
+	h1 {
+		font-size: clamp(2rem, 5vw, 3.25rem);
+		margin: 0;
+		text-align: center;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 1.25rem;
+		width: 100%;
+		max-width: 60rem;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1.5rem;
+		border: 1px solid #eee;
+		border-radius: 0.75rem;
+		text-decoration: none;
+		color: inherit;
+		transition: border-color 0.15s ease, transform 0.15s ease;
+	}
+
+	.card:hover {
+		border-color: #ccc;
+		transform: translateY(-2px);
+	}
+
+	.card h2 {
+		font-size: 1.1rem;
+		margin: 0;
+	}
+
+	.card p {
+		font-size: 0.9rem;
+		color: #666;
+		margin: 0;
+	}
+
+	.card-badge {
+		align-self: flex-start;
+		padding: 0.2rem 0.6rem;
+		border-radius: 999px;
+		background: #f2f2f2;
+		color: #666;
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+</style>

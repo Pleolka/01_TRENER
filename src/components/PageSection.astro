@@ -1,0 +1,53 @@
+---
+import SiteChrome from './SiteChrome.astro';
+
+interface Props {
+	title: string;
+	description?: string;
+	badge?: string;
+}
+
+const { title, description, badge } = Astro.props;
+---
+
+<SiteChrome>
+	<section class="hero">
+		{badge && <span class="badge">{badge}</span>}
+		<h1>{title}</h1>
+		{description && <p class="subtitle">{description}</p>}
+	</section>
+</SiteChrome>
+
+<style>
+	.hero {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding: 4rem 1.5rem;
+		gap: 1.25rem;
+	}
+
+	.badge {
+		padding: 0.3rem 0.85rem;
+		border-radius: 999px;
+		background: #f2f2f2;
+		color: #666;
+		font-size: 0.8rem;
+		font-weight: 600;
+	}
+
+	h1 {
+		font-size: clamp(2rem, 5vw, 3.25rem);
+		margin: 0;
+	}
+
+	.subtitle {
+		font-size: 1.1rem;
+		color: #555;
+		max-width: 32rem;
+		margin: 0;
+	}
+</style>

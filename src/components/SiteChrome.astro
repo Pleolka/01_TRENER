@@ -1,0 +1,112 @@
+---
+import { list as navItems } from '../assets/data/strukturaStrony';
+import logo from '../images/logo.svg';
+
+const footerLinks = [
+	{ name: 'Regulamin', path: '/regulamin' },
+	{ name: 'Polityka prywatności', path: '/polityka-prywatnosci' },
+];
+
+const year = new Date().getFullYear();
+---
+
+<div class="page">
+	<header class="header">
+		<a class="logo" href="/">
+			<img src={logo.src} alt="Trener Shop" />
+		</a>
+		<nav class="nav">
+			{navItems.map((item) => <a href={item.path}>{item.name}</a>)}
+		</nav>
+	</header>
+
+	<main class="main">
+		<slot />
+	</main>
+
+	<footer class="footer">
+		<span>&copy; {year} Trener Shop</span>
+		<div class="footer-links">
+			{footerLinks.map((item) => <a href={item.path}>{item.name}</a>)}
+		</div>
+	</footer>
+</div>
+
+<style>
+	.page {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		font-family: system-ui, sans-serif;
+		color: #1a1a1a;
+	}
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1.5rem 2rem;
+		border-bottom: 1px solid #eee;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.logo {
+		display: flex;
+		align-items: center;
+	}
+
+	.logo img {
+		height: 1.75rem;
+		width: auto;
+		display: block;
+	}
+
+	.nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.5rem;
+	}
+
+	.nav a {
+		color: #444;
+		text-decoration: none;
+		font-size: 0.95rem;
+	}
+
+	.nav a:hover {
+		color: #000;
+	}
+
+	.main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.footer {
+		padding: 1.5rem;
+		text-align: center;
+		color: #888;
+		font-size: 0.85rem;
+		border-top: 1px solid #eee;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.footer-links {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.footer-links a {
+		color: #888;
+		text-decoration: none;
+	}
+
+	.footer-links a:hover {
+		color: #444;
+	}
+</style>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trenershop.pl/sitemap-index.xml
