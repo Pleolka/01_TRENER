@@ -11,14 +11,22 @@ const year = new Date().getFullYear();
 ---
 
 <div class="page">
-	<header class="header">
-		<a class="logo" href="/">
-			<img src={logo.src} alt="Trener Shop" />
-		</a>
-		<nav class="nav">
-			{navItems.map((item) => <a href={item.path}>{item.name}</a>)}
-		</nav>
-	</header>
+	<div class="navbar">
+		<header class="pill">
+			<a class="logo" href="/">
+				<img src={logo.src} alt="Trener Shop" />
+			</a>
+
+			<input type="checkbox" id="nav-toggle" class="nav-toggle" />
+			<label for="nav-toggle" class="nav-toggle-label" aria-label="Otwórz menu">
+				<span></span>
+			</label>
+
+			<nav class="nav">
+				{navItems.map((item) => <a href={item.path}>{item.name}</a>)}
+			</nav>
+		</header>
+	</div>
 
 	<main class="main">
 		<slot />
@@ -41,23 +49,38 @@ const year = new Date().getFullYear();
 		color: #1a1a1a;
 	}
 
-	.header {
+	.navbar {
+		position: sticky;
+		top: 1rem;
+		z-index: 50;
+		display: flex;
+		justify-content: center;
+		margin-top: 1rem;
+		padding: 0 1rem;
+	}
+
+	.pill {
+		position: relative;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		padding: 1.5rem 2rem;
-		border-bottom: 1px solid #eee;
-		flex-wrap: wrap;
-		gap: 1rem;
+		gap: 2rem;
+		width: fit-content;
+		max-width: 100%;
+		padding: 0.65rem 1.5rem;
+		background: #fff;
+		border: 1px solid #eee;
+		border-radius: 999px;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 	}
 
 	.logo {
 		display: flex;
 		align-items: center;
+		flex-shrink: 0;
 	}
 
 	.logo img {
-		height: 1.75rem;
+		height: 1.5rem;
 		width: auto;
 		display: block;
 	}
@@ -72,10 +95,100 @@ const year = new Date().getFullYear();
 		color: #444;
 		text-decoration: none;
 		font-size: 0.95rem;
+		white-space: nowrap;
 	}
 
 	.nav a:hover {
 		color: #000;
+	}
+
+	.nav-toggle {
+		display: none;
+	}
+
+	.nav-toggle-label {
+		display: none;
+		flex-shrink: 0;
+		width: 1.5rem;
+		height: 1.5rem;
+		cursor: pointer;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.nav-toggle-label span,
+	.nav-toggle-label span::before,
+	.nav-toggle-label span::after {
+		display: block;
+		width: 1.25rem;
+		height: 2px;
+		background: #1a1a1a;
+		border-radius: 2px;
+		transition: transform 0.2s ease, opacity 0.2s ease;
+	}
+
+	.nav-toggle-label span {
+		position: relative;
+	}
+
+	.nav-toggle-label span::before,
+	.nav-toggle-label span::after {
+		content: '';
+		position: absolute;
+		left: 0;
+	}
+
+	.nav-toggle-label span::before {
+		top: -6px;
+	}
+
+	.nav-toggle-label span::after {
+		top: 6px;
+	}
+
+	.nav-toggle:checked ~ .nav-toggle-label span {
+		background: transparent;
+	}
+
+	.nav-toggle:checked ~ .nav-toggle-label span::before {
+		top: 0;
+		transform: rotate(45deg);
+	}
+
+	.nav-toggle:checked ~ .nav-toggle-label span::after {
+		top: 0;
+		transform: rotate(-45deg);
+	}
+
+	@media (max-width: 640px) {
+		.pill {
+			width: 100%;
+			justify-content: space-between;
+		}
+
+		.nav-toggle-label {
+			display: flex;
+		}
+
+		.nav {
+			display: none;
+			position: absolute;
+			top: calc(100% + 0.75rem);
+			left: 0;
+			right: 0;
+			flex-direction: column;
+			align-items: center;
+			gap: 1rem;
+			padding: 1.25rem;
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 1.5rem;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+		}
+
+		.nav-toggle:checked ~ .nav {
+			display: flex;
+		}
 	}
 
 	.main {
