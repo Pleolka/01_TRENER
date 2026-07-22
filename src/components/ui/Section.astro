@@ -1,0 +1,47 @@
+---
+// Odpowiednik Section2 z WELDMET (src/utils/utils.js) — padding
+// pionowy w rem, malejący na mniejszych ekranach tak jak w oryginale.
+interface Props {
+	pt?: number;
+	pb?: number;
+	bgcolor?: string;
+	mt?: string;
+	mb?: string;
+}
+
+const { pt = 2, pb = 2, bgcolor = 'transparent', mt = '0', mb = '0' } = Astro.props;
+
+const style = [`--pt:${pt}rem`, `--pb:${pb}rem`, `--bgcolor:${bgcolor}`, `--mt:${mt}`, `--mb:${mb}`].join(
+	';',
+);
+---
+
+<section class="section" style={style}>
+	<slot />
+</section>
+
+<style>
+	.section {
+		padding-top: var(--pt);
+		padding-bottom: var(--pb);
+		background-color: var(--bgcolor);
+		margin-top: var(--mt);
+		margin-bottom: var(--mb);
+		position: relative;
+	}
+
+	/* jak w WELDMET: padding-top maleje na mniejszych ekranach;
+	   przy niskich wartościach pt calc() może wyjść ujemny —
+	   przeglądarka wtedy po prostu przycina do 0 */
+	@media (max-width: 979px) {
+		.section {
+			padding-top: calc(var(--pt) - 3rem);
+		}
+	}
+
+	@media (max-width: 575px) {
+		.section {
+			padding-top: calc(var(--pt) - 4rem);
+		}
+	}
+</style>

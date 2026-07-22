@@ -1,57 +1,36 @@
 ---
 import SiteChrome from './SiteChrome.astro';
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
 ---
 
 <SiteChrome>
-	<section class="hero">
-		<h1>Sklep w budowie</h1>
-		<p class="subtitle">
-			Strona startowa uruchomiona na Astro. Kolejne kroki: CMS, płatności i koszyk.
-		</p>
-		<a class="cta" href="/sklep">Zobacz ofertę</a>
-	</section>
+	<Section pt={6} pb={6}>
+		<Container>
+			<div class="hero">
+				<h1>Sklep w budowie</h1>
+				<p class="subtitle">
+					Strona startowa uruchomiona na Astro. Kolejne kroki: CMS, płatności i koszyk.
+				</p>
+				<Button href="/sklep">Zobacz ofertę</Button>
+			</div>
+		</Container>
+	</Section>
 </SiteChrome>
 
 <style>
 	.hero {
-		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
 		text-align: center;
-		padding: 4rem 1.5rem;
 		gap: 1.25rem;
-	}
-
-	h1 {
-		font-size: clamp(2rem, 5vw, 3.25rem);
-		margin: 0;
+		max-width: 40rem;
+		margin-inline: auto;
 	}
 
 	.subtitle {
-		font-size: 1.1rem;
-		color: #555;
-		max-width: 32rem;
-		margin: 0;
-	}
-
-	.cta {
-		display: inline-block;
-		margin-top: 0.5rem;
-		padding: 0.85rem 2rem;
-		font-size: 1rem;
-		font-weight: 600;
-		color: #fff;
-		background: #111;
-		border: none;
-		border-radius: 999px;
-		text-decoration: none;
-		transition: transform 0.15s ease, background 0.15s ease;
-	}
-
-	.cta:hover {
-		background: #000;
-		transform: translateY(-1px);
+		color: var(--color-muted);
 	}
 </style>

@@ -1,0 +1,204 @@
+/*
+  Design tokens — breakpointy i skala typografii przeniesione 1:1
+  z WELDMET (src/utils/theme.js), z obiektu JS + ThemeProvider
+  na CSS custom properties (Astro nie potrzebuje Providera —
+  zmienne CSS są globalne same z siebie).
+
+  Breakpointy (te same nazwy i wartości co w WELDMET; CSS nie
+  pozwala użyć zmiennej wewnątrz warunku @media, więc liczby są
+  też wpisane wprost w media queries poniżej):
+    small:  576px
+    medium: 980px
+    large:  1320px
+    huge:   1921px
+*/
+
+:root {
+	/* === kolory === */
+	--color-font: #1a1a1a;
+	--color-heading: #1a1a1a;
+	--color-black: #000000;
+	--color-white: #ffffff;
+	--color-muted: #666666;
+	--color-muted-light: #888888;
+	--color-nav: #444444;
+	--color-border: #eeeeee;
+	--color-border-strong: #cccccc;
+	--color-surface: #f2f2f2;
+	--color-base: #111111;
+	--color-base-dark: #000000;
+	--color-accent: #a9369d;
+
+	/* === rodzina i grubości fontu === */
+	--font-family-main: system-ui, sans-serif;
+	--font-weight: 400;
+	--font-weight-bold: 700;
+	--font-weight-h: 700;
+
+	/* === skala fontów: wartości domyślne = "xl" (>=1921px) === */
+	--font-size-p: 22px;
+	--line-h-p: 1.6;
+	--font-size-label: 17px;
+	--line-h-label: 1.1;
+	--font-size-h1: 48px;
+	--line-h-h1: 1.2;
+	--font-size-h2: 34px;
+	--line-h-h2: 1.1;
+	--font-size-h3: 26px;
+	--line-h-h3: 1.3;
+	--font-size-h4: 26px;
+	--line-h-h4: 1.3;
+	--font-size-h5: 23px;
+	--line-h-h5: 1.1;
+	--font-size-h6: 21px;
+	--line-h-h6: 1.7;
+}
+
+/* "l" — poniżej huge (1921px) */
+@media (max-width: 1920px) {
+	:root {
+		--font-size-p: 20px;
+		--line-h-p: 1.5;
+		--font-size-label: 16px;
+		--line-h-label: 1.1;
+		--font-size-h1: 46px;
+		--line-h-h1: 1.2;
+		--font-size-h2: 34px;
+		--line-h-h2: 1.1;
+		--font-size-h3: 24px;
+		--line-h-h3: 1.3;
+		--font-size-h4: 25px;
+		--line-h-h4: 1.3;
+		--font-size-h5: 22px;
+		--line-h-h5: 1.1;
+		--font-size-h6: 20px;
+		--line-h-h6: 1.6;
+	}
+}
+
+/* "m" — poniżej large (1320px) */
+@media (max-width: 1319px) {
+	:root {
+		--font-size-p: 18px;
+		--line-h-p: 1.5;
+		--font-size-label: 15px;
+		--line-h-label: 1.1;
+		--font-size-h1: 40px;
+		--line-h-h1: 1.2;
+		--font-size-h2: 32px;
+		--line-h-h2: 1.1;
+		--font-size-h3: 22px;
+		--line-h-h3: 1.3;
+		--font-size-h4: 24px;
+		--line-h-h4: 1.3;
+		--font-size-h5: 21px;
+		--line-h-h5: 1.1;
+		--font-size-h6: 19px;
+		--line-h-h6: 1.5;
+	}
+}
+
+/* "s" — poniżej medium (980px) */
+@media (max-width: 979px) {
+	:root {
+		--font-size-p: 16px;
+		--line-h-p: 1.4;
+		--font-size-label: 14px;
+		--line-h-label: 1.1;
+		--font-size-h1: 30px;
+		--line-h-h1: 1.2;
+		--font-size-h2: 28px;
+		--line-h-h2: 1.1;
+		--font-size-h3: 20px;
+		--line-h-h3: 1.3;
+		--font-size-h4: 23px;
+		--line-h-h4: 1.3;
+		--font-size-h5: 20px;
+		--line-h-h5: 1.1;
+		--font-size-h6: 18px;
+		--line-h-h6: 1.5;
+	}
+}
+
+/* "xs" — poniżej small (576px) */
+@media (max-width: 575px) {
+	:root {
+		--font-size-p: 16px;
+		--line-h-p: 1.3;
+		--font-size-label: 13px;
+		--line-h-label: 1.1;
+		--font-size-h1: 24px;
+		--line-h-h1: 1.2;
+		--font-size-h2: 20px;
+		--line-h-h2: 1.1;
+		--font-size-h3: 18px;
+		--line-h-h3: 1.2;
+		--font-size-h4: 18px;
+		--line-h-h4: 1.2;
+		--font-size-h5: 19px;
+		--line-h-h5: 1.1;
+		--font-size-h6: 17px;
+		--line-h-h6: 1.5;
+	}
+}
+
+/* === reset + zastosowanie tokenów do gołych tagów (jak globalStyle.js) === */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-family-main);
+	font-weight: var(--font-weight);
+	color: var(--color-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: var(--font-weight-h);
+	color: var(--color-heading);
+	margin: 0;
+}
+
+h1 {
+	font-size: var(--font-size-h1);
+	line-height: var(--line-h-h1);
+}
+h2 {
+	font-size: var(--font-size-h2);
+	line-height: var(--line-h-h2);
+}
+h3 {
+	font-size: var(--font-size-h3);
+	line-height: var(--line-h-h3);
+}
+h4 {
+	font-size: var(--font-size-h4);
+	line-height: var(--line-h-h4);
+}
+h5 {
+	font-size: var(--font-size-h5);
+	line-height: var(--line-h-h5);
+}
+h6 {
+	font-size: var(--font-size-h6);
+	line-height: var(--line-h-h6);
+}
+
+p {
+	font-size: var(--font-size-p);
+	line-height: var(--line-h-p);
+	margin: 0;
+}
+
+label {
+	font-size: var(--font-size-label);
+	line-height: var(--line-h-label);
+}

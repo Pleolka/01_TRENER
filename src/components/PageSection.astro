@@ -1,5 +1,7 @@
 ---
 import SiteChrome from './SiteChrome.astro';
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
 
 interface Props {
 	title: string;
@@ -11,43 +13,38 @@ const { title, description, badge } = Astro.props;
 ---
 
 <SiteChrome>
-	<section class="hero">
-		{badge && <span class="badge">{badge}</span>}
-		<h1>{title}</h1>
-		{description && <p class="subtitle">{description}</p>}
-	</section>
+	<Section pt={6} pb={6}>
+		<Container>
+			<div class="hero">
+				{badge && <span class="badge">{badge}</span>}
+				<h1>{title}</h1>
+				{description && <p class="subtitle">{description}</p>}
+			</div>
+		</Container>
+	</Section>
 </SiteChrome>
 
 <style>
 	.hero {
-		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
 		text-align: center;
-		padding: 4rem 1.5rem;
 		gap: 1.25rem;
+		max-width: 40rem;
+		margin-inline: auto;
 	}
 
 	.badge {
 		padding: 0.3rem 0.85rem;
 		border-radius: 999px;
-		background: #f2f2f2;
-		color: #666;
+		background: var(--color-surface);
+		color: var(--color-muted);
 		font-size: 0.8rem;
 		font-weight: 600;
 	}
 
-	h1 {
-		font-size: clamp(2rem, 5vw, 3.25rem);
-		margin: 0;
-	}
-
 	.subtitle {
-		font-size: 1.1rem;
-		color: #555;
-		max-width: 32rem;
-		margin: 0;
+		color: var(--color-muted);
 	}
 </style>

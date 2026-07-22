@@ -1,0 +1,58 @@
+---
+// Odpowiednik Container/ContainerMob z WELDMET (src/utils/utils.js).
+interface Props {
+	mt?: string;
+	mb?: string;
+	mtMobile?: string;
+}
+
+const { mt = '2rem', mb = '2rem', mtMobile } = Astro.props;
+
+const style = [`--mt:${mt}`, `--mb:${mb}`, mtMobile ? `--mt-mobile:${mtMobile}` : '']
+	.filter(Boolean)
+	.join(';');
+---
+
+<div class="container" style={style}>
+	<slot />
+</div>
+
+<style>
+	.container {
+		width: 100%;
+		margin-inline: auto;
+		margin-top: var(--mt);
+		margin-bottom: var(--mb);
+		max-width: 1600px;
+		position: relative;
+		z-index: 10;
+	}
+
+	@media (max-width: 1920px) {
+		.container {
+			max-width: 1200px;
+		}
+	}
+
+	@media (max-width: 1319px) {
+		.container {
+			max-width: 960px;
+		}
+	}
+
+	@media (max-width: 979px) {
+		.container {
+			max-width: 720px;
+			padding-inline: 1rem;
+			margin-top: var(--mt-mobile, 1rem);
+		}
+	}
+
+	@media (max-width: 575px) {
+		.container {
+			max-width: 540px;
+			padding-inline: 1rem;
+			margin-top: var(--mt-mobile, 0rem);
+		}
+	}
+</style>
