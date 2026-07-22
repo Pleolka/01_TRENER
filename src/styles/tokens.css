@@ -14,23 +14,24 @@
 */
 
 :root {
-	/* === kolory === */
-	--color-font: #1a1a1a;
-	--color-heading: #1a1a1a;
-	--color-black: #000000;
+	/* === kolory (paleta marki) === */
+	--color-font: #240f22;
+	--color-heading: #240f22;
+	--color-black: #240f22;
 	--color-white: #ffffff;
-	--color-muted: #666666;
-	--color-muted-light: #888888;
-	--color-nav: #444444;
+	--color-muted: #5e7473;
+	--color-muted-light: #999999;
+	--color-nav: #5f455c;
 	--color-border: #eeeeee;
 	--color-border-strong: #cccccc;
-	--color-surface: #f2f2f2;
-	--color-base: #111111;
-	--color-base-dark: #000000;
-	--color-accent: #a9369d;
+	--color-surface: #e1d9cb;
+	--color-base: #a9369c;
+	--color-base-dark: #5f455c;
+	--color-accent: #a9369c;
 
 	/* === rodzina i grubości fontu === */
-	--font-family-main: system-ui, sans-serif;
+	--font-family-heading: 'AR One Sans Variable', sans-serif;
+	--font-family-body: 'DM Sans Variable', sans-serif;
 	--font-weight: 400;
 	--font-weight-bold: 700;
 	--font-weight-h: 700;
@@ -151,7 +152,7 @@
 
 body {
 	margin: 0;
-	font-family: var(--font-family-main);
+	font-family: var(--font-family-body);
 	font-weight: var(--font-weight);
 	color: var(--color-font);
 }
@@ -162,6 +163,7 @@ h3,
 h4,
 h5,
 h6 {
+	font-family: var(--font-family-heading);
 	font-weight: var(--font-weight-h);
 	color: var(--color-heading);
 	margin: 0;
