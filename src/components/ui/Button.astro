@@ -4,54 +4,55 @@
 // wariantami zamiast pięciu (base, outline). Kolejne warianty dokłada
 // się tak samo: nowa klasa .btn--nazwa poniżej.
 interface Props {
-	href: string;
-	variant?: 'base' | 'outline';
-	target?: string;
+  href: string;
+  variant?: "base" | "outline";
+  target?: string;
 }
 
-const { href, variant = 'base', target } = Astro.props;
+const { href, variant = "base", target } = Astro.props;
 ---
 
 <a class={`btn btn--${variant}`} href={href} target={target}>
-	<slot />
+  <slot />
 </a>
 
 <style>
-	.btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 40px;
-		padding: 0 3rem;
-		border-radius: 8px;
-		text-decoration: none;
-		font-weight: 600;
-		font-size: 18px;
-		line-height: 1.1;
-		transition:
-			background 0.3s ease,
-			color 0.3s ease,
-			border-color 0.3s ease;
-	}
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.1;
+    transition:
+      filter 0.3s ease,
+      background 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
+  }
 
-	.btn--base {
-		color: var(--color-white);
-		background: var(--color-base);
-		border: none;
-	}
+  .btn--base {
+    color: var(--color-white);
+    background: var(--gradient-button);
+    border: none;
+  }
 
-	.btn--base:hover {
-		background: var(--color-base-dark);
-	}
+  .btn--base:hover {
+    filter: brightness(0.9);
+  }
 
-	.btn--outline {
-		color: var(--color-base);
-		background: transparent;
-		border: 1px solid var(--color-base);
-	}
+  .btn--outline {
+    color: var(--color-base);
+    background: transparent;
+    border: 1px solid var(--color-base);
+  }
 
-	.btn--outline:hover {
-		color: var(--color-white);
-		background: var(--color-base);
-	}
+  .btn--outline:hover {
+    color: var(--color-white);
+    background: var(--color-base);
+  }
 </style>

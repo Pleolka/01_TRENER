@@ -18,5 +18,6 @@ export const list = [
   {
     name: 'Kontakt',
     path: '/kontakt',
+    cta: true,
   },
 ]

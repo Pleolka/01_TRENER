@@ -1,223 +1,278 @@
 ---
-import { list as navItems } from '../assets/data/strukturaStrony';
-import logo from '../images/logo.svg';
+import { list as navItems } from "../assets/data/strukturaStrony";
+import logo from "../images/logo.svg";
+
+const links = navItems.filter((item) => !item.cta);
+const cta = navItems.find((item) => item.cta);
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 const footerLinks = [
-	{ name: 'Regulamin', path: '/regulamin' },
-	{ name: 'Polityka prywatności', path: '/polityka-prywatnosci' },
+  { name: "Regulamin", path: "/regulamin" },
+  { name: "Polityka prywatności", path: "/polityka-prywatnosci" },
 ];
 
 const year = new Date().getFullYear();
 ---
 
 <div class="page">
-	<div class="navbar">
-		<header class="pill">
-			<a class="logo" href="/">
-				<img src={logo.src} alt="Trener Shop" />
-			</a>
+  <div class="banner" aria-hidden="true"></div>
 
-			<input type="checkbox" id="nav-toggle" class="nav-toggle" />
-			<label for="nav-toggle" class="nav-toggle-label" aria-label="Otwórz menu">
-				<span></span>
-			</label>
+  <div class="navbar">
+    <header class="pill">
+      <a class="logo" href="/">
+        <img src={logo.src} alt="Trener Shop" />
+      </a>
 
-			<nav class="nav">
-				{navItems.map((item) => <a href={item.path}>{item.name}</a>)}
-			</nav>
-		</header>
-	</div>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-toggle-label" aria-label="Otwórz menu">
+        <span></span>
+      </label>
 
-	<main class="main">
-		<slot />
-	</main>
+      <nav class="nav">
+        {
+          links.map((item) => (
+            <a
+              href={item.path}
+              class:list={["nav-link", { active: item.path === currentPath }]}
+            >
+              {item.name}
+            </a>
+          ))
+        }
+      </nav>
 
-	<footer class="footer">
-		<span>&copy; {year} Trener Shop</span>
-		<div class="footer-links">
-			{footerLinks.map((item) => <a href={item.path}>{item.name}</a>)}
-		</div>
-	</footer>
+      {
+        cta && (
+          <a class="nav-cta" href={cta.path}>
+            {cta.name}
+          </a>
+        )
+      }
+    </header>
+  </div>
+
+  <main class="main">
+    <slot />
+  </main>
+
+  <footer class="footer">
+    <span>&copy; {year} Trener Shop</span>
+    <div class="footer-links">
+      {footerLinks.map((item) => <a href={item.path}>{item.name}</a>)}
+    </div>
+  </footer>
 </div>
 
 <style>
-	.page {
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-	}
+  .page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-	.navbar {
-		position: sticky;
-		top: 1rem;
-		z-index: 50;
-		display: flex;
-		justify-content: center;
-		margin-top: 1rem;
-		padding: 0 1rem;
-	}
+  .banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 600px;
+    background: var(--gradient-banner);
+    z-index: -1;
+  }
 
-	.pill {
-		position: relative;
-		display: flex;
-		align-items: center;
-		gap: 2rem;
-		width: fit-content;
-		max-width: 100%;
-		padding: 0.65rem 1.5rem;
-		background: var(--color-white);
-		border: 1px solid var(--color-border);
-		border-radius: 999px;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-	}
+  .navbar {
+    position: sticky;
+    top: 1rem;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 0 1rem;
+  }
 
-	.logo {
-		display: flex;
-		align-items: center;
-		flex-shrink: 0;
-	}
+  .pill {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+    padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+    background: var(--color-white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+  }
 
-	.logo img {
-		height: 1.5rem;
-		width: auto;
-		display: block;
-	}
+  .logo {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
 
-	.nav {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1.5rem;
-	}
+  .logo img {
+    height: 1.5rem;
+    width: auto;
+    display: block;
+  }
 
-	.nav a {
-		color: var(--color-nav);
-		text-decoration: none;
-		font-size: var(--font-size-label);
-		white-space: nowrap;
-	}
+  .nav {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
 
-	.nav a:hover {
-		color: var(--color-black);
-	}
+  .nav-link {
+    color: var(--color-nav);
+    text-decoration: none;
+    font-size: var(--font-size-p);
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
-	.nav-toggle {
-		display: none;
-	}
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-base);
+  }
 
-	.nav-toggle-label {
-		display: none;
-		flex-shrink: 0;
-		width: 1.5rem;
-		height: 1.5rem;
-		cursor: pointer;
-		align-items: center;
-		justify-content: center;
-	}
+  .nav-cta {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.5rem;
+    border-radius: 999px;
+    background: var(--gradient-button);
+    color: var(--color-white);
+    font-size: var(--font-size-p);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: filter 0.2s ease;
+  }
 
-	.nav-toggle-label span,
-	.nav-toggle-label span::before,
-	.nav-toggle-label span::after {
-		display: block;
-		width: 1.25rem;
-		height: 2px;
-		background: var(--color-font);
-		border-radius: 2px;
-		transition: transform 0.2s ease, opacity 0.2s ease;
-	}
+  .nav-cta:hover {
+    filter: brightness(0.9);
+  }
 
-	.nav-toggle-label span {
-		position: relative;
-	}
+  .nav-toggle {
+    display: none;
+  }
 
-	.nav-toggle-label span::before,
-	.nav-toggle-label span::after {
-		content: '';
-		position: absolute;
-		left: 0;
-	}
+  .nav-toggle-label {
+    display: none;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
 
-	.nav-toggle-label span::before {
-		top: -6px;
-	}
+  .nav-toggle-label span,
+  .nav-toggle-label span::before,
+  .nav-toggle-label span::after {
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    background: var(--color-font);
+    border-radius: 2px;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
 
-	.nav-toggle-label span::after {
-		top: 6px;
-	}
+  .nav-toggle-label span {
+    position: relative;
+  }
 
-	.nav-toggle:checked ~ .nav-toggle-label span {
-		background: transparent;
-	}
+  .nav-toggle-label span::before,
+  .nav-toggle-label span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
 
-	.nav-toggle:checked ~ .nav-toggle-label span::before {
-		top: 0;
-		transform: rotate(45deg);
-	}
+  .nav-toggle-label span::before {
+    top: -6px;
+  }
 
-	.nav-toggle:checked ~ .nav-toggle-label span::after {
-		top: 0;
-		transform: rotate(-45deg);
-	}
+  .nav-toggle-label span::after {
+    top: 6px;
+  }
 
-	@media (max-width: 640px) {
-		.pill {
-			width: 100%;
-			justify-content: space-between;
-		}
+  .nav-toggle:checked ~ .nav-toggle-label span {
+    background: transparent;
+  }
 
-		.nav-toggle-label {
-			display: flex;
-		}
+  .nav-toggle:checked ~ .nav-toggle-label span::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
 
-		.nav {
-			display: none;
-			position: absolute;
-			top: calc(100% + 0.75rem);
-			left: 0;
-			right: 0;
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-			padding: 1.25rem;
-			background: var(--color-white);
-			border: 1px solid var(--color-border);
-			border-radius: 1.5rem;
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-		}
+  .nav-toggle:checked ~ .nav-toggle-label span::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
 
-		.nav-toggle:checked ~ .nav {
-			display: flex;
-		}
-	}
+  @media (max-width: 640px) {
+    .nav-toggle-label {
+      display: flex;
+      margin-left: auto;
+    }
 
-	.main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-	}
+    .nav {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.75rem);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: 1.5rem;
+    }
 
-	.footer {
-		padding: 1.5rem;
-		text-align: center;
-		color: var(--color-muted-light);
-		font-size: var(--font-size-label);
-		border-top: 1px solid var(--color-border);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.5rem;
-	}
+    .nav-toggle:checked ~ .nav {
+      display: flex;
+    }
+  }
 
-	.footer-links {
-		display: flex;
-		gap: 1rem;
-	}
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 
-	.footer-links a {
-		color: var(--color-muted-light);
-		text-decoration: none;
-	}
+  .footer {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--color-muted-light);
+    font-size: var(--font-size-label);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-	.footer-links a:hover {
-		color: var(--color-nav);
-	}
+  .footer-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .footer-links a {
+    color: var(--color-muted-light);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    color: var(--color-nav);
+  }
 </style>

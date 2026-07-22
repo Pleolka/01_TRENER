@@ -14,147 +14,158 @@
 */
 
 :root {
-	/* === kolory (paleta marki) === */
-	--color-font: #240f22;
-	--color-heading: #240f22;
-	--color-black: #240f22;
-	--color-white: #ffffff;
-	--color-muted: #5e7473;
-	--color-muted-light: #999999;
-	--color-nav: #5f455c;
-	--color-border: #eeeeee;
-	--color-border-strong: #cccccc;
-	--color-surface: #e1d9cb;
-	--color-base: #a9369c;
-	--color-base-dark: #5f455c;
-	--color-accent: #a9369c;
+  /* === kolory (paleta marki) === */
+  --color-font: #240f22;
+  --color-heading: #240f22;
+  --color-black: #240f22;
+  --color-white: #ffffff;
+  --color-muted: #5f455c;
+  --color-muted-light: #999999;
+  --color-nav: #240f22;
+  --color-border: #eeeeee;
+  --color-border-strong: #cccccc;
+  --color-surface: #e1d9cb;
+  --color-base: #a9369c;
+  --color-base-dark: #68175e;
+  --color-base-dark--muted: #5f455c;
+  --color-accent: #a9369c;
+  --gradient-button: linear-gradient(
+    180deg,
+    var(--color-base) 0%,
+    var(--color-base-dark) 100%
+  );
+  --gradient-banner: linear-gradient(
+    0deg,
+    rgba(225, 217, 203, 1) 0%,
+    rgba(247, 242, 233, 1) 100%
+  );
 
-	/* === rodzina i grubości fontu === */
-	--font-family-heading: 'AR One Sans Variable', sans-serif;
-	--font-family-body: 'DM Sans Variable', sans-serif;
-	--font-weight: 400;
-	--font-weight-bold: 700;
-	--font-weight-h: 700;
+  /* === rodzina i grubości fontu === */
+  --font-family-heading: "AR One Sans Variable", sans-serif;
+  --font-family-body: "DM Sans Variable", sans-serif;
+  --font-weight: 400;
+  --font-weight-bold: 700;
+  --font-weight-h: 700;
 
-	/* === skala fontów: wartości domyślne = "xl" (>=1921px) === */
-	--font-size-p: 22px;
-	--line-h-p: 1.6;
-	--font-size-label: 17px;
-	--line-h-label: 1.1;
-	--font-size-h1: 48px;
-	--line-h-h1: 1.2;
-	--font-size-h2: 34px;
-	--line-h-h2: 1.1;
-	--font-size-h3: 26px;
-	--line-h-h3: 1.3;
-	--font-size-h4: 26px;
-	--line-h-h4: 1.3;
-	--font-size-h5: 23px;
-	--line-h-h5: 1.1;
-	--font-size-h6: 21px;
-	--line-h-h6: 1.7;
+  /* === skala fontów: wartości domyślne = "xl" (>=1921px) === */
+  --font-size-p: 22px;
+  --line-h-p: 1.6;
+  --font-size-label: 17px;
+  --line-h-label: 1.1;
+  --font-size-h1: 48px;
+  --line-h-h1: 1.2;
+  --font-size-h2: 34px;
+  --line-h-h2: 1.1;
+  --font-size-h3: 26px;
+  --line-h-h3: 1.3;
+  --font-size-h4: 26px;
+  --line-h-h4: 1.3;
+  --font-size-h5: 23px;
+  --line-h-h5: 1.1;
+  --font-size-h6: 21px;
+  --line-h-h6: 1.7;
 }
 
 /* "l" — poniżej huge (1921px) */
 @media (max-width: 1920px) {
-	:root {
-		--font-size-p: 20px;
-		--line-h-p: 1.5;
-		--font-size-label: 16px;
-		--line-h-label: 1.1;
-		--font-size-h1: 46px;
-		--line-h-h1: 1.2;
-		--font-size-h2: 34px;
-		--line-h-h2: 1.1;
-		--font-size-h3: 24px;
-		--line-h-h3: 1.3;
-		--font-size-h4: 25px;
-		--line-h-h4: 1.3;
-		--font-size-h5: 22px;
-		--line-h-h5: 1.1;
-		--font-size-h6: 20px;
-		--line-h-h6: 1.6;
-	}
+  :root {
+    --font-size-p: 20px;
+    --line-h-p: 1.5;
+    --font-size-label: 16px;
+    --line-h-label: 1.1;
+    --font-size-h1: 46px;
+    --line-h-h1: 1.2;
+    --font-size-h2: 34px;
+    --line-h-h2: 1.1;
+    --font-size-h3: 24px;
+    --line-h-h3: 1.3;
+    --font-size-h4: 25px;
+    --line-h-h4: 1.3;
+    --font-size-h5: 22px;
+    --line-h-h5: 1.1;
+    --font-size-h6: 20px;
+    --line-h-h6: 1.6;
+  }
 }
 
 /* "m" — poniżej large (1320px) */
 @media (max-width: 1319px) {
-	:root {
-		--font-size-p: 18px;
-		--line-h-p: 1.5;
-		--font-size-label: 15px;
-		--line-h-label: 1.1;
-		--font-size-h1: 40px;
-		--line-h-h1: 1.2;
-		--font-size-h2: 32px;
-		--line-h-h2: 1.1;
-		--font-size-h3: 22px;
-		--line-h-h3: 1.3;
-		--font-size-h4: 24px;
-		--line-h-h4: 1.3;
-		--font-size-h5: 21px;
-		--line-h-h5: 1.1;
-		--font-size-h6: 19px;
-		--line-h-h6: 1.5;
-	}
+  :root {
+    --font-size-p: 18px;
+    --line-h-p: 1.5;
+    --font-size-label: 15px;
+    --line-h-label: 1.1;
+    --font-size-h1: 40px;
+    --line-h-h1: 1.2;
+    --font-size-h2: 32px;
+    --line-h-h2: 1.1;
+    --font-size-h3: 22px;
+    --line-h-h3: 1.3;
+    --font-size-h4: 24px;
+    --line-h-h4: 1.3;
+    --font-size-h5: 21px;
+    --line-h-h5: 1.1;
+    --font-size-h6: 19px;
+    --line-h-h6: 1.5;
+  }
 }
 
 /* "s" — poniżej medium (980px) */
 @media (max-width: 979px) {
-	:root {
-		--font-size-p: 16px;
-		--line-h-p: 1.4;
-		--font-size-label: 14px;
-		--line-h-label: 1.1;
-		--font-size-h1: 30px;
-		--line-h-h1: 1.2;
-		--font-size-h2: 28px;
-		--line-h-h2: 1.1;
-		--font-size-h3: 20px;
-		--line-h-h3: 1.3;
-		--font-size-h4: 23px;
-		--line-h-h4: 1.3;
-		--font-size-h5: 20px;
-		--line-h-h5: 1.1;
-		--font-size-h6: 18px;
-		--line-h-h6: 1.5;
-	}
+  :root {
+    --font-size-p: 16px;
+    --line-h-p: 1.4;
+    --font-size-label: 14px;
+    --line-h-label: 1.1;
+    --font-size-h1: 30px;
+    --line-h-h1: 1.2;
+    --font-size-h2: 28px;
+    --line-h-h2: 1.1;
+    --font-size-h3: 20px;
+    --line-h-h3: 1.3;
+    --font-size-h4: 23px;
+    --line-h-h4: 1.3;
+    --font-size-h5: 20px;
+    --line-h-h5: 1.1;
+    --font-size-h6: 18px;
+    --line-h-h6: 1.5;
+  }
 }
 
 /* "xs" — poniżej small (576px) */
 @media (max-width: 575px) {
-	:root {
-		--font-size-p: 16px;
-		--line-h-p: 1.3;
-		--font-size-label: 13px;
-		--line-h-label: 1.1;
-		--font-size-h1: 24px;
-		--line-h-h1: 1.2;
-		--font-size-h2: 20px;
-		--line-h-h2: 1.1;
-		--font-size-h3: 18px;
-		--line-h-h3: 1.2;
-		--font-size-h4: 18px;
-		--line-h-h4: 1.2;
-		--font-size-h5: 19px;
-		--line-h-h5: 1.1;
-		--font-size-h6: 17px;
-		--line-h-h6: 1.5;
-	}
+  :root {
+    --font-size-p: 16px;
+    --line-h-p: 1.3;
+    --font-size-label: 13px;
+    --line-h-label: 1.1;
+    --font-size-h1: 24px;
+    --line-h-h1: 1.2;
+    --font-size-h2: 20px;
+    --line-h-h2: 1.1;
+    --font-size-h3: 18px;
+    --line-h-h3: 1.2;
+    --font-size-h4: 18px;
+    --line-h-h4: 1.2;
+    --font-size-h5: 19px;
+    --line-h-h5: 1.1;
+    --font-size-h6: 17px;
+    --line-h-h6: 1.5;
+  }
 }
 
 /* === reset + zastosowanie tokenów do gołych tagów (jak globalStyle.js) === */
 *,
 *::before,
 *::after {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-	margin: 0;
-	font-family: var(--font-family-body);
-	font-weight: var(--font-weight);
-	color: var(--color-font);
+  margin: 0;
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight);
+  color: var(--color-font);
 }
 
 h1,
@@ -163,44 +174,44 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: var(--font-family-heading);
-	font-weight: var(--font-weight-h);
-	color: var(--color-heading);
-	margin: 0;
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-h);
+  color: var(--color-heading);
+  margin: 0;
 }
 
 h1 {
-	font-size: var(--font-size-h1);
-	line-height: var(--line-h-h1);
+  font-size: var(--font-size-h1);
+  line-height: var(--line-h-h1);
 }
 h2 {
-	font-size: var(--font-size-h2);
-	line-height: var(--line-h-h2);
+  font-size: var(--font-size-h2);
+  line-height: var(--line-h-h2);
 }
 h3 {
-	font-size: var(--font-size-h3);
-	line-height: var(--line-h-h3);
+  font-size: var(--font-size-h3);
+  line-height: var(--line-h-h3);
 }
 h4 {
-	font-size: var(--font-size-h4);
-	line-height: var(--line-h-h4);
+  font-size: var(--font-size-h4);
+  line-height: var(--line-h-h4);
 }
 h5 {
-	font-size: var(--font-size-h5);
-	line-height: var(--line-h-h5);
+  font-size: var(--font-size-h5);
+  line-height: var(--line-h-h5);
 }
 h6 {
-	font-size: var(--font-size-h6);
-	line-height: var(--line-h-h6);
+  font-size: var(--font-size-h6);
+  line-height: var(--line-h-h6);
 }
 
 p {
-	font-size: var(--font-size-p);
-	line-height: var(--line-h-p);
-	margin: 0;
+  font-size: var(--font-size-p);
+  line-height: var(--line-h-p);
+  margin: 0;
 }
 
 label {
-	font-size: var(--font-size-label);
-	line-height: var(--line-h-label);
+  font-size: var(--font-size-label);
+  line-height: var(--line-h-label);
 }
