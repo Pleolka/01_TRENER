@@ -1,0 +1,157 @@
+---
+import { info } from '../assets/data/kontakt';
+import iksLogo from '../images/logo_white_iks.png';
+
+const legalLinks = [
+	{ name: 'Regulamin', path: '/regulamin' },
+	{ name: 'Polityka prywatności', path: '/polityka-prywatnosci' },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+	<div class="footer-main">
+		<h2>Napisz do mnie!</h2>
+
+		<a class="mail-link" href={`mailto:${info.mail}`}>
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<rect x="2" y="4" width="20" height="16" rx="2"></rect>
+				<path d="m22 7-10 6L2 7"></path>
+			</svg>
+			{info.mail}
+		</a>
+
+		<ul class="footer-legal">
+			{
+				legalLinks.map((item) => (
+					<li>
+						<a href={item.path}>{item.name}</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+
+	<div class="footer-credit">
+		<hr />
+		<span>&copy; {year} {info.imie}</span>
+		<a href="https://iksdesign.pl/" target="_blank" rel="noopener noreferrer">
+			<img src={iksLogo.src} alt="" width="31" height="20" />
+			IKS Design
+		</a>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		background: var(--color-font);
+		color: var(--color-white);
+		text-align: center;
+		padding-top: 3rem;
+	}
+
+	.footer-main {
+		max-width: 32rem;
+		margin-inline: auto;
+		padding: 0 1.5rem 2.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.footer-main h2 {
+		font-size: 1.1rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		margin: 0;
+	}
+
+	.mail-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		color: var(--color-white);
+		text-decoration: none;
+		font-weight: 600;
+		transition: color 0.2s ease;
+	}
+
+	.mail-link:hover {
+		color: var(--color-base);
+	}
+
+	.mail-link svg {
+		flex-shrink: 0;
+		width: 1.1rem;
+		height: 1.1rem;
+	}
+
+	.footer-legal {
+		list-style: none;
+		margin: 0.5rem 0 0;
+		padding: 0;
+		display: flex;
+		gap: 1.5rem;
+	}
+
+	.footer-legal a {
+		color: var(--color-white);
+		opacity: 0.75;
+		text-decoration: none;
+		font-size: var(--font-size-label);
+		transition: opacity 0.2s ease;
+	}
+
+	.footer-legal a:hover {
+		opacity: 1;
+	}
+
+	.footer-credit {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.85rem;
+		padding-bottom: 2rem;
+	}
+
+	.footer-credit hr {
+		width: 100%;
+		border: 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.15);
+		margin: 0 0 0.85rem;
+	}
+
+	.footer-credit span,
+	.footer-credit a {
+		color: var(--color-white);
+		opacity: 0.5;
+		font-size: 0.8rem;
+		text-decoration: none;
+		transition: opacity 0.2s ease;
+	}
+
+	.footer-credit a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.footer-credit a img {
+		display: block;
+		width: auto;
+		height: 20px;
+	}
+
+	.footer-credit a:hover {
+		opacity: 0.85;
+	}
+
+	@media (max-width: 575px) {
+		.footer-legal {
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+	}
+</style>

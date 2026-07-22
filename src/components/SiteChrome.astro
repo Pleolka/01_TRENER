@@ -1,18 +1,12 @@
 ---
 import { list as navItems } from "../assets/data/strukturaStrony";
 import logo from "../images/logo.svg";
+import Footer from "./Footer.astro";
 
 const links = navItems.filter((item) => !item.cta);
 const cta = navItems.find((item) => item.cta);
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
-
-const footerLinks = [
-  { name: "Regulamin", path: "/regulamin" },
-  { name: "Polityka prywatności", path: "/polityka-prywatnosci" },
-];
-
-const year = new Date().getFullYear();
 ---
 
 <div class="page">
@@ -56,12 +50,7 @@ const year = new Date().getFullYear();
     <slot />
   </main>
 
-  <footer class="footer">
-    <span>&copy; {year} Trener Shop</span>
-    <div class="footer-links">
-      {footerLinks.map((item) => <a href={item.path}>{item.name}</a>)}
-    </div>
-  </footer>
+  <Footer />
 </div>
 
 <style>
@@ -248,31 +237,5 @@ const year = new Date().getFullYear();
     flex: 1;
     display: flex;
     flex-direction: column;
-  }
-
-  .footer {
-    padding: 1.5rem;
-    text-align: center;
-    color: var(--color-muted-light);
-    font-size: var(--font-size-label);
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .footer-links a {
-    color: var(--color-muted-light);
-    text-decoration: none;
-  }
-
-  .footer-links a:hover {
-    color: var(--color-nav);
   }
 </style>
