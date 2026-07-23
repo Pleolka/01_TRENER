@@ -3,17 +3,114 @@ import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
+
+const teasers = [
+	{
+		title: 'Konsultacje z trenerem personalnym',
+		tagline: 'Pozbądź się wątpliwości na treningu podczas jednej rozmowy!',
+		description:
+			'Stop niepewności na treningu! Ustal raz na zawsze jak zrobić rozgrzewkę, dobierać ciężar do ćwiczeń, albo ustawić się do przysiadów bułgarskich.',
+		path: '/konsultacje-z-trenerem-personalnym',
+	},
+	{
+		title: 'Współpraca treningowa online',
+		tagline: 'Zbuduj zdrowe i silne ciało',
+		description:
+			'Tworzę dla Ciebie system, który uwzględnia Twoje preferencje, umiejętności i aktualne możliwości oraz prowadzę Cię prosto do efektów.',
+		path: '/online-coaching',
+	},
+	{
+		title: 'Mocny brzuch w 6 tygodni',
+		tagline: 'Zbuduj silne mięśnie brzucha w zaledwie 1,5 miesiąca',
+		description:
+			'Zamiast wykonywać co trening różne ćwiczenia, które dają niewielkie rezultaty, ja stworzyłam system najskuteczniejszych ćwiczeń — z nim Twój brzuch będzie silny i wyrzeźbiony.',
+		path: '/mocny-brzuch-w-6-tygodni',
+	},
+];
+
+const miniProducts = [
+	{
+		title: 'Spontaniczny ruch',
+		description:
+			'Sprawdzone sposoby na więcej spontanicznego ruchu (NEAT) — nawet, jeśli prowadzisz „życie na siedząco”.',
+		price: '59 PLN',
+	},
+	{
+		title: 'Regeneracja ciała',
+		description: 'Metody regeneracji ciała i układu nerwowego po aktywności fizycznej: techniki, schematy, suplementy.',
+		price: '99 PLN',
+	},
+	{
+		title: 'Dyscyplina na co dzień',
+		description: 'System ułatwiający stworzenie i utrzymanie nawyków wspierających Twoje zdrowie.',
+		price: '199 PLN',
+	},
+];
 ---
 
 <SiteChrome>
-	<Section pt={6} pb={6}>
+	<Section pt={6} pb={5}>
 		<Container>
 			<div class="hero">
-				<h1>Sklep w budowie</h1>
+				<h1>Zmień swoje ciało ze mną!</h1>
 				<p class="subtitle">
-					Strona startowa uruchomiona na Astro. Kolejne kroki: CMS, płatności i koszyk.
+					Pomagam ułożyć trening i nawyki tak, by pasowały do Twojego życia — bez chaosu,
+					zgadywania i przypadkowych planów.
 				</p>
-				<Button href="/sklep">Zobacz ofertę</Button>
+				<div class="hero-actions">
+					<Button href="/konsultacje-z-trenerem-personalnym">Umów konsultację</Button>
+					<Button href="/sklep" variant="outline">Zobacz ofertę</Button>
+				</div>
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={3} pb={5}>
+		<Container>
+			<div class="teasers">
+				{
+					teasers.map((teaser) => (
+						<div class="teaser">
+							<h2>{teaser.title}</h2>
+							<p class="teaser-tagline">{teaser.tagline}</p>
+							<p class="teaser-description">{teaser.description}</p>
+							<Button href={teaser.path} variant="outline">
+								Dowiedz się więcej
+							</Button>
+						</div>
+					))
+				}
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={3} pb={5}>
+		<Container>
+			<h2 class="section-title">Sklep</h2>
+			<p class="section-subtitle">Tworzę praktyczne i łatwe procedury, które wspomagają zdrowie.</p>
+			<div class="products-grid">
+				{
+					miniProducts.map((product) => (
+						<div class="product-card">
+							<h3>{product.title}</h3>
+							<p>{product.description}</p>
+							<span class="price">{product.price}</span>
+						</div>
+					))
+				}
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={3} pb={6}>
+		<Container>
+			<div class="lead-teaser">
+				<h2>Sprawdź za darmo, jak się ze mną pracuje! Pobierz e-booka „Lekka redukcja”</h2>
+				<p>
+					Pobierz darmowego e-booka z 3-dniowym jadłospisem na super łatwą redukcję bez
+					wyrzeczeń. Sprawdź na własnej skórze efekty współpracy ze mną! 🥑🥗
+				</p>
+				<Button href="/lekka-redukcja">Pobierz e-booka</Button>
 			</div>
 		</Container>
 	</Section>
@@ -31,6 +128,105 @@ import Button from './ui/Button.astro';
 	}
 
 	.subtitle {
+		color: var(--color-muted);
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 0.5rem;
+	}
+
+	.teasers {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 1.5rem;
+	}
+
+	.teaser {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.6rem;
+		padding: 1.75rem;
+		background: var(--color-white);
+		border: 1px solid var(--color-border);
+		border-radius: 1rem;
+	}
+
+	.teaser h2 {
+		font-size: 1.3rem;
+	}
+
+	.teaser-tagline {
+		font-style: italic;
+		color: var(--color-base);
+		font-weight: 600;
+	}
+
+	.teaser-description {
+		color: var(--color-muted);
+		flex: 1;
+	}
+
+	.section-title {
+		text-align: center;
+	}
+
+	.section-subtitle {
+		text-align: center;
+		color: var(--color-muted);
+		margin-bottom: 2rem;
+	}
+
+	.products-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 1.25rem;
+	}
+
+	.product-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1.5rem;
+		background: var(--color-white);
+		border: 1px solid var(--color-border);
+		border-radius: 0.75rem;
+	}
+
+	.product-card h3 {
+		font-size: 1.1rem;
+	}
+
+	.product-card p {
+		color: var(--color-muted);
+		font-size: 0.9rem;
+		flex: 1;
+	}
+
+	.product-card .price {
+		font-weight: 700;
+		color: var(--color-base);
+	}
+
+	.lead-teaser {
+		max-width: 40rem;
+		margin-inline: auto;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.25rem;
+		padding: 2.5rem;
+		background: var(--color-white);
+		border: 1px solid var(--color-border);
+		border-radius: 1.5rem;
+	}
+
+	.lead-teaser p {
 		color: var(--color-muted);
 	}
 </style>
