@@ -1,0 +1,201 @@
+---
+import SiteChrome from './SiteChrome.astro';
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
+
+const kalorycznosci = ['1700', '1800', '1900', '2000', '2200'];
+---
+
+<SiteChrome>
+	<Section pt={5} pb={3}>
+		<Container>
+			<div class="intro">
+				<h1>Pobierz e-book z przepisami „Lekka redukcja” za darmo!</h1>
+				<p class="subtitle">
+					Pobierz darmowego e-booka z planem na łatwą redukcję bez wyrzeczeń i sprawdź na własnej
+					skórze efekty współpracy ze mną!
+				</p>
+				<Button href="#formularz">Pobierz jadłospis</Button>
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={3} pb={6}>
+		<Container>
+			<div id="formularz" class="form-wrapper">
+				<div class="form-intro">
+					<h2>Pobierz e-book z przepisami „Lekka redukcja” za darmo!</h2>
+					<p class="subtitle">
+						Wypełnij formularz, odbierz swój jadłospis i zacznij małymi krokami zmieniać swoje
+						życie 🥑🥗
+					</p>
+				</div>
+
+				<form
+					class="lead-form"
+					name="lekka-redukcja"
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					action="/dziekujemy"
+				>
+					<input type="hidden" name="form-name" value="lekka-redukcja" />
+					<p class="honeypot">
+						<label>
+							Nie wypełniaj tego pola
+							<input name="bot-field" />
+						</label>
+					</p>
+
+					<div class="field">
+						<label for="imie">Jak masz na imię?</label>
+						<input type="text" id="imie" name="imie" autocomplete="name" required />
+					</div>
+
+					<fieldset class="field">
+						<legend>Wybierz kaloryczność</legend>
+						<div class="checkbox-grid">
+							{
+								kalorycznosci.map((kcal) => (
+									<label class="checkbox-option">
+										<input type="checkbox" name="kalorycznosc" value={kcal} />
+										{kcal} kcal
+									</label>
+								))
+							}
+						</div>
+					</fieldset>
+
+					<div class="field">
+						<label for="email">Na jakiego maila wysłać Ci jadłospis?</label>
+						<input type="email" id="email" name="email" autocomplete="email" required />
+					</div>
+
+					<button type="submit" class="submit-btn">Wyślij mi jadłospis</button>
+				</form>
+			</div>
+		</Container>
+	</Section>
+</SiteChrome>
+
+<style>
+	.intro {
+		text-align: center;
+		max-width: 38rem;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.subtitle {
+		color: var(--color-muted);
+	}
+
+	.form-wrapper {
+		max-width: 32rem;
+		margin: 0 auto;
+		padding: 2rem;
+		background: var(--color-white);
+		border: 1px solid var(--color-border);
+		border-radius: 1.5rem;
+	}
+
+	.form-intro {
+		text-align: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.form-intro h2 {
+		font-size: 1.4rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.lead-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.honeypot {
+		position: absolute;
+		left: -9999px;
+	}
+
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		border: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.field label,
+	.field legend {
+		font-weight: 600;
+		color: var(--color-font);
+		padding: 0;
+	}
+
+	.field input[type='text'],
+	.field input[type='email'] {
+		font: inherit;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: 0.75rem;
+		background: var(--color-white);
+		color: var(--color-font);
+	}
+
+	.field input:focus {
+		outline: none;
+		border-color: var(--color-base);
+	}
+
+	.checkbox-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		margin-top: 0.4rem;
+	}
+
+	.checkbox-option {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.5rem 0.9rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: 999px;
+		font-weight: 400;
+		font-size: var(--font-size-label);
+		cursor: pointer;
+	}
+
+	.checkbox-option input {
+		accent-color: var(--color-base);
+	}
+
+	.submit-btn {
+		align-self: center;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 40px;
+		padding: 0 3rem;
+		border-radius: 999px;
+		border: none;
+		background: var(--gradient-button);
+		color: var(--color-white);
+		font-weight: 600;
+		font-size: 18px;
+		cursor: pointer;
+		transition: filter 0.3s ease;
+	}
+
+	.submit-btn:hover {
+		filter: brightness(0.9);
+	}
+</style>
