@@ -61,6 +61,7 @@ const { heading, eyebrow, badge, content } = Astro.props;
 	.prose :global(h2) {
 		margin-top: 2.5rem;
 		margin-bottom: 1rem;
+		color: var(--color-base);
 	}
 
 	.prose :global(p) {
@@ -96,6 +97,7 @@ const { heading, eyebrow, badge, content } = Astro.props;
 		padding: 1rem 1.25rem;
 		border: 1px solid var(--color-border);
 		border-radius: 0.75rem;
+		transition: border-color 0.15s ease;
 	}
 
 	.prose :global(details[open]) {
@@ -103,8 +105,32 @@ const { heading, eyebrow, badge, content } = Astro.props;
 	}
 
 	.prose :global(summary) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
 		cursor: pointer;
 		font-weight: 600;
+		list-style: none;
+	}
+
+	.prose :global(summary::-webkit-details-marker) {
+		display: none;
+	}
+
+	.prose :global(summary::after) {
+		content: '';
+		flex-shrink: 0;
+		width: 0.6rem;
+		height: 0.6rem;
+		border-right: 2px solid var(--color-base);
+		border-bottom: 2px solid var(--color-base);
+		transform: rotate(45deg);
+		transition: transform 0.2s ease;
+	}
+
+	.prose :global(details[open] summary::after) {
+		transform: rotate(-135deg);
 	}
 
 	.prose :global(details p) {
