@@ -1,0 +1,133 @@
+---
+import SiteChrome from './SiteChrome.astro';
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
+---
+
+<SiteChrome>
+	<Section pt={5} pb={6}>
+		<Container>
+			<div class="intro">
+				<h1>Zmień swoje ciało ze mną!</h1>
+				<p class="subtitle">
+					Za pomocą tego formularza skontaktujesz się ze mną bezpośrednio. Pamiętaj, aby podać
+					adres e-mail, z którego korzystasz na co dzień.
+				</p>
+			</div>
+
+			<form
+				class="contact-form"
+				name="kontakt"
+				method="POST"
+				data-netlify="true"
+				netlify-honeypot="bot-field"
+				action="/dziekujemy"
+			>
+				<input type="hidden" name="form-name" value="kontakt" />
+				<p class="honeypot">
+					<label>
+						Nie wypełniaj tego pola
+						<input name="bot-field" />
+					</label>
+				</p>
+
+				<div class="field">
+					<label for="imie">Imię</label>
+					<input type="text" id="imie" name="imie" autocomplete="name" required />
+				</div>
+
+				<div class="field">
+					<label for="email">Email</label>
+					<input type="email" id="email" name="email" autocomplete="email" required />
+				</div>
+
+				<div class="field">
+					<label for="wiadomosc">Wiadomość</label>
+					<textarea
+						id="wiadomosc"
+						name="wiadomosc"
+						rows="5"
+						placeholder="Napisz w czym mogę Ci pomóc."
+						required
+					></textarea>
+				</div>
+
+				<button type="submit" class="submit-btn">Wyślij wiadomość</button>
+			</form>
+		</Container>
+	</Section>
+</SiteChrome>
+
+<style>
+	.intro {
+		text-align: center;
+		max-width: 34rem;
+		margin: 0 auto 2.5rem;
+	}
+
+	.subtitle {
+		color: var(--color-muted);
+	}
+
+	.contact-form {
+		max-width: 32rem;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.honeypot {
+		position: absolute;
+		left: -9999px;
+	}
+
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.field label {
+		font-weight: 600;
+		color: var(--color-font);
+	}
+
+	.field input,
+	.field textarea {
+		font: inherit;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: 0.75rem;
+		background: var(--color-white);
+		color: var(--color-font);
+		resize: vertical;
+	}
+
+	.field input:focus,
+	.field textarea:focus {
+		outline: none;
+		border-color: var(--color-base);
+	}
+
+	.submit-btn {
+		align-self: center;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 40px;
+		padding: 0 3rem;
+		border-radius: 999px;
+		border: none;
+		background: var(--gradient-button);
+		color: var(--color-white);
+		font-weight: 600;
+		font-size: 18px;
+		cursor: pointer;
+		transition: filter 0.3s ease;
+	}
+
+	.submit-btn:hover {
+		filter: brightness(0.9);
+	}
+</style>
