@@ -2,13 +2,15 @@
 import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
+import SectionBadge from './ui/SectionBadge.astro';
 ---
 
 <SiteChrome>
 	<Section pt={5} pb={6}>
 		<Container>
 			<div class="intro">
-				<h1>Zmień swoje ciało ze mną!</h1>
+				<SectionBadge text="Kontakt" />
+				<h1><span class="accent">Zmień</span> swoje ciało ze mną!</h1>
 				<p class="subtitle">
 					Za pomocą tego formularza skontaktujesz się ze mną bezpośrednio. Pamiętaj, aby podać
 					adres e-mail, z którego korzystasz na co dzień.
@@ -60,9 +62,17 @@ import Container from './ui/Container.astro';
 
 <style>
 	.intro {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
 		text-align: center;
 		max-width: 34rem;
 		margin: 0 auto 2.5rem;
+	}
+
+	.accent {
+		color: var(--color-base);
 	}
 
 	.subtitle {
@@ -97,7 +107,7 @@ import Container from './ui/Container.astro';
 	.field textarea {
 		font: inherit;
 		padding: 0.75rem 1rem;
-		border: 1px solid var(--color-border-strong);
+		border: 1px solid var(--color-border);
 		border-radius: 0.75rem;
 		background: var(--color-white);
 		color: var(--color-font);

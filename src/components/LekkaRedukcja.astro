@@ -3,6 +3,7 @@ import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
+import SectionBadge from './ui/SectionBadge.astro';
 
 const kalorycznosci = ['1700', '1800', '1900', '2000', '2200'];
 ---
@@ -11,7 +12,8 @@ const kalorycznosci = ['1700', '1800', '1900', '2000', '2200'];
 	<Section pt={5} pb={3}>
 		<Container>
 			<div class="intro">
-				<h1>Pobierz e-book z przepisami „Lekka redukcja” za darmo!</h1>
+				<SectionBadge text="Za darmo" />
+				<h1>Pobierz e-book z przepisami <span class="accent">„Lekka redukcja”</span> za darmo!</h1>
 				<p class="subtitle">
 					Pobierz darmowego e-booka z planem na łatwą redukcję bez wyrzeczeń i sprawdź na własnej
 					skórze efekty współpracy ze mną!
@@ -90,6 +92,10 @@ const kalorycznosci = ['1700', '1800', '1900', '2000', '2200'];
 		gap: 1.25rem;
 	}
 
+	.accent {
+		color: var(--color-base);
+	}
+
 	.subtitle {
 		color: var(--color-muted);
 	}
@@ -144,7 +150,7 @@ const kalorycznosci = ['1700', '1800', '1900', '2000', '2200'];
 	.field input[type='email'] {
 		font: inherit;
 		padding: 0.75rem 1rem;
-		border: 1px solid var(--color-border-strong);
+		border: 1px solid var(--color-border);
 		border-radius: 0.75rem;
 		background: var(--color-white);
 		color: var(--color-font);
@@ -167,7 +173,7 @@ const kalorycznosci = ['1700', '1800', '1900', '2000', '2200'];
 		align-items: center;
 		gap: 0.4rem;
 		padding: 0.5rem 0.9rem;
-		border: 1px solid var(--color-border-strong);
+		border: 1px solid var(--color-border);
 		border-radius: 999px;
 		font-weight: 400;
 		font-size: var(--font-size-label);

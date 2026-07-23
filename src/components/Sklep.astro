@@ -2,6 +2,7 @@
 import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
+import SectionBadge from './ui/SectionBadge.astro';
 
 const FALLBACK_OFFERS = [
 	{
@@ -38,7 +39,10 @@ const offers = offersProp && offersProp.length > 0 ? offersProp : FALLBACK_OFFER
 <SiteChrome>
 	<Section pt={5} pb={6}>
 		<Container>
-			<h1 class="title">Sklep</h1>
+			<div class="header">
+				<SectionBadge text="Sklep" />
+				<h1 class="title">Sprawdzone <span class="accent">procedury</span> dla Twojego zdrowia</h1>
+			</div>
 			<div class="grid">
 				{
 					offers.map((offer) => (
@@ -55,9 +59,17 @@ const offers = offersProp && offersProp.length > 0 ? offersProp : FALLBACK_OFFER
 </SiteChrome>
 
 <style>
-	.title {
+	.header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
 		text-align: center;
 		margin-bottom: 2.5rem;
+	}
+
+	.accent {
+		color: var(--color-base);
 	}
 
 	.grid {

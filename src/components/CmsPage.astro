@@ -2,22 +2,27 @@
 import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
+import SectionBadge from './ui/SectionBadge.astro';
 
 interface Props {
 	heading: string;
+	eyebrow?: string;
 	badge?: string | null;
 	content?: string | null;
 }
 
-const { heading, badge, content } = Astro.props;
+const { heading, eyebrow, badge, content } = Astro.props;
 ---
 
 <SiteChrome>
 	<Section pt={5} pb={6}>
 		<Container>
 			<article class="prose">
-				{badge && <span class="badge">{badge}</span>}
-				<h1>{heading}</h1>
+				<div class="prose-header">
+					{eyebrow && <SectionBadge text={eyebrow} />}
+					{badge && <span class="badge">{badge}</span>}
+					<h1>{heading}</h1>
+				</div>
 				{content && <Fragment set:html={content} />}
 			</article>
 		</Container>
@@ -30,9 +35,17 @@ const { heading, badge, content } = Astro.props;
 		margin-inline: auto;
 	}
 
+	.prose-header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.85rem;
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
 	.badge {
 		display: inline-block;
-		margin-bottom: 1rem;
 		padding: 0.3rem 0.85rem;
 		border-radius: 999px;
 		background: var(--color-surface);
