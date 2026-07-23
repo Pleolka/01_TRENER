@@ -5,11 +5,18 @@ import Section from '../components/ui/Section.astro';
 import Container from '../components/ui/Container.astro';
 
 const { frontmatter } = Astro.props;
+const heading = frontmatter.heading || frontmatter.title;
 ---
 
 <BaseLayout title={frontmatter.title} description={frontmatter.description}>
 	<SiteChrome>
-		<Section pt={4} pb={6}>
+		<Section pt={4} pb={3}>
+			<Container>
+				<h1 class="legal-heading">{heading}</h1>
+			</Container>
+		</Section>
+
+		<Section pt={2} pb={6} bgcolor="var(--color-white)">
 			<Container>
 				<article class="prose">
 					<slot />
@@ -20,13 +27,14 @@ const { frontmatter } = Astro.props;
 </BaseLayout>
 
 <style>
-	.prose {
+	.legal-heading {
 		max-width: 48rem;
 		margin-inline: auto;
 	}
 
-	.prose :global(h1) {
-		margin-bottom: 2rem;
+	.prose {
+		max-width: 48rem;
+		margin-inline: auto;
 	}
 
 	.prose :global(h2) {

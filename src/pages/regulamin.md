@@ -1,10 +1,9 @@
 ---
 layout: ../layouts/LegalLayout.astro
 title: Regulamin
+heading: REGULAMIN SERWISU INTERNETOWEGO NATALIAFIGAS.PL
 description: 'Regulamin serwisu internetowego — zasady korzystania, zakupy, reklamacje i odstąpienie od umowy.'
 ---
-
-# REGULAMIN SERWISU INTERNETOWEGO NATALIAFIGAS.PL
 
 ## 1. POSTANOWIENIA OGÓLNE
 

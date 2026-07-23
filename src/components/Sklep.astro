@@ -47,12 +47,17 @@ const FALLBACK_ICON = 'M12 3v12|m7 10 5 5 5-5|M5 21h14';
 ---
 
 <SiteChrome>
-	<Section pt={5} pb={6}>
+	<Section pt={5} pb={3}>
 		<Container>
 			<div class="header">
 				<SectionBadge text="Sklep" />
 				<h1 class="title">Sprawdzone <span class="accent">procedury</span> dla Twojego zdrowia</h1>
 			</div>
+		</Container>
+	</Section>
+
+	<Section pt={2} pb={6} bgcolor="var(--color-white)">
+		<Container>
 			<div class="grid">
 				{
 					offers.map((offer) => (

@@ -6,7 +6,7 @@ import SectionBadge from './ui/SectionBadge.astro';
 ---
 
 <SiteChrome>
-	<Section pt={5} pb={6}>
+	<Section pt={5} pb={3}>
 		<Container>
 			<div class="intro">
 				<SectionBadge text="Kontakt" />
@@ -16,7 +16,11 @@ import SectionBadge from './ui/SectionBadge.astro';
 					adres e-mail, z którego korzystasz na co dzień.
 				</p>
 			</div>
+		</Container>
+	</Section>
 
+	<Section pt={2} pb={6} bgcolor="var(--color-white)">
+		<Container>
 			<form
 				class="contact-form"
 				name="kontakt"

@@ -1,10 +1,9 @@
 ---
 layout: ../layouts/LegalLayout.astro
 title: Polityka prywatności
+heading: POLITYKA PRYWATNOŚCI
 description: 'Polityka prywatności i polityka cookies — zasady przetwarzania danych osobowych na nataliafigas.pl.'
 ---
-
-# POLITYKA PRYWATNOŚCI
 
 ## §1 POSTANOWIENIA OGÓLNE
 
