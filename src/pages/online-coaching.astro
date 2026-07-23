@@ -1,15 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageSection from '../components/PageSection.astro';
+import CmsPage from '../components/CmsPage.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('online-coaching');
+
+const title = page?.seoTitle || 'Online coaching';
+const description =
+	page?.seoDescription ||
+	'Online coaching Trener Shop — zdalny program treningowy prowadzony krok po kroku. Usługa obecnie wstrzymana.';
+const heading = page?.heading || page?.title || 'Online coaching';
+const badge = page?.badge || 'Wstrzymane';
+const content = page?.content || '<p>Ta usługa jest obecnie wstrzymana. Wróć tu wkrótce po szczegóły.</p>';
 ---
 
-<BaseLayout
-	title="Online coaching"
-	description="Online coaching Trener Shop — zdalny program treningowy prowadzony krok po kroku. Usługa obecnie wstrzymana."
->
-	<PageSection
-		title="Online coaching"
-		badge="Wstrzymane"
-		description="Ta usługa jest obecnie wstrzymana. Wróć tu wkrótce po szczegóły."
-	/>
+<BaseLayout title={title} description={description}>
+	<CmsPage heading={heading} badge={badge} content={content} />
 </BaseLayout>

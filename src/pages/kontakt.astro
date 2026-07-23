@@ -1,11 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Kontakt from '../components/Kontakt.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('kontakt');
+
+const title = page?.seoTitle || 'Kontakt';
+const description =
+	page?.seoDescription || 'Skontaktuj się z Trener Shop — zapytaj o ofertę treningową lub konsultacje personalne.';
 ---
 
-<BaseLayout
-	title="Kontakt"
-	description="Skontaktuj się z Trener Shop — zapytaj o ofertę treningową lub konsultacje personalne."
->
+<BaseLayout title={title} description={description}>
 	<Kontakt />
 </BaseLayout>

@@ -1,14 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageSection from '../components/PageSection.astro';
+import CmsPage from '../components/CmsPage.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('konsultacje-z-trenerem-personalnym');
+
+const title = page?.seoTitle || 'Konsultacje z trenerem personalnym';
+const description =
+	page?.seoDescription ||
+	'Indywidualne konsultacje z trenerem personalnym dopasowane do Twojego celu i poziomu zaawansowania.';
+const heading = page?.heading || page?.title || 'Konsultacje z trenerem personalnym';
+const content = page?.content || '<p>Szczegóły oferty konsultacji indywidualnych pojawią się wkrótce.</p>';
 ---
 
-<BaseLayout
-	title="Konsultacje z trenerem personalnym"
-	description="Indywidualne konsultacje z trenerem personalnym dopasowane do Twojego celu i poziomu zaawansowania."
->
-	<PageSection
-		title="Konsultacje z trenerem personalnym"
-		description="Szczegóły oferty konsultacji indywidualnych pojawią się wkrótce."
-	/>
+<BaseLayout title={title} description={description}>
+	<CmsPage heading={heading} badge={page?.badge} content={content} />
 </BaseLayout>

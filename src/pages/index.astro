@@ -1,11 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Home from '../components/Home.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('home');
+
+const title = page?.seoTitle || 'Strona główna';
+const description =
+	page?.seoDescription ||
+	'Trener Shop — sklep i oferta treningowa trenera personalnego: konsultacje, programy online i plany treningowe.';
 ---
 
-<BaseLayout
-	title="Strona główna"
-	description="Trener Shop — sklep i oferta treningowa trenera personalnego: konsultacje, programy online i plany treningowe."
->
+<BaseLayout title={title} description={description}>
 	<Home />
 </BaseLayout>

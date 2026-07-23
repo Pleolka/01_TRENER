@@ -1,11 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LekkaRedukcja from '../components/LekkaRedukcja.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('lekka-redukcja');
+
+const title = page?.seoTitle || 'Lekka redukcja';
+const description =
+	page?.seoDescription ||
+	'Pobierz za darmo e-book z przepisami „Lekka redukcja” — jadłospis dopasowany do Twojej kaloryczności.';
 ---
 
-<BaseLayout
-	title="Lekka redukcja"
-	description="Pobierz za darmo e-book z przepisami „Lekka redukcja” — jadłospis dopasowany do Twojej kaloryczności."
->
+<BaseLayout title={title} description={description}>
 	<LekkaRedukcja />
 </BaseLayout>

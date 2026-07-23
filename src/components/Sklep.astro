@@ -3,7 +3,7 @@ import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
 
-const offers = [
+const FALLBACK_OFFERS = [
 	{
 		path: '/konsultacje-z-trenerem-personalnym',
 		title: 'Konsultacje z trenerem personalnym',
@@ -26,6 +26,13 @@ const offers = [
 		description: 'Łagodny plan redukcji tkanki tłuszczowej bez restrykcji.',
 	},
 ];
+
+interface Props {
+	offers?: { path: string; title: string; description: string; badge?: string | null }[];
+}
+
+const { offers: offersProp } = Astro.props;
+const offers = offersProp && offersProp.length > 0 ? offersProp : FALLBACK_OFFERS;
 ---
 
 <SiteChrome>

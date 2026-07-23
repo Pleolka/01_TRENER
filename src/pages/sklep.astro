@@ -1,11 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Sklep from '../components/Sklep.astro';
+import { getPageBySlug, getOffers } from '../lib/datocms';
+
+const [page, offers] = await Promise.all([getPageBySlug('sklep'), getOffers()]);
+
+const title = page?.seoTitle || 'Sklep';
+const description =
+	page?.seoDescription ||
+	'Poznaj ofertę Trener Shop: konsultacje z trenerem personalnym, online coaching oraz programy treningowe.';
 ---
 
-<BaseLayout
-	title="Sklep"
-	description="Poznaj ofertę Trener Shop: konsultacje z trenerem personalnym, online coaching oraz programy treningowe."
->
-	<Sklep />
+<BaseLayout title={title} description={description}>
+	<Sklep offers={offers} />
 </BaseLayout>

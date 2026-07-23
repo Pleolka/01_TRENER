@@ -1,14 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageSection from '../components/PageSection.astro';
+import CmsPage from '../components/CmsPage.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('o-mnie');
+
+const title = page?.seoTitle || 'O mnie';
+const description =
+	page?.seoDescription || 'Poznaj trenera stojącego za Trener Shop — doświadczenie i podejście do treningu.';
+const heading = page?.heading || page?.title || 'O mnie';
+const content = page?.content || '<p>Historia i doświadczenie trenera — treść w przygotowaniu.</p>';
 ---
 
-<BaseLayout
-	title="O mnie"
-	description="Poznaj trenera stojącego za Trener Shop — doświadczenie i podejście do treningu."
->
-	<PageSection
-		title="O mnie"
-		description="Historia i doświadczenie trenera — treść w przygotowaniu."
-	/>
+<BaseLayout title={title} description={description}>
+	<CmsPage heading={heading} badge={page?.badge} content={content} />
 </BaseLayout>

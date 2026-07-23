@@ -1,11 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageSection from '../components/PageSection.astro';
+import CmsPage from '../components/CmsPage.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('blog');
+
+const title = page?.seoTitle || 'Blog';
+const description =
+	page?.seoDescription || 'Blog Trener Shop — porady treningowe, dietetyczne i motywacyjne. Wpisy pojawią się już wkrótce.';
+const heading = page?.heading || page?.title || 'Blog';
+const content = page?.content || '<p>Wpisy pojawią się już wkrótce.</p>';
 ---
 
-<BaseLayout
-	title="Blog"
-	description="Blog Trener Shop — porady treningowe, dietetyczne i motywacyjne. Wpisy pojawią się już wkrótce."
->
-	<PageSection title="Blog" description="Wpisy pojawią się już wkrótce." />
+<BaseLayout title={title} description={description}>
+	<CmsPage heading={heading} badge={page?.badge} content={content} />
 </BaseLayout>

@@ -1,14 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageSection from '../components/PageSection.astro';
+import CmsPage from '../components/CmsPage.astro';
+import { getPageBySlug } from '../lib/datocms';
+
+const page = await getPageBySlug('mocny-brzuch-w-6-tygodni');
+
+const title = page?.seoTitle || 'Mocny brzuch w 6 tygodni';
+const description =
+	page?.seoDescription ||
+	'Mocny brzuch w 6 tygodni — sześciotygodniowy plan treningowy na siłę i stabilizację mięśni brzucha.';
+const heading = page?.heading || page?.title || 'Mocny brzuch w 6 tygodni';
+const content = page?.content || '<p>Program treningowy — szczegóły już wkrótce.</p>';
 ---
 
-<BaseLayout
-	title="Mocny brzuch w 6 tygodni"
-	description="Mocny brzuch w 6 tygodni — sześciotygodniowy plan treningowy na siłę i stabilizację mięśni brzucha."
->
-	<PageSection
-		title="Mocny brzuch w 6 tygodni"
-		description="Program treningowy — szczegóły już wkrótce."
-	/>
+<BaseLayout title={title} description={description}>
+	<CmsPage heading={heading} badge={page?.badge} content={content} />
 </BaseLayout>
