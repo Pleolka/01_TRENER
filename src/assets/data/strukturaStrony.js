@@ -1,23 +1,23 @@
 export const list = [
   {
-    name: 'Strona główna',
-    path: '/',
+    name: "Home",
+    path: "/",
   },
   {
-    name: 'O mnie',
-    path: '/o-mnie',
+    name: "O mnie",
+    path: "/o-mnie",
   },
   {
-    name: 'Sklep',
-    path: '/sklep',
+    name: "Sklep",
+    path: "/sklep",
   },
   {
-    name: 'Blog',
-    path: '/blog',
+    name: "Blog",
+    path: "/blog",
   },
   {
-    name: 'Kontakt',
-    path: '/kontakt',
+    name: "Kontakt",
+    path: "/kontakt",
     cta: true,
   },
-]
+];
