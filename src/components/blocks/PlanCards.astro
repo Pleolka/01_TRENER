@@ -14,7 +14,21 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 <div class="plans">
 	{
 		plans.map((plan) => (
-			<article class="plan">
+			<article class:list={['plan', { 'has-image': plan.image }]}>
+				{plan.image && (
+					<span class="photo-wrap">
+						<img
+							class="photo"
+							src={`${plan.image.url}?w=800&h=450&fit=crop&auto=format&q=80`}
+							srcset={`${plan.image.url}?w=480&h=270&fit=crop&auto=format&q=80 480w, ${plan.image.url}?w=800&h=450&fit=crop&auto=format&q=80 800w, ${plan.image.url}?w=1200&h=675&fit=crop&auto=format&q=80 1200w`}
+							sizes="(max-width: 900px) 90vw, 50vw"
+							alt={plan.image.alt ?? ''}
+							width="800"
+							height="450"
+							loading="lazy"
+						/>
+					</span>
+				)}
 				<h3>{plan.name}</h3>
 				{plan.description && <p class="description">{plan.description}</p>}
 				{lines(plan.features).length > 0 && (
@@ -50,6 +64,38 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 		border: 1px solid var(--color-border);
 		border-top: 2px solid var(--color-energy);
 		border-radius: var(--radius-button);
+	}
+
+	/* zdjęcie na górze karty, od krawędzi do krawędzi; łagodny filtr marki —
+	   ten sam co karty kroków i opinii (tokens.css: --filter-photo-soft) */
+	.has-image {
+		overflow: hidden;
+	}
+
+	.photo-wrap {
+		position: relative;
+		display: block;
+		margin: -2rem -2rem 0.5rem;
+		isolation: isolate;
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.photo {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
 	}
 
 	h3 {

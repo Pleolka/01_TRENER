@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Sklep from '../components/Sklep.astro';
-import { getShopPage, getOffers } from '../lib/datocms';
-import { heroBackground } from '../lib/heroBackground';
-import bgImage from '../images/bg-ciezary-6.jpg';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Sklep from '../../components/Sklep.astro';
+import { getShopPage, getOffers } from '../../lib/datocms';
+import { heroBackground } from '../../lib/heroBackground';
+import bgImage from '../../images/bg-ciezary-6.jpg';
 
 // wstęp z modelu pojedynczego „Sklep — wstęp” (shop_page), produkty z modelu Offer
 const [page, offers] = await Promise.all([getShopPage(), getOffers()]);

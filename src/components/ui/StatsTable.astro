@@ -1,0 +1,134 @@
+---
+// Liczniki jako delikatna tabelka: równe kolumny, cienkie linie między
+// nimi, zawartość wyśrodkowana, liczby odliczają się od 0 po pojawieniu
+// się na ekranie. Używana na stronie głównej i na Współpracy 1:1.
+interface Stat {
+	value: string;
+	suffix?: string | null;
+	label: string;
+}
+
+interface Props {
+	items: Stat[];
+	/* wyśrodkowanie tabelki w kolumnie (na telefonie zawsze wyśrodkowana) */
+	center?: boolean;
+	class?: string;
+}
+
+const { items, center = false, class: className } = Astro.props;
+---
+
+<div class:list={['stats', className, { center }]}>
+	{
+		items.map((stat) => (
+			<div class="stat">
+				<span class="stat-value">
+					{/* w HTML od razu wartość docelowa — skrypt niżej odlicza od 0 */}
+					<span class="count" data-target={stat.value}>
+						{stat.value}
+					</span>
+					{stat.suffix && <span class="suffix">{stat.suffix}</span>}
+				</span>
+				<span class="stat-label">{stat.label}</span>
+			</div>
+		))
+	}
+</div>
+
+<script>
+	// Odliczanie liczb (.count[data-target]) od 0 do wartości, gdy licznik
+	// pojawi się na ekranie. Bez JS i dla wyszukiwarek liczby są poprawne,
+	// bo HTML zawiera wartość docelową. Przy ograniczonej animacji
+	// (prefers-reduced-motion) liczby się nie animują.
+	const counters = document.querySelectorAll<HTMLElement>('.count[data-target]');
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const animate = (el: HTMLElement) => {
+		const target = Number(el.dataset.target);
+		if (!Number.isFinite(target) || target === 0) return;
+		const duration = 1600;
+		const start = performance.now();
+		const step = (now: number) => {
+			const progress = Math.min((now - start) / duration, 1);
+			const eased = 1 - Math.pow(1 - progress, 3); // szybki start, łagodny koniec
+			el.textContent = String(Math.round(target * eased));
+			if (progress < 1) requestAnimationFrame(step);
+		};
+		el.textContent = '0';
+		requestAnimationFrame(step);
+	};
+
+	if (!reduceMotion && 'IntersectionObserver' in window) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (!entry.isIntersecting) continue;
+					animate(entry.target as HTMLElement);
+					observer.unobserve(entry.target);
+				}
+			},
+			{ threshold: 0.6 },
+		);
+		counters.forEach((el) => observer.observe(el));
+	}
+</script>
+
+<style>
+	.stats {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+		width: 100%;
+		max-width: 36rem;
+		background: rgba(193, 232, 255, 0.03);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+	}
+
+	.center {
+		margin-inline: auto;
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+		padding: 1.25rem 0.75rem;
+		text-align: center;
+	}
+
+	.stat + .stat {
+		border-left: 1px solid var(--color-border);
+	}
+
+	.stat-value {
+		font-family: var(--font-family-body);
+		font-weight: 700;
+		/* cyfry o stałej szerokości — liczba nie „skacze” podczas odliczania */
+		font-variant-numeric: tabular-nums;
+		/* mniejsze na wąskich ekranach, żeby 3 kolumny się mieściły */
+		font-size: clamp(1.5rem, 5vw, 2.25rem);
+		line-height: 1.1;
+		white-space: nowrap;
+		color: var(--color-energy);
+	}
+
+	/* odstęp między liczbą a dopiskiem (14 lat, 5000 +, 100 %) */
+	.suffix {
+		margin-left: 0.25em;
+	}
+
+	.stat-label {
+		color: var(--color-muted);
+		font-size: 0.85rem;
+		line-height: 1.3;
+	}
+
+	@media (max-width: 900px) {
+		.stats {
+			margin-inline: auto;
+		}
+	}
+</style>

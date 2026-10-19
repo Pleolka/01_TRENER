@@ -31,20 +31,19 @@ const description =
 					<PageHero hero={page} />
 
 					<BlockSection id="details" alt badge={page.scopeBadge} heading={page.scopeHeading} lead={page.scopeLead}>
-						<FeatureGrid items={page.scopeItems} />
+						<FeatureGrid items={page.scopeItems} icons columns={5} />
 					</BlockSection>
 
-					<BlockSection badge={page.resultsBadge} heading={page.resultsHeading} lead={page.resultsText}>
+					<BlockSection badge={page.resultsBadge} heading={page.resultsHeading} lead={page.resultsText} image={page.resultsImage} imageLeft>
 						<StatsRow items={page.resultsStats} />
-						{(page.resultsCtaHeading || page.resultsCtaText) && (
-							<div class="results-cta">
-								{page.resultsCtaHeading && <h3>{page.resultsCtaHeading}</h3>}
-								{page.resultsCtaText && <p>{page.resultsCtaText}</p>}
+						{page.resultsButtonLabel && page.resultsButtonUrl && (
+							<div class="after">
+								<Button href={page.resultsButtonUrl}>{page.resultsButtonLabel}</Button>
 							</div>
 						)}
 					</BlockSection>
 
-					<BlockSection alt heading={page.stepsHeading}>
+					<BlockSection alt badge={page.stepsBadge} heading={page.stepsHeading}>
 						<FeatureGrid items={page.steps} numbered />
 					</BlockSection>
 
@@ -71,18 +70,7 @@ const description =
 </BaseLayout>
 
 <style>
-	.results-cta {
-		margin-top: 3rem;
-		padding-top: 2rem;
-		border-top: 1px solid var(--color-border);
-	}
-
-	.results-cta p {
-		margin-top: 0.5rem;
-		color: var(--color-muted);
-	}
-
 	.after {
-		margin-top: 2.5rem;
+		margin-top: var(--space-actions);
 	}
 </style>

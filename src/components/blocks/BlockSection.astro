@@ -1,9 +1,13 @@
 ---
 // Wspólna sekcja podstron: tło (co druga jednolita), kontener, nagłówek
 // sekcji (etykieta, H2, wstęp) i dowolna zawartość w slocie.
+// image     — opcjonalne zdjęcie stojące na dolnej krawędzi sekcji (ten sam
+//             układ co sekcje na O mnie); bez niego treść na całą szerokość
+// imageLeft — zdjęcie po lewej zamiast po prawej (na telefonie zawsze pod treścią)
 import Section from '../ui/Section.astro';
 import Container from '../ui/Container.astro';
 import { accent } from '../../lib/accent';
+import type { CmsImage } from '../../lib/datocms';
 
 interface Props {
 	id?: string;
@@ -13,26 +17,45 @@ interface Props {
 	heading?: string | null;
 	subheading?: string | null;
 	lead?: string | null;
+	image?: CmsImage | null;
+	imageLeft?: boolean;
 }
 
-const { id, alt = false, badge, heading, subheading, lead } = Astro.props;
+const { id, alt = false, badge, heading, subheading, lead, image, imageLeft = false } = Astro.props;
 const hasHeader = badge || heading || subheading || lead;
 ---
 
-<Section bgcolor={alt ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
+<Section pb={image ? 0 : undefined} bgcolor={alt ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
 	<Container mt="0" mb="0">
-		<div id={id} class="block-section">
+		<div id={id} class:list={['block-section', { 'with-image': image, 'image-left': image && imageLeft }]}>
+			<div class="content">
+				{
+					hasHeader && (
+						<header class="block-header stack">
+							{badge && <p class="eyebrow">{badge}</p>}
+							{heading && <h2 set:html={accent(heading)} />}
+							{subheading && <p class="subheading">{subheading}</p>}
+							{lead && <p class="lead">{lead}</p>}
+						</header>
+					)
+				}
+				<slot />
+			</div>
 			{
-				hasHeader && (
-					<header class="block-header stack">
-						{badge && <p class="eyebrow">{badge}</p>}
-						{heading && <h2 set:html={accent(heading)} />}
-						{subheading && <p class="subheading">{subheading}</p>}
-						{lead && <p class="lead">{lead}</p>}
-					</header>
+				image && (
+					<figure class="media">
+						<img
+							src={`${image.url}?w=900&auto=format&q=85`}
+							srcset={`${image.url}?w=500&auto=format&q=85 500w, ${image.url}?w=900&auto=format&q=85 900w, ${image.url}?w=1300&auto=format&q=85 1300w`}
+							sizes="(max-width: 900px) 90vw, 50vw"
+							alt={image.alt ?? ''}
+							width={image.width}
+							height={image.height}
+							loading="lazy"
+						/>
+					</figure>
 				)
 			}
-			<slot />
 		</div>
 	</Container>
 </Section>
@@ -41,6 +64,53 @@ const hasHeader = badge || heading || subheading || lead;
 	.block-section {
 		/* kotwice (#details itp.) nie chowają się pod przyklejonym paskiem */
 		scroll-margin-top: 6rem;
+	}
+
+	/* ze zdjęciem: treść i zdjęcie po połowie, zdjęcie na dolnej krawędzi sekcji */
+	.with-image {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: end;
+		gap: clamp(2rem, 6vw, 6rem);
+	}
+
+	.with-image .content {
+		align-self: center;
+		padding-bottom: var(--section-py);
+	}
+
+	.media {
+		margin: 0;
+	}
+
+	/* zdjęcie po lewej (tylko na szerokich ekranach — na telefonie zawsze pod treścią) */
+	@media (min-width: 901px) {
+		.image-left .media {
+			order: -1;
+		}
+	}
+
+	.media img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	/* węższe ekrany: treść, pod nią zdjęcie na dole sekcji */
+	@media (max-width: 900px) {
+		.with-image {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.with-image .content {
+			padding-bottom: var(--space-actions);
+		}
+
+		.media {
+			width: 100%;
+			max-width: 18rem;
+			margin-inline: auto;
+		}
 	}
 
 	.block-header {

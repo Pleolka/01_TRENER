@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductPage from '../../components/ProductPage.astro';
+import { getOffers, getOffer } from '../../lib/datocms';
+import { heroBackground } from '../../lib/heroBackground';
+import bgImage from '../../images/bg-ciezary-6.jpg';
+
+// Każdy produkt sklepu z ceną i adresem (slug) w DatoCMS dostaje własną
+// podstronę /sklep-online/<slug>. Nowy produkt pojawi się po kolejnym buildzie.
+export async function getStaticPaths() {
+	const offers = await getOffers();
+	return offers
+		.filter((o): o is typeof o & { slug: string } => Boolean(o.price && o.slug))
+		.map((o) => ({ params: { slug: o.slug } }));
+}
+
+const slug = Astro.params.slug as string;
+const offer = await getOffer(slug);
+
+if (!offer) {
+	return Astro.redirect('/sklep-online');
+}
+
+const hero = await heroBackground(bgImage);
+const description = offer.description || offer.title;
+---
+
+<BaseLayout title={offer.title} description={description}>
+	<ProductPage offer={offer} {...hero} />
+</BaseLayout>

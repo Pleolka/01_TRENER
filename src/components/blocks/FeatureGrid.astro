@@ -1,20 +1,41 @@
 ---
 // Siatka pozycji „tytuł + opis” (zakres współpracy, korzyści, kroki).
 // numbered — automatyczna numeracja 01, 02, 03…
+// icons    — wyśrodkowana karta z ikoną nad tytułem (Phosphor, lib/icons.ts)
+// columns  — stała liczba kolumn w jednym rzędzie na szerokich ekranach
+//            (od 980px); węższe ekrany przechodzą na siatkę automatyczną
+import { iconFor } from '../../lib/icons';
 import type { CmsFeatureItem } from '../../lib/datocms';
 
 interface Props {
 	items: CmsFeatureItem[];
 	numbered?: boolean;
+	icons?: boolean;
+	columns?: number;
 }
 
-const { items, numbered = false } = Astro.props;
+const { items, numbered = false, icons = false, columns } = Astro.props;
 ---
 
-<ul class="feature-grid">
+<ul class:list={['feature-grid', { fixed: columns, 'with-icons': icons }]} style={columns ? `--cols:${columns}` : undefined}>
 	{
 		items.map((item, i) => (
-			<li class="feature">
+			<li class:list={['feature', { 'has-image': item.image }]}>
+				{item.image && (
+					<span class="photo-wrap">
+					<img
+						class="photo"
+						src={`${item.image.url}?w=640&h=400&fit=crop&auto=format&q=80`}
+						srcset={`${item.image.url}?w=400&h=250&fit=crop&auto=format&q=80 400w, ${item.image.url}?w=640&h=400&fit=crop&auto=format&q=80 640w, ${item.image.url}?w=960&h=600&fit=crop&auto=format&q=80 960w`}
+						sizes="(max-width: 900px) 90vw, 25vw"
+						alt={item.image.alt ?? ''}
+						width="640"
+						height="400"
+						loading="lazy"
+					/>
+					</span>
+				)}
+				{icons && <span class="icon" set:html={iconFor(item.title)} />}
 				{numbered && <span class="number">{String(i + 1).padStart(2, '0')}</span>}
 				<h3>{item.title}</h3>
 				{item.description && <p>{item.description}</p>}
@@ -33,6 +54,18 @@ const { items, numbered = false } = Astro.props;
 		list-style: none;
 	}
 
+	/* stała liczba kolumn — wszystkie karty w jednym rzędzie, jak długo się da */
+	@media (min-width: 980px) {
+		.fixed {
+			grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+			gap: 1rem;
+		}
+
+		.fixed .feature {
+			padding: 1.5rem 1.25rem;
+		}
+	}
+
 	.feature {
 		display: flex;
 		flex-direction: column;
@@ -42,6 +75,66 @@ const { items, numbered = false } = Astro.props;
 		border: 1px solid var(--color-border);
 		border-top: 2px solid var(--color-energy);
 		border-radius: var(--radius-button);
+	}
+
+	/* karty z ikoną: wszystko wyśrodkowane */
+	.with-icons .feature {
+		align-items: center;
+		text-align: center;
+	}
+
+	/* karta ze zdjęciem: zawartość wyśrodkowana, zdjęcie na górze od krawędzi
+	   do krawędzi (bez wewnętrznego odstępu karty) */
+	.has-image {
+		overflow: hidden;
+		align-items: center;
+		text-align: center;
+	}
+
+	/* łagodny filtr marki — ten sam co miniatury bloga
+	   (tokens.css: --filter-photo-soft, --tint-photo, --tint-photo-soft-opacity) */
+	.photo-wrap {
+		position: relative;
+		display: block;
+		width: calc(100% + 3.5rem);
+		margin: -1.75rem -1.75rem 0.75rem;
+		isolation: isolate;
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.photo {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
+	}
+
+	.icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 4rem;
+		height: 4rem;
+		margin-bottom: 0.5rem;
+		color: var(--color-energy);
+		background: rgba(62, 232, 255, 0.08);
+		border-radius: 50%;
+	}
+
+	.icon :global(svg) {
+		width: 2.25rem;
+		height: 2.25rem;
 	}
 
 	.number {

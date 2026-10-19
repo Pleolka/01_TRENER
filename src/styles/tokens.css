@@ -30,7 +30,10 @@
     var(--color-page) 100%
   );
   --color-bg: transparent; /* sekcje — pokazują gradient strony */
-  --color-section-alt: var(--color-page); /* co druga sekcja ze zdjęciem — jednolite tło */
+  --color-section-alt: var(
+    --color-page
+  ); /* co druga sekcja ze zdjęciem — jednolite tło */
+  --color-footer: #010016; /* stopka — ciemniejszy granat niż tło strony */
 
   /* powierzchnie (karty, pola formularza, odznaki) */
   --color-surface: #0b1d3d;
@@ -64,7 +67,7 @@
   --btn-outline-color: var(--color-energy);
 
   /* akcent drugoplanowy — linki, ramki, focus */
-  --color-accent: #749ef9;
+  --color-accent: #2ff1ff;
   --color-heading: var(--color-white);
   --color-base: #364fa9;
   --color-base-dark: #171f68;
@@ -79,8 +82,8 @@
      najpierw czerń-biel z mocniejszym kontrastem, potem warstwa koloru
      marki nałożona przez mix-blend-mode: color (efekt duotone) */
   --filter-photo: grayscale(1) contrast(1.15) brightness(0.95);
-  --filter-photo-soft: grayscale(0.5) contrast(1.05);
-  --tint-photo-soft-opacity: 0.45; /* miniatury: kolor marki tylko muśnięty */
+  --filter-photo-soft: grayscale(0.2) contrast(1.02); /* zdjęcia w treści — delikatnie */
+  --tint-photo-soft-opacity: 0.2; /* zdjęcia w treści: kolor marki tylko muśnięty */
   --tint-photo: linear-gradient(
     135deg,
     var(--color-base-dark) 0%,
@@ -103,7 +106,11 @@
   /* === odstępy — jedna skala dla wszystkich podstron ===
      Pionowy rytm każdej sekcji: odstęp sekcji (góra/dół), a w nagłówku
      etykieta → nagłówek → tekst → przyciski / tabela / formularz. */
-  --section-py: clamp(3.5rem, 2.5rem + 3vw, 6rem); /* góra i dół każdej sekcji */
+  --section-py: clamp(
+    3.5rem,
+    2.5rem + 3vw,
+    6rem
+  ); /* góra i dół każdej sekcji */
   --space-eyebrow: 1.25rem; /* etykieta → nagłówek */
   --space-heading: 1.5rem; /* nagłówek → tekst */
   --space-text: 1rem; /* akapit → akapit */

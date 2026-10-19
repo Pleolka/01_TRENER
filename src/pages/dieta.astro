@@ -12,6 +12,7 @@ import CtaBox from '../components/blocks/CtaBox.astro';
 import Button from '../components/ui/Button.astro';
 import { getDietPage } from '../lib/datocms';
 import { heroBackground } from '../lib/heroBackground';
+import { accent } from '../lib/accent';
 import bgImage from '../images/bg-ciezary-5.jpg';
 
 // treści z modelu pojedynczego „Dieta” (diet_page) w DatoCMS
@@ -32,7 +33,7 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 					<PageHero hero={page} />
 
 					<BlockSection id="szczegoly" alt heading={page.benefitsHeading} lead={page.benefitsLead}>
-						<FeatureGrid items={page.benefits} />
+						<FeatureGrid items={page.benefits} columns={3} icons />
 						{(page.benefitsClosingHeading || page.benefitsClosingText) && (
 							<div class="closing">
 								{page.benefitsClosingHeading && <h3>{page.benefitsClosingHeading}</h3>}
@@ -50,12 +51,32 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 						<PlanCards plans={page.plans} />
 					</BlockSection>
 
-					<BlockSection alt badge={page.audienceBadge} heading={page.audienceHeading}>
-						<ul class="audience">
-							{lines(page.audienceItems).map((item) => (
-								<li>{item}</li>
-							))}
-						</ul>
+					{/* „dla kogo”: zdjęcie po lewej, etykieta + nagłówek + lista z ptaszkami po prawej */}
+					<BlockSection alt>
+						<div class:list={['audience-layout', { 'has-image': page.audienceImage }]}>
+							{page.audienceImage && (
+								<span class="audience-photo">
+									<img
+										src={`${page.audienceImage.url}?w=900&h=1000&fit=crop&auto=format&q=80`}
+										srcset={`${page.audienceImage.url}?w=540&h=600&fit=crop&auto=format&q=80 540w, ${page.audienceImage.url}?w=900&h=1000&fit=crop&auto=format&q=80 900w, ${page.audienceImage.url}?w=1260&h=1400&fit=crop&auto=format&q=80 1260w`}
+										sizes="(max-width: 900px) 90vw, 45vw"
+										alt={page.audienceImage.alt ?? ''}
+										width="900"
+										height="1000"
+										loading="lazy"
+									/>
+								</span>
+							)}
+							<div class="audience-text stack">
+								{page.audienceBadge && <p class="eyebrow">{page.audienceBadge}</p>}
+								{page.audienceHeading && <h2 set:html={accent(page.audienceHeading)} />}
+								<ul class="audience stack-gap">
+									{lines(page.audienceItems).map((item) => (
+										<li>{item}</li>
+									))}
+								</ul>
+							</div>
+						</div>
 					</BlockSection>
 
 					<BlockSection heading={page.optionsHeading} lead={page.optionsLead}>
@@ -97,11 +118,61 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 		color: var(--color-muted);
 	}
 
-	/* „dla kogo” — dwie kolumny punktów ze znaczkiem ✓ */
-	.audience {
+	/* „dla kogo”: zdjęcie po lewej, treść po prawej; na telefonie zdjęcie nad treścią */
+	.audience-layout.has-image {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
-		gap: 1rem 2rem;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: center;
+		gap: clamp(2rem, 6vw, 6rem);
+	}
+
+	@media (max-width: 900px) {
+		.audience-layout.has-image {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	/* łagodny filtr marki — ten sam co zdjęcia w kartach */
+	.audience-photo {
+		position: relative;
+		display: block;
+		overflow: hidden;
+		border-radius: var(--radius-button);
+		isolation: isolate;
+	}
+
+	.audience-photo::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.audience-photo img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 9 / 10;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
+	}
+
+	.audience-text {
+		align-items: flex-start;
+	}
+
+	.audience-text :global(.accent) {
+		color: var(--color-energy);
+	}
+
+	/* pionowa lista z ptaszkami w kolorze energy */
+	.audience {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -109,23 +180,20 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 
 	.audience li {
 		position: relative;
-		padding: 1rem 1rem 1rem 3rem;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-button);
+		padding-left: 2.25rem;
 		font-weight: 600;
 	}
 
 	.audience li::before {
 		content: '';
 		position: absolute;
-		left: 1.25rem;
-		top: 50%;
-		width: 0.45rem;
-		height: 0.8rem;
+		left: 0.4rem;
+		top: 0.15em;
+		width: 0.5rem;
+		height: 0.9rem;
 		border-right: 2px solid var(--color-energy);
 		border-bottom: 2px solid var(--color-energy);
-		transform: translateY(-65%) rotate(45deg);
+		transform: rotate(45deg);
 	}
 
 	.after {

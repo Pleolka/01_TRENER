@@ -1,0 +1,295 @@
+---
+// Podstrona produktu sklepu (/sklep-online/<slug>): zdjęcie po lewej,
+// kategoria, nazwa, cena, krótki opis i przyciski po prawej; pod spodem
+// zakładki z CMS-u (tab menu); bez zakładek — pole „Pełny opis”.
+import SiteChrome from './SiteChrome.astro';
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
+import { buyHref, type CmsOffer } from '../lib/datocms';
+import type { HeroImage } from '../lib/heroBackground';
+
+interface Props {
+	offer: CmsOffer;
+	heroBg?: HeroImage;
+	heroAspect?: number;
+}
+
+const { offer, heroBg, heroAspect } = Astro.props;
+const tabs = (offer.tabs ?? []).filter((t) => t.content);
+---
+
+<SiteChrome heroBg={heroBg} heroAspect={heroAspect}>
+	<Section>
+		<Container>
+			<div class:list={['product', { 'has-image': offer.image }]}>
+				{
+					offer.image && (
+						<span class="photo-wrap">
+							<img
+								src={`${offer.image.url}?w=900&h=700&fit=crop&auto=format&q=80`}
+								srcset={`${offer.image.url}?w=540&h=420&fit=crop&auto=format&q=80 540w, ${offer.image.url}?w=900&h=700&fit=crop&auto=format&q=80 900w, ${offer.image.url}?w=1300&h=1011&fit=crop&auto=format&q=80 1300w`}
+								sizes="(max-width: 900px) 90vw, 45vw"
+								alt={offer.image.alt ?? offer.title}
+								width="900"
+								height="700"
+								loading="eager"
+								fetchpriority="high"
+							/>
+						</span>
+					)
+				}
+				<div class="info stack">
+					{offer.badge && <p class="eyebrow">{offer.badge}</p>}
+					<h1>{offer.title}</h1>
+					{offer.price && <p class="price">{offer.price}</p>}
+					{offer.description && <p class="description">{offer.description}</p>}
+					<div class="actions stack-gap">
+						<Button href={buyHref(offer)}>Dodaj do koszyka</Button>
+						<Button href="/sklep-online" variant="outline">Wróć do sklepu</Button>
+					</div>
+				</div>
+			</div>
+
+			{
+				tabs.length > 0 ? (
+					<div class="tabs">
+						<div class="tablist" role="tablist" aria-label="Informacje o produkcie">
+							{tabs.map((t, i) => (
+								<button
+									type="button"
+									class="tab"
+									role="tab"
+									id={`tab-${t.id}`}
+									aria-controls={`panel-${t.id}`}
+									aria-selected={i === 0 ? 'true' : 'false'}
+									tabindex={i === 0 ? 0 : -1}
+								>
+									{t.title}
+								</button>
+							))}
+						</div>
+						{tabs.map((t, i) => (
+							<div
+								class="details panel"
+								role="tabpanel"
+								id={`panel-${t.id}`}
+								aria-labelledby={`tab-${t.id}`}
+								hidden={i !== 0}
+								set:html={t.content}
+							/>
+						))}
+					</div>
+				) : (
+					offer.content && <article class="details details--plain" set:html={offer.content} />
+				)
+			}
+		</Container>
+	</Section>
+</SiteChrome>
+
+<script>
+	// Tab menu: kliknięcie albo strzałki/Home/End przełączają zakładki.
+	document.querySelectorAll<HTMLElement>('[role="tablist"]').forEach((list) => {
+		const tabs = [...list.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+		const select = (tab: HTMLButtonElement) => {
+			tabs.forEach((t) => {
+				const active = t === tab;
+				t.setAttribute('aria-selected', String(active));
+				t.tabIndex = active ? 0 : -1;
+				const panel = document.getElementById(t.getAttribute('aria-controls') ?? '');
+				if (panel) panel.hidden = !active;
+			});
+		};
+		tabs.forEach((tab, i) => {
+			tab.addEventListener('click', () => select(tab));
+			tab.addEventListener('keydown', (e) => {
+				const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+				if (next === undefined) return;
+				e.preventDefault();
+				const target = tabs[(next + tabs.length) % tabs.length];
+				select(target);
+				target.focus();
+			});
+		});
+	});
+</script>
+
+<style>
+	.product.has-image {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: center;
+		gap: clamp(2rem, 6vw, 6rem);
+	}
+
+	@media (max-width: 900px) {
+		.product.has-image {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	/* łagodny filtr marki — ten sam co pozostałe zdjęcia w treści */
+	.photo-wrap {
+		position: relative;
+		display: block;
+		overflow: hidden;
+		border-radius: var(--radius-button);
+		border-top: 2px solid var(--color-energy);
+		isolation: isolate;
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.photo-wrap img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 9 / 7;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
+	}
+
+	.info {
+		align-items: flex-start;
+	}
+
+	.price {
+		font-family: var(--font-family-body);
+		font-weight: 700;
+		font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+		color: var(--color-energy);
+	}
+
+	.description {
+		max-width: var(--measure);
+		color: var(--color-muted);
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	/* zakładki: menu nad treścią, aktywna podkreślona kolorem energy;
+	   na wąskich ekranach menu przewija się w poziomie */
+	.tabs {
+		margin-top: var(--space-content);
+	}
+
+	.tablist {
+		display: flex;
+		gap: 0.25rem;
+		overflow-x: auto;
+		border-bottom: 1px solid var(--color-border);
+		scrollbar-width: none;
+	}
+
+	.tab {
+		flex-shrink: 0;
+		padding: 1rem 1.25rem;
+		font: inherit;
+		font-weight: 600;
+		color: var(--color-muted);
+		background: none;
+		border: none;
+		border-bottom: 2px solid transparent;
+		margin-bottom: -1px;
+		cursor: pointer;
+		white-space: nowrap;
+		transition:
+			color 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.tab:hover {
+		color: var(--color-font);
+	}
+
+	.tab[aria-selected='true'] {
+		color: var(--color-energy);
+		border-bottom-color: var(--color-energy);
+	}
+
+	.tab:focus-visible {
+		outline: 2px solid var(--color-energy);
+		outline-offset: -2px;
+	}
+
+	.panel {
+		padding-top: var(--space-actions);
+	}
+
+	/* treść zakładki albo pełnego opisu z CMS-u */
+	.details {
+		max-width: var(--measure);
+	}
+
+	.details--plain {
+		margin-top: var(--space-content);
+		padding-top: var(--space-content);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.details :global(h3) {
+		margin: 0 0 1rem;
+		font-size: clamp(1.3rem, 1.15rem + 0.8vw, 1.7rem);
+	}
+
+	.details :global(h2) {
+		margin: 2.5rem 0 1rem;
+		font-size: clamp(1.4rem, 1.2rem + 1vw, 1.9rem);
+	}
+
+	.details :global(h2:first-child) {
+		margin-top: 0;
+	}
+
+	.details :global(p) {
+		margin-bottom: 1rem;
+	}
+
+	.details :global(strong) {
+		color: var(--color-white);
+	}
+
+	/* listy z ptaszkami w kolorze energy */
+	.details :global(ul) {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		margin: 0 0 1.5rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.details :global(li) {
+		position: relative;
+		padding-left: 2rem;
+	}
+
+	.details :global(li)::before {
+		content: '';
+		position: absolute;
+		left: 0.35rem;
+		top: 0.2em;
+		width: 0.45rem;
+		height: 0.8rem;
+		border-right: 2px solid var(--color-energy);
+		border-bottom: 2px solid var(--color-energy);
+		transform: rotate(45deg);
+	}
+
+	.details :global(a) {
+		color: var(--color-accent);
+	}
+</style>

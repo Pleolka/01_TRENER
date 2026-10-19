@@ -6,13 +6,15 @@
 interface Props {
   href: string;
   variant?: "base" | "outline";
+  /* sm — mniejszy przycisk, np. dwa obok siebie na karcie produktu */
+  size?: "md" | "sm";
   target?: string;
 }
 
-const { href, variant = "base", target } = Astro.props;
+const { href, variant = "base", size = "md", target } = Astro.props;
 ---
 
-<a class={`btn btn--${variant}`} href={href} target={target}>
+<a class:list={["btn", `btn--${variant}`, { "btn--sm": size === "sm" }]} href={href} target={target}>
   <slot />
 </a>
 
@@ -48,6 +50,12 @@ const { href, variant = "base", target } = Astro.props;
       padding: 0 1.5rem;
       font-size: 16px;
     }
+  }
+
+  .btn--sm {
+    min-height: 38px;
+    padding: 0 1.1rem;
+    font-size: 15px;
   }
 
   .btn--base {

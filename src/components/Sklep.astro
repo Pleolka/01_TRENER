@@ -5,6 +5,8 @@ import Container from './ui/Container.astro';
 import SectionBadge from './ui/SectionBadge.astro';
 import type { CmsOffer } from '../lib/datocms';
 import { accent } from '../lib/accent';
+import Button from './ui/Button.astro';
+import { buyHref } from '../lib/datocms';
 
 interface Props {
 	heroBg?: import('../lib/heroBackground').HeroImage;
@@ -67,11 +69,33 @@ const categories = [
 			<div class="grid">
 				{
 					products.map((offer) => (
-						<div class="card" data-category={offer.category ?? ''}>
+						<div class:list={['card', { 'has-image': offer.image }]} data-category={offer.category ?? ''}>
+							{offer.image && (
+								<a class="photo-wrap" href={offer.slug ? `/sklep-online/${offer.slug}` : undefined} tabindex="-1" aria-hidden="true">
+									<img
+										class="photo"
+										src={`${offer.image.url}?w=640&h=400&fit=crop&auto=format&q=80`}
+										srcset={`${offer.image.url}?w=400&h=250&fit=crop&auto=format&q=80 400w, ${offer.image.url}?w=640&h=400&fit=crop&auto=format&q=80 640w, ${offer.image.url}?w=960&h=600&fit=crop&auto=format&q=80 960w`}
+										sizes="(max-width: 900px) 90vw, 33vw"
+										alt=""
+										width="640"
+										height="400"
+										loading="lazy"
+									/>
+								</a>
+							)}
 							{offer.badge && <span class="card-badge">{offer.badge}</span>}
 							<h3>{offer.title}</h3>
 							<p>{offer.description}</p>
 							<span class="price">{offer.price}</span>
+							<div class="card-actions">
+								<Button href={buyHref(offer)}>Dodaj do koszyka</Button>
+								{offer.slug && (
+									<Button href={`/sklep-online/${offer.slug}`} variant="outline">
+										Więcej
+									</Button>
+								)}
+							</div>
 						</div>
 					))
 				}
@@ -142,20 +166,85 @@ const categories = [
 		color: var(--color-on-energy);
 	}
 
+	/* karty: 3 kolumny na komputerze, 2 na tablecie, 1 na telefonie */
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
-		gap: 1.25rem;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+	}
+
+	@media (min-width: 640px) {
+		.grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 980px) {
+		.grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
 	}
 
 	.card {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		padding: 1.5rem;
 		background: var(--color-surface);
 		border: 1px solid var(--color-border);
-		border-radius: 0.75rem;
+		border-radius: var(--radius-button);
+	}
+
+	/* zdjęcie produktu na górze karty, od krawędzi do krawędzi; łagodny filtr
+	   marki — ten sam co pozostałe zdjęcia w treści (tokens.css) */
+	.has-image {
+		overflow: hidden;
+	}
+
+	.photo-wrap {
+		position: relative;
+		display: block;
+		margin: -1.5rem -1.5rem 0.5rem;
+		isolation: isolate;
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.photo {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
+	}
+
+	/* przyciski na dole karty — dwa obok siebie */
+	/* przyciski tej samej wielkości — dwie równe kolumny na całą szerokość karty */
+	.card-actions {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+		gap: 0.75rem;
+		margin-top: 1rem;
+	}
+
+	.card-actions :global(.btn) {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		/* węższe marginesy niż w zwykłym przycisku — napis mieści się w jednej linii */
+		padding-inline: 0.75rem;
+		font-size: 15px;
+		white-space: nowrap;
+		text-align: center;
 	}
 
 	.card[hidden] {
@@ -164,27 +253,30 @@ const categories = [
 
 	.card-badge {
 		align-self: flex-start;
-		padding: 0.2rem 0.6rem;
-		border-radius: 999px;
-		background: var(--color-surface-strong);
-		color: var(--color-muted);
+		padding: 0.3rem 0.75rem;
+		border-radius: var(--radius-button);
+		background: var(--color-font);
+		color: var(--color-page);
 		font-size: 0.75rem;
-		font-weight: 600;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 	}
 
 	.card h3 {
-		font-size: 1.1rem;
-		line-height: 1.3;
+		font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.7rem);
+		line-height: 1.2;
 	}
 
 	.card p {
 		flex: 1;
-		font-size: 0.9rem;
-		line-height: 1.4;
+		font-size: 0.95rem;
+		line-height: 1.5;
 		color: var(--color-muted);
 	}
 
 	.price {
+		font-size: 1.3rem;
 		font-weight: 700;
 		color: var(--color-energy);
 	}

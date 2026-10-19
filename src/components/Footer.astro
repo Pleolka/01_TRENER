@@ -2,6 +2,20 @@
 import { info } from '../assets/data/kontakt';
 import { Image } from 'astro:assets';
 import iksLogo from '../images/logo_white_iks.png';
+import instagramIcon from '@phosphor-icons/core/assets/regular/instagram-logo.svg?raw';
+import facebookIcon from '@phosphor-icons/core/assets/regular/facebook-logo.svg?raw';
+import youtubeIcon from '@phosphor-icons/core/assets/regular/youtube-logo.svg?raw';
+import { getSiteConfig } from '../lib/datocms';
+
+// linki do social mediów z CMS-u (model „Ustawienia strony”).
+// Tymczasowo: ikony wyświetlają się zawsze — dopóki pole w CMS-ie jest
+// puste, ikona prowadzi na stronę główną (external = prawdziwy link z CMS-u).
+const config = await getSiteConfig();
+const socials = [
+	{ name: 'Instagram', url: config?.instagramUrl, icon: instagramIcon },
+	{ name: 'Facebook', url: config?.facebookUrl, icon: facebookIcon },
+	{ name: 'YouTube', url: config?.youtubeUrl, icon: youtubeIcon },
+].map((s) => ({ ...s, external: Boolean(s.url), url: s.url || '/' }));
 
 const legalLinks = [
 	{ name: 'Regulamin', path: '/regulamin' },
@@ -22,6 +36,24 @@ const year = new Date().getFullYear();
 			</svg>
 			{info.mail}
 		</a>
+
+		{
+			socials.length > 0 && (
+				<ul class="footer-social">
+					{socials.map((s) => (
+						<li>
+							<a
+								href={s.url}
+								target={s.external ? '_blank' : undefined}
+								rel={s.external ? 'noopener noreferrer' : undefined}
+								aria-label={s.name}
+								set:html={s.icon}
+							/>
+						</li>
+					))}
+				</ul>
+			)
+		}
 
 		<ul class="footer-legal">
 			{
@@ -46,10 +78,47 @@ const year = new Date().getFullYear();
 
 <style>
 	.footer {
-		background: var(--color-base-extra-dark);
+		background: var(--color-footer);
+		/* oddzielona linią od treści — tak jak pasek nawigacji */
+		border-top: 1px solid var(--color-border);
 		color: var(--color-white);
 		text-align: center;
 		padding-top: 3rem;
+	}
+
+	.footer-social {
+		display: flex;
+		justify-content: center;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.footer-social a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		color: var(--color-white);
+		border: 1px solid var(--color-border-strong);
+		border-radius: 50%;
+		transition:
+			color 0.2s ease,
+			border-color 0.2s ease,
+			background 0.2s ease;
+	}
+
+	.footer-social a:hover {
+		color: var(--color-on-energy);
+		background: var(--color-energy);
+		border-color: var(--color-energy);
+	}
+
+	.footer-social a :global(svg) {
+		width: 1.35rem;
+		height: 1.35rem;
 	}
 
 	.footer-main {
@@ -63,10 +132,9 @@ const year = new Date().getFullYear();
 	}
 
 	.footer-main h2 {
-		color: var(--color-white);
-		font-size: 1.1rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
+		color: var(--color-energy);
+		font-size: clamp(2rem, 1.4rem + 3vw, 3.5rem);
+		line-height: 1.15;
 		margin: 0;
 	}
 

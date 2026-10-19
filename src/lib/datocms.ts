@@ -29,6 +29,42 @@ const OFFERS_QUERY = `
       badge
       price
       category
+      slug
+      buyUrl
+      image {
+        url
+        alt
+        width
+        height
+      }
+    }
+  }
+`;
+
+const OFFER_BY_SLUG_QUERY = `
+  query OfferBySlug($slug: String!) {
+    offer(filter: { slug: { eq: $slug } }) {
+      title
+      description
+      badge
+      price
+      category
+      slug
+      buyUrl
+      content
+      tabs {
+        ... on ProductTabRecord {
+          id
+          title
+          content
+        }
+      }
+      image {
+        url
+        alt
+        width
+        height
+      }
     }
   }
 `;
@@ -51,6 +87,12 @@ export interface CmsOffer {
   badge: string | null;
   price: string | null;
   category: string | null;
+  slug: string | null;
+  buyUrl: string | null;
+  image: { url: string; alt: string | null; width: number; height: number } | null;
+  /* pełny opis i zakładki — tylko na podstronie produktu */
+  content?: string | null;
+  tabs?: { id: string; title: string; content: string | null }[];
 }
 
 interface OffersResponse {
@@ -73,6 +115,23 @@ export async function getOffers(): Promise<CmsOffer[]> {
     return [];
   }
 }
+
+export async function getOffer(slug: string): Promise<CmsOffer | null> {
+  try {
+    const data = await executeQuery<{ offer: CmsOffer | null }, { slug: string }>(OFFER_BY_SLUG_QUERY, {
+      token: import.meta.env.DATOCMS_API_TOKEN,
+      variables: { slug },
+    });
+    return data.offer;
+  } catch (error) {
+    console.warn(`[datocms] Nie udało się pobrać produktu "${slug}":`, error);
+    return null;
+  }
+}
+
+// adres przycisku „Dodaj do koszyka”: link zakupu z CMS-u, a bez niego —
+// formularz kontaktowy (strona nie ma jeszcze własnego koszyka)
+export const buyHref = (offer: Pick<CmsOffer, 'buyUrl'>) => offer.buyUrl || '/kontakt';
 
 const HOME_CONTENT_QUERY = `
   query HomeContent {
@@ -253,7 +312,14 @@ const TESTIMONIALS_FAQ_CTA_FIELDS = `
       testimonialsHeading
       testimonialsLead
       testimonials {
-        ... on TestimonialRecord { id quote author tag }
+        ... on TestimonialRecord {
+          id
+          quote
+          author
+          tag
+          photo { url alt width height }
+          avatar { url alt }
+        }
       }
       testimonialsButtonLabel
       testimonialsButtonUrl
@@ -269,7 +335,7 @@ const TESTIMONIALS_FAQ_CTA_FIELDS = `
       ctaButtonLabel
       ctaButtonUrl`;
 
-const FEATURE_ITEM = `... on FeatureItemRecord { id title description }`;
+const FEATURE_ITEM = `... on FeatureItemRecord { id title description image { url alt width height } }`;
 
 const COOPERATION_PAGE_QUERY = `
   query CooperationPage {
@@ -285,8 +351,15 @@ ${HERO_FIELDS}
       resultsStats {
         ... on StatItemRecord { id value suffix label }
       }
-      resultsCtaHeading
-      resultsCtaText
+      resultsButtonLabel
+      resultsButtonUrl
+      resultsImage {
+        url
+        alt
+        width
+        height
+      }
+      stepsBadge
       stepsHeading
       steps { ${FEATURE_ITEM} }
 ${TESTIMONIALS_FAQ_CTA_FIELDS}
@@ -308,15 +381,21 @@ ${HERO_FIELDS}
       plansSubheading
       plansLead
       plans {
-        ... on PlanRecord { id name description features price priceNote buttonLabel buttonUrl }
+        ... on PlanRecord { id name description features price priceNote buttonLabel buttonUrl image { url alt width height } }
       }
       audienceBadge
       audienceHeading
       audienceItems
+      audienceImage {
+        url
+        alt
+        width
+        height
+      }
       optionsHeading
       optionsLead
       options {
-        ... on OptionItemRecord { id title description buttonLabel buttonUrl }
+        ... on OptionItemRecord { id title description buttonLabel buttonUrl image { url alt width height } }
       }
 ${TESTIMONIALS_FAQ_CTA_FIELDS}
 ${SEO_FIELDS}
@@ -364,15 +443,23 @@ ${SEO_FIELDS}
 
 type Text = string | null;
 
-export interface CmsFeatureItem { id: string; title: string; description: Text }
+export interface CmsFeatureItem { id: string; title: string; description: Text; image?: CmsImage | null }
 export interface CmsStatItem { id: string; value: string; suffix: Text; label: string }
-export interface CmsTestimonial { id: string; quote: string; author: string; tag: Text }
+export interface CmsTestimonial {
+  id: string; quote: string; author: string; tag: Text;
+  photo?: CmsImage | null;
+  avatar?: { url: string; alt: string | null } | null;
+}
 export interface CmsFaqItem { id: string; question: string; answer: string }
 export interface CmsPlan {
   id: string; name: string; description: Text; features: Text;
   price: Text; priceNote: Text; buttonLabel: Text; buttonUrl: Text;
+  image?: CmsImage | null;
 }
-export interface CmsOptionItem { id: string; title: string; description: Text; buttonLabel: Text; buttonUrl: Text }
+export interface CmsOptionItem {
+  id: string; title: string; description: Text; buttonLabel: Text; buttonUrl: Text;
+  image?: CmsImage | null;
+}
 
 export interface CmsHero {
   heroBadge: Text; heroLabel: Text; heroHeading: string; heroText: Text;
@@ -390,8 +477,8 @@ export interface CmsTestimonialsFaqCta {
 export interface CmsCooperationPage extends CmsHero, CmsTestimonialsFaqCta {
   scopeBadge: Text; scopeHeading: Text; scopeLead: Text; scopeItems: CmsFeatureItem[];
   resultsBadge: Text; resultsHeading: Text; resultsText: Text; resultsStats: CmsStatItem[];
-  resultsCtaHeading: Text; resultsCtaText: Text;
-  stepsHeading: Text; steps: CmsFeatureItem[];
+  resultsButtonLabel: Text; resultsButtonUrl: Text; resultsImage: CmsImage | null;
+  stepsBadge: Text; stepsHeading: Text; steps: CmsFeatureItem[];
   seo: CmsSeo | null;
 }
 
@@ -399,7 +486,7 @@ export interface CmsDietPage extends CmsHero, CmsTestimonialsFaqCta {
   benefitsHeading: Text; benefitsLead: Text; benefits: CmsFeatureItem[];
   benefitsClosingHeading: Text; benefitsClosingText: Text;
   plansHeading: Text; plansSubheading: Text; plansLead: Text; plans: CmsPlan[];
-  audienceBadge: Text; audienceHeading: Text; audienceItems: Text;
+  audienceBadge: Text; audienceHeading: Text; audienceItems: Text; audienceImage: CmsImage | null;
   optionsHeading: Text; optionsLead: Text; options: CmsOptionItem[];
   seo: CmsSeo | null;
 }
@@ -457,3 +544,23 @@ export const getDietPage = () => getSingleton<CmsDietPage>(DIET_PAGE_QUERY, 'die
 export const getContactPage = () => getSingleton<CmsContactPage>(CONTACT_PAGE_QUERY, 'contactPage', 'Kontakt');
 export const getShopPage = () => getSingleton<CmsShopPage>(SHOP_PAGE_QUERY, 'shopPage', 'Sklep');
 export const getBlogPage = () => getSingleton<CmsBlogPage>(BLOG_PAGE_QUERY, 'blogPage', 'Blog');
+
+// --- Ustawienia strony (model pojedynczy site_config): linki do social mediów
+
+const SITE_CONFIG_QUERY = `
+  query SiteConfig {
+    siteConfig {
+      instagramUrl
+      facebookUrl
+      youtubeUrl
+    }
+  }
+`;
+
+export interface CmsSiteConfig {
+  instagramUrl: Text;
+  facebookUrl: Text;
+  youtubeUrl: Text;
+}
+
+export const getSiteConfig = () => getSingleton<CmsSiteConfig>(SITE_CONFIG_QUERY, 'siteConfig', 'ustawienia');

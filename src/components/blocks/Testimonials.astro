@@ -1,5 +1,7 @@
 ---
 // Opinie klientek — karty z cytatem, autorką i podpisem.
+// Opcjonalnie z CMS-u: duże zdjęcie na górze karty (np. efekt metamorfozy)
+// i małe okrągłe zdjęcie autorki przy podpisie.
 import type { CmsTestimonial } from '../../lib/datocms';
 
 interface Props {
@@ -12,13 +14,39 @@ const { items } = Astro.props;
 <div class="testimonials">
 	{
 		items.map((item) => (
-			<figure class="testimonial">
+			<figure class:list={['testimonial', { 'has-photo': item.photo }]}>
+				{item.photo && (
+					<span class="photo-wrap">
+						<img
+							class="photo"
+							src={`${item.photo.url}?w=640&h=480&fit=crop&auto=format&q=80`}
+							srcset={`${item.photo.url}?w=400&h=300&fit=crop&auto=format&q=80 400w, ${item.photo.url}?w=640&h=480&fit=crop&auto=format&q=80 640w, ${item.photo.url}?w=960&h=720&fit=crop&auto=format&q=80 960w`}
+							sizes="(max-width: 900px) 90vw, 33vw"
+							alt={item.photo.alt ?? ''}
+							width="640"
+							height="480"
+							loading="lazy"
+						/>
+					</span>
+				)}
 				<blockquote>
 					<p>„{item.quote}”</p>
 				</blockquote>
 				<figcaption>
-					<strong>{item.author}</strong>
-					{item.tag && <span>{item.tag}</span>}
+					{item.avatar && (
+						<img
+							class="avatar"
+							src={`${item.avatar.url}?w=96&h=96&fit=crop&crop=faces&auto=format&q=80`}
+							alt=""
+							width="48"
+							height="48"
+							loading="lazy"
+						/>
+					)}
+					<span class="who">
+						<strong>{item.author}</strong>
+						{item.tag && <span>{item.tag}</span>}
+					</span>
 				</figcaption>
 			</figure>
 		))
@@ -45,8 +73,48 @@ const { items } = Astro.props;
 		border-radius: var(--radius-button);
 	}
 
+	/* karta ze zdjęciem: zdjęcie na górze od krawędzi do krawędzi,
+	   akcent energy przenosi się z lewej krawędzi na górną */
+	.has-photo {
+		overflow: hidden;
+		justify-content: flex-start;
+		border-left-width: 1px;
+		border-top: 2px solid var(--color-energy);
+	}
+
+	/* łagodny filtr marki — ten sam co karty kroków i miniatury bloga */
+	.photo-wrap {
+		position: relative;
+		display: block;
+		margin: -2rem -2rem 0;
+		isolation: isolate;
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.photo {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
+	}
+
 	blockquote {
 		margin: 0;
+	}
+
+	.has-photo blockquote {
+		flex: 1;
 	}
 
 	blockquote p {
@@ -58,15 +126,30 @@ const { items } = Astro.props;
 
 	figcaption {
 		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+	}
+
+	.avatar {
+		flex-shrink: 0;
+		width: 3rem;
+		height: 3rem;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 2px solid var(--color-energy);
+	}
+
+	.who {
+		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
 	}
 
-	figcaption strong {
+	.who strong {
 		color: var(--color-white);
 	}
 
-	figcaption span {
+	.who span {
 		color: var(--color-muted);
 		font-size: 0.9rem;
 	}
