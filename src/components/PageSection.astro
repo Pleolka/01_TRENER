@@ -31,20 +31,19 @@ const { title, description, badge } = Astro.props;
 		align-items: center;
 		text-align: center;
 		gap: 1.25rem;
-		max-width: 40rem;
-		margin-inline: auto;
 	}
 
 	.badge {
 		padding: 0.3rem 0.85rem;
 		border-radius: 999px;
-		background: var(--color-white);
+		background: var(--color-surface);
 		color: var(--color-muted);
 		font-size: 0.8rem;
 		font-weight: 600;
 	}
 
 	.subtitle {
+		max-width: var(--measure);
 		color: var(--color-muted);
 	}
 </style>

@@ -1,0 +1,71 @@
+---
+// Zakończenie podstrony: hasło, tekst, podtytuł, przycisk — w wyróżnionej ramce.
+import Button from '../ui/Button.astro';
+import { accent } from '../../lib/accent';
+import type { CmsTestimonialsFaqCta } from '../../lib/datocms';
+
+interface Props {
+	cta: Pick<CmsTestimonialsFaqCta, 'ctaHeading' | 'ctaText' | 'ctaSubheading' | 'ctaSubtext' | 'ctaButtonLabel' | 'ctaButtonUrl'>;
+}
+
+const { cta } = Astro.props;
+---
+
+<div class="cta-box">
+	<div class="main">
+		{cta.ctaHeading && <h2 set:html={accent(cta.ctaHeading)} />}
+		{cta.ctaText && <p class="text">{cta.ctaText}</p>}
+	</div>
+	<div class="side">
+		{cta.ctaSubheading && <p class="subheading">{cta.ctaSubheading}</p>}
+		{cta.ctaSubtext && <p class="subtext">{cta.ctaSubtext}</p>}
+		{cta.ctaButtonLabel && cta.ctaButtonUrl && <Button href={cta.ctaButtonUrl}>{cta.ctaButtonLabel}</Button>}
+	</div>
+</div>
+
+<style>
+	.cta-box {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 2rem clamp(2rem, 6vw, 6rem);
+		align-items: center;
+		padding: clamp(2rem, 5vw, 4rem);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-top: 2px solid var(--color-energy);
+		border-radius: var(--radius-button);
+	}
+
+	h2 :global(.accent) {
+		color: var(--color-energy);
+	}
+
+	.text {
+		max-width: var(--measure);
+		margin-top: 1.25rem;
+		color: var(--color-muted);
+	}
+
+	.side {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.subheading {
+		font-weight: 600;
+		color: var(--color-white);
+	}
+
+	.subtext {
+		color: var(--color-muted);
+		margin-bottom: 0.5rem;
+	}
+
+	@media (max-width: 900px) {
+		.cta-box {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

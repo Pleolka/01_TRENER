@@ -1,16 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Home from '../components/Home.astro';
-import { getPageBySlug } from '../lib/datocms';
+import { getHomeContent, getHomeMeta } from '../lib/datocms';
 
-const page = await getPageBySlug('home');
+// treści, zdjęcie hero i SEO z modelu pojedynczego „Strona główna” (home_content)
+const [content, meta] = await Promise.all([getHomeContent(), getHomeMeta()]);
 
-const title = page?.seoTitle || 'Strona główna';
+const title = meta?.seo?.title || 'Strona główna';
 const description =
-	page?.seoDescription ||
-	'Trener Shop — sklep i oferta treningowa trenera personalnego: konsultacje, programy online i plany treningowe.';
+	meta?.seo?.description ||
+	'Programy treningowe, dieta w aplikacji i prowadzenie 1:1 dla kobiet biznesu. Budowanie siły, kształtowanie sylwetki i zdrowe życie.';
 ---
 
 <BaseLayout title={title} description={description}>
-	<Home />
+	<Home content={content} heroImage={meta?.heroImage} />
 </BaseLayout>

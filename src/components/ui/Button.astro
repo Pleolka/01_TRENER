@@ -23,12 +23,14 @@ const { href, variant = "base", target } = Astro.props;
     justify-content: center;
     min-height: 40px;
     padding: 0 3rem;
-    border-radius: 999px;
+    border-radius: var(--radius-button);
     text-decoration: none;
     font-weight: 600;
     font-size: 18px;
     line-height: 1.1;
     transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
       filter 0.3s ease,
       background 0.3s ease,
       color 0.3s ease,
@@ -36,23 +38,28 @@ const { href, variant = "base", target } = Astro.props;
   }
 
   .btn--base {
-    color: var(--color-white);
+    color: var(--color-on-energy);
     background: var(--gradient-button);
     border: none;
+    box-shadow: var(--glow-energy);
   }
 
   .btn--base:hover {
-    filter: brightness(0.9);
+    transform: translateY(-2px);
+    box-shadow: var(--glow-energy-hover);
+    filter: brightness(1.08);
   }
 
   .btn--outline {
-    color: var(--color-base);
+    color: var(--btn-outline-color);
     background: transparent;
-    border: 1px solid var(--color-base);
+    border: var(--btn-outline-width) solid var(--btn-outline-color);
   }
 
   .btn--outline:hover {
-    color: var(--color-white);
-    background: var(--color-base);
+    color: var(--color-on-energy);
+    background: var(--btn-outline-color);
+    box-shadow: var(--glow-energy);
+    transform: translateY(-2px);
   }
 </style>

@@ -1,15 +1,19 @@
 ---
 import { list as navItems } from "../assets/data/strukturaStrony";
 import logo from "../images/Logo.webp";
+import Container from "./ui/Container.astro";
 
 const links = navItems.filter((item) => !item.cta);
 const cta = navItems.find((item) => item.cta);
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+// aktywna też na podstronach sekcji, np. /blog/<wpis> podświetla „Blog”
+const isActive = (path: string) => currentPath === path || currentPath.startsWith(`${path}/`);
 ---
 
 <div class="navbar">
-  <header class="pill">
+  <Container mt="0" mb="0" mtMobile="0">
+  <header class="bar">
     <a class="logo" href="/">
       <img src={logo.src} alt="Natalia Figas" />
     </a>
@@ -25,7 +29,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
           links.map((item) => (
             <a
               href={item.path}
-              class:list={["nav-link", { active: item.path === currentPath }]}
+              class:list={["nav-link", { active: isActive(item.path) }]}
             >
               {item.name}
             </a>
@@ -42,30 +46,50 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
       }
     </nav>
   </header>
+  </Container>
 </div>
+
+<script>
+  const navbar = document.querySelector(".navbar");
+  const update = () => navbar?.classList.toggle("scrolled", window.scrollY > 10);
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+</script>
 
 <style>
   .navbar {
     position: sticky;
-    top: 1.5rem;
+    top: 0;
     z-index: 50;
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-    padding: 0 1rem;
+    width: 100%;
+    /* delikatne przyciemnienie kolorem tła strony (--color-page) —
+       tło hero przebija, ale pasek odcina się od niego */
+    background: rgba(2, 0, 36, 0.5);
+    border-bottom: 1px solid var(--color-border);
+    transition:
+      background 0.25s ease,
+      backdrop-filter 0.25s ease;
   }
 
-  .pill {
+  /* po przewinięciu treść przesuwa się pod paskiem — mocniejsze
+     przyciemnienie i rozmycie trzymają czytelność linków */
+  .navbar.scrolled {
+    background: rgba(2, 0, 36, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .bar {
     position: relative;
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    width: 100%;
-    max-width: 900px;
-    padding: 0.5rem 0.5rem 0.5rem 1.5rem;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
+    padding: 1.25rem 0;
+    transition: padding 0.25s ease;
+  }
+
+  .navbar.scrolled .bar {
+    padding: 0.4rem 0;
   }
 
   .logo {
@@ -75,9 +99,14 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .logo img {
-    height: 2.7rem;
+    height: 3.4rem;
     width: auto;
     display: block;
+    transition: height 0.25s ease;
+  }
+
+  .navbar.scrolled .logo img {
+    height: 2.4rem;
   }
 
   .nav {
@@ -92,20 +121,28 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
+    /* rośnie z szerokością ekranu: 1.5rem na węższych, do 3rem na szerokich */
+    gap: clamp(1.5rem, 3vw, 3rem);
   }
 
   .nav-link {
-    color: var(--color-nav);
+    color: var(--color-white);
     text-decoration: none;
     font-size: var(--font-size-p);
-    font-weight: 600;
+    font-weight: 400;
     white-space: nowrap;
+    transition: color 0.2s ease;
   }
 
-  .nav-link:hover,
+  /* hover tylko zmienia kolor — bez zmiany grubości, żeby menu nie skakało */
+  .nav-link:hover {
+    color: var(--color-energy);
+  }
+
+  /* bieżąca podstrona: kolor energy i pełna grubość */
   .nav-link.active {
-    color: var(--color-base);
+    color: var(--color-energy);
+    font-weight: 600;
   }
 
   .nav-cta {
@@ -114,18 +151,25 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     align-items: center;
     justify-content: center;
     padding: 0.6rem 1.5rem;
-    border-radius: 999px;
-    background: var(--gradient-button);
-    color: var(--color-white);
+    border-radius: var(--radius-button);
+    /* wersja obrysowa — jak Button variant="outline" */
+    background: transparent;
+    border: var(--btn-outline-width) solid var(--btn-outline-color);
+    color: var(--btn-outline-color);
     font-size: var(--font-size-p);
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-    transition: filter 0.2s ease;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .nav-cta:hover {
-    filter: brightness(0.9);
+    background: var(--btn-outline-color);
+    color: var(--color-on-energy);
+    box-shadow: var(--glow-energy);
   }
 
   .nav-toggle {
@@ -133,6 +177,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .nav-toggle-label {
+    margin-right: 1rem;
     display: none;
     flex-shrink: 0;
     width: 1.5rem;
@@ -148,7 +193,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     display: block;
     width: 1.25rem;
     height: 2px;
-    background: var(--color-font);
+    background: var(--color-white);
     border-radius: 2px;
     transition:
       transform 0.2s ease,
@@ -197,16 +242,15 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     .nav {
       display: none;
       position: absolute;
-      top: calc(100% + 0.75rem);
-      left: 0;
-      right: 0;
+      top: 100%;
+      left: calc(-1 * var(--container-gutter));
+      right: calc(-1 * var(--container-gutter));
       flex-direction: column;
       align-items: center;
       gap: 1rem;
       padding: 1.25rem;
-      background: var(--color-white);
-      border: 1px solid var(--color-border);
-      border-radius: 1.5rem;
+      background: var(--color-page);
+      border-bottom: 1px solid var(--color-border);
     }
 
     .nav-links {

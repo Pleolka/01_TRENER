@@ -18,40 +18,25 @@ const style = [`--mt:${mt}`, `--mb:${mb}`, mtMobile ? `--mt-mobile:${mtMobile}` 
 </div>
 
 <style>
+	/* jeden płynny kontener: pełna szerokość minus margines po bokach,
+	   maksymalnie --container-max (tokens.css) */
 	.container {
-		width: 100%;
+		width: min(100% - 2 * var(--container-gutter), var(--container-max));
 		margin-inline: auto;
 		margin-top: var(--mt);
 		margin-bottom: var(--mb);
-		max-width: 1600px;
 		position: relative;
 		z-index: 10;
 	}
 
-	@media (max-width: 1920px) {
-		.container {
-			max-width: 1200px;
-		}
-	}
-
-	@media (max-width: 1319px) {
-		.container {
-			max-width: 960px;
-		}
-	}
-
 	@media (max-width: 979px) {
 		.container {
-			max-width: 720px;
-			padding-inline: 1rem;
 			margin-top: var(--mt-mobile, 1rem);
 		}
 	}
 
 	@media (max-width: 575px) {
 		.container {
-			max-width: 540px;
-			padding-inline: 1rem;
 			margin-top: var(--mt-mobile, 0rem);
 		}
 	}

@@ -1,0 +1,68 @@
+---
+// Warianty z przyciskiem, numerowane automatycznie (np. długość subskrypcji).
+import Button from '../ui/Button.astro';
+import type { CmsOptionItem } from '../../lib/datocms';
+
+interface Props {
+	options: CmsOptionItem[];
+}
+
+const { options } = Astro.props;
+---
+
+<div class="options">
+	{
+		options.map((option, i) => (
+			<article class="option">
+				<span class="number">{String(i + 1).padStart(2, '0')}</span>
+				<h3>{option.title}</h3>
+				{option.description && <p>{option.description}</p>}
+				{option.buttonLabel && option.buttonUrl && (
+					<div class="action">
+						<Button href={option.buttonUrl} variant="outline">
+							{option.buttonLabel}
+						</Button>
+					</div>
+				)}
+			</article>
+		))
+	}
+</div>
+
+<style>
+	.options {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 1.5rem;
+	}
+
+	.option {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: 2rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+	}
+
+	.number {
+		font-family: var(--font-family-heading);
+		font-size: 1.75rem;
+		line-height: 1;
+		color: var(--color-energy);
+	}
+
+	h3 {
+		font-size: 1.4rem;
+	}
+
+	p {
+		color: var(--color-muted);
+	}
+
+	.action {
+		margin-top: auto;
+		padding-top: 1rem;
+	}
+</style>

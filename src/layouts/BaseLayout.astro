@@ -1,6 +1,6 @@
 ---
-import '@fontsource-variable/ar-one-sans/wght.css';
-import '@fontsource-variable/dm-sans/wght.css';
+import '@fontsource-variable/playfair-display/wght.css';
+import '@fontsource-variable/montserrat/wght.css';
 import '../styles/tokens.css';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 
 const { title, description } = Astro.props;
 
-const pageTitle = `${title} — Trener Shop`;
+const pageTitle = `${title} — Natalia Figas`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -27,7 +27,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 		<link rel="canonical" href={canonicalURL} />
 
 		<meta property="og:type" content="website" />
-		<meta property="og:site_name" content="Trener Shop" />
+		<meta property="og:site_name" content="Natalia Figas" />
 		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonicalURL} />

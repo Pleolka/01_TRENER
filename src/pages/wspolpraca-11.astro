@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteChrome from '../components/SiteChrome.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import BlockSection from '../components/blocks/BlockSection.astro';
+import FeatureGrid from '../components/blocks/FeatureGrid.astro';
+import StatsRow from '../components/blocks/StatsRow.astro';
+import Testimonials from '../components/blocks/Testimonials.astro';
+import FaqList from '../components/blocks/FaqList.astro';
+import CtaBox from '../components/blocks/CtaBox.astro';
+import Button from '../components/ui/Button.astro';
+import { getCooperationPage } from '../lib/datocms';
+import { heroBackground } from '../lib/heroBackground';
+import bgImage from '../images/bg-ciezary-4.jpg';
+
+// treści z modelu pojedynczego „Współpraca 1:1” (cooperation_page) w DatoCMS
+const page = await getCooperationPage();
+const hero = await heroBackground(bgImage);
+
+const title = page?.seo?.title || 'Współpraca 1:1';
+const description =
+	page?.seo?.description ||
+	'Program 2halves — indywidualny program treningowy, dieta i wsparcie na każdym etapie Twojej drogi.';
+---
+
+<BaseLayout title={title} description={description}>
+	<SiteChrome {...hero}>
+		{
+			page && (
+				<Fragment>
+					<PageHero hero={page} />
+
+					<BlockSection id="details" alt badge={page.scopeBadge} heading={page.scopeHeading} lead={page.scopeLead}>
+						<FeatureGrid items={page.scopeItems} />
+					</BlockSection>
+
+					<BlockSection badge={page.resultsBadge} heading={page.resultsHeading} lead={page.resultsText}>
+						<StatsRow items={page.resultsStats} />
+						{(page.resultsCtaHeading || page.resultsCtaText) && (
+							<div class="results-cta">
+								{page.resultsCtaHeading && <h3>{page.resultsCtaHeading}</h3>}
+								{page.resultsCtaText && <p>{page.resultsCtaText}</p>}
+							</div>
+						)}
+					</BlockSection>
+
+					<BlockSection alt heading={page.stepsHeading}>
+						<FeatureGrid items={page.steps} numbered />
+					</BlockSection>
+
+					<BlockSection heading={page.testimonialsHeading} lead={page.testimonialsLead}>
+						<Testimonials items={page.testimonials} />
+						{page.testimonialsButtonLabel && page.testimonialsButtonUrl && (
+							<div class="after">
+								<Button href={page.testimonialsButtonUrl}>{page.testimonialsButtonLabel}</Button>
+							</div>
+						)}
+					</BlockSection>
+
+					<BlockSection alt badge={page.faqBadge} heading={page.faqHeading}>
+						<FaqList items={page.faq} />
+					</BlockSection>
+
+					<BlockSection>
+						<CtaBox cta={page} />
+					</BlockSection>
+				</Fragment>
+			)
+		}
+	</SiteChrome>
+</BaseLayout>
+
+<style>
+	.results-cta {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.results-cta p {
+		margin-top: 0.5rem;
+		color: var(--color-muted);
+	}
+
+	.after {
+		margin-top: 2.5rem;
+	}
+</style>

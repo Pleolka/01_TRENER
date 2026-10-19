@@ -14,35 +14,93 @@
 */
 
 :root {
-  /* === kolory (paleta marki) === */
-  --color-font: #240f22;
-  --color-heading: #240f22;
-  --color-black: #240f22;
+  /* === kolory ===
+     Jedna paleta: granatowe tło, jasnoniebieski tekst, niebieski akcent.
+     Zasada: --color-base / --color-base-dark tylko jako WYPEŁNIENIE
+     (przyciski, aktywne filtry); tekst, linki i obramowania akcentowe
+     zawsze --color-accent — na ciemnym tle ma wystarczający kontrast. */
+
+  /* tło strony */
+  --color-page: #020024;
+  --color-page-mid: #061f40;
+  --gradient-page: linear-gradient(
+    90deg,
+    var(--color-page) 0%,
+    var(--color-page-mid) 75%,
+    var(--color-page) 100%
+  );
+  --color-bg: transparent; /* sekcje — pokazują gradient strony */
+  --color-section-alt: var(--color-page); /* co druga sekcja ze zdjęciem — jednolite tło */
+
+  /* powierzchnie (karty, pola formularza, odznaki) */
+  --color-surface: #0b1d3d;
+  --color-surface-strong: #13295a;
+
+  /* tekst */
+  --color-font: #c1e8ff;
+  --color-muted: #8ea6c4;
   --color-white: #ffffff;
-  --color-muted: #5f455c;
-  --color-muted-light: #999999;
-  --color-nav: #240f22;
-  --color-border: #e3d9c8;
-  --color-border-strong: #bdb3a7;
-  --color-surface: #e1d9cb;
-  --color-base: #a9369c;
-  --color-base-dark: #68175e;
-  --color-base-dark--muted: #5f455c;
-  --color-accent: #a9369c;
+
+  /* energia — jaskrawy cyjan, ta sama rodzina co granat i poświata w bg-main:
+     przyciski i wyróżnienia. Na wypełnieniu energy tekst jest ciemny. */
+  --color-energy: #00c8fd;
+  --color-energy-dark: #00a0eb;
+  --color-on-energy: var(--color-page);
+  --gradient-energy: linear-gradient(
+    135deg,
+    var(--color-energy) 0%,
+    var(--color-energy-dark) 100%
+  );
+  --glow-energy: 0 8px 28px rgba(62, 232, 255, 0.3);
+  --glow-energy-hover: 0 12px 34px rgba(62, 232, 255, 0.45);
+
+  /* zaokrąglenie wszystkich przycisków (też filtry Sklepu i Bloga) */
+  --radius-button: 4px;
+
+  /* przycisk obrysowy — jeden wygląd w Button, pasku nawigacji i treściach CMS */
+  --btn-outline-width: 2px;
+  --btn-outline-color: var(--color-energy);
+
+  /* akcent drugoplanowy — linki, ramki, focus */
+  --color-accent: #749ef9;
+  --color-heading: var(--color-white);
+  --color-base: #364fa9;
+  --color-base-dark: #171f68;
+  --color-base-extra-dark: var(--color-page);
   --gradient-button: linear-gradient(
     180deg,
-    var(--color-base) 0%,
-    var(--color-base-dark) 100%
-  );
-  --gradient-banner: linear-gradient(
-    0deg,
-    rgba(225, 217, 203, 1) 0%,
-    rgba(247, 242, 233, 1) 100%
+    var(--color-energy) 0%,
+    var(--color-energy-dark) 100%
   );
 
+  /* filtr zdjęć — ujednolica każde zdjęcie (tło hero, wpisy bloga):
+     najpierw czerń-biel z mocniejszym kontrastem, potem warstwa koloru
+     marki nałożona przez mix-blend-mode: color (efekt duotone) */
+  --filter-photo: grayscale(1) contrast(1.15) brightness(0.95);
+  --filter-photo-soft: grayscale(0.5) contrast(1.05);
+  --tint-photo-soft-opacity: 0.45; /* miniatury: kolor marki tylko muśnięty */
+  --tint-photo: linear-gradient(
+    135deg,
+    var(--color-base-dark) 0%,
+    var(--color-energy-dark) 100%
+  );
+
+  /* linie — jasny tekst z przezroczystością, pasują do każdego tła */
+  --color-border: rgba(193, 232, 255, 0.12);
+  --color-border-strong: rgba(193, 232, 255, 0.28);
+
+  /* === układ — jeden kontener dla całej strony (ui/Container.astro) ===
+     Kontener rośnie płynnie z ekranem aż do --container-max; po bokach
+     zawsze zostaje margines --container-gutter. Bloki (nagłówki, siatki,
+     karty, sekcje) wypełniają kontener; ograniczana jest tylko długość
+     linii tekstu (--measure), żeby dało się go wygodnie czytać. */
+  --container-max: 1200px;
+  --container-gutter: clamp(1rem, 4vw, 2.5rem);
+  --measure: 68ch;
+
   /* === rodzina i grubości fontu === */
-  --font-family-heading: "AR One Sans Variable", sans-serif;
-  --font-family-body: "DM Sans Variable", sans-serif;
+  --font-family-heading: "Playfair Display Variable", Georgia, serif;
+  --font-family-body: "Montserrat Variable", sans-serif;
   --font-weight: 400;
   --font-weight-bold: 700;
   --font-weight-h: 700;
@@ -52,9 +110,9 @@
   --line-h-p: 1.6;
   --font-size-label: 17px;
   --line-h-label: 1.1;
-  --font-size-h1: 48px;
+  --font-size-h1: 90px;
   --line-h-h1: 1.2;
-  --font-size-h2: 34px;
+  --font-size-h2: 60px;
   --line-h-h2: 1.1;
   --font-size-h3: 26px;
   --line-h-h3: 1.3;
@@ -64,6 +122,13 @@
   --line-h-h5: 1.1;
   --font-size-h6: 21px;
   --line-h-h6: 1.7;
+}
+
+/* bardzo szerokie ekrany (>= 1921px) — szerszy kontener */
+@media (min-width: 1921px) {
+  :root {
+    --container-max: 1440px;
+  }
 }
 
 /* "l" — poniżej huge (1921px) */
@@ -163,6 +228,8 @@
 
 body {
   margin: 0;
+  background: var(--color-page);
+  background: var(--gradient-page);
   font-family: var(--font-family-body);
   font-weight: var(--font-weight);
   color: var(--color-font);
@@ -208,10 +275,29 @@ h6 {
 p {
   font-size: var(--font-size-p);
   line-height: var(--line-h-p);
+  color: var(--color-font);
   margin: 0;
+}
+
+a {
+  color: var(--color-font);
 }
 
 label {
   font-size: var(--font-size-label);
   line-height: var(--line-h-label);
+}
+
+/* etykieta nad nagłówkiem — wersaliki, rozstrzelone, w kolorze energy.
+   Do użycia wszędzie: w komponentach i w treściach z CMS-u (<p class="eyebrow">). */
+.eyebrow {
+  display: block;
+  margin: 0;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-label);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-energy);
 }

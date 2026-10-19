@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Blog from '../../components/Blog.astro';
+import { getBlogPage, getBlogPosts } from '../../lib/datocms';
+import { heroBackground } from '../../lib/heroBackground';
+import bgImage from '../../images/bg-ciezary-1.jpg';
+
+// wstęp z modelu pojedynczego „Blog — wstęp” (blog_page), wpisy z modelu Wpis na blogu
+const [page, posts] = await Promise.all([getBlogPage(), getBlogPosts()]);
+
+const title = page?.seo?.title || 'Blog';
+const description =
+	page?.seo?.description || 'Wiedza, inspiracja i praktyczne wskazówki na drodze do lepszego samopoczucia.';
+const hero = await heroBackground(bgImage);
+---
+
+<BaseLayout title={title} description={description}>
+	<Blog heading={page?.heading} badge={page?.badge} lead={page?.lead} listBadge={page?.listBadge} listHeading={page?.listHeading} posts={posts} {...hero} />
+</BaseLayout>

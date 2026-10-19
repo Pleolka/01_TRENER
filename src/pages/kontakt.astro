@@ -1,15 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Kontakt from '../components/Kontakt.astro';
-import { getPageBySlug } from '../lib/datocms';
+import { getContactPage } from '../lib/datocms';
+import { heroBackground } from '../lib/heroBackground';
+import bgImage from '../images/bg-ciezary-7.jpg';
 
-const page = await getPageBySlug('kontakt');
+// treści z modelu pojedynczego „Kontakt” (contact_page) w DatoCMS
+const page = await getContactPage();
 
-const title = page?.seoTitle || 'Kontakt';
+const title = page?.seo?.title || 'Kontakt';
 const description =
-	page?.seoDescription || 'Skontaktuj się z Trener Shop — zapytaj o ofertę treningową lub konsultacje personalne.';
+	page?.seo?.description || 'Masz pytania dotyczące treningów personalnych, prowadzenia online lub moich e-booków? Napisz do mnie bezpośrednio.';
+const hero = await heroBackground(bgImage);
 ---
 
 <BaseLayout title={title} description={description}>
-	<Kontakt />
+	<Kontakt badge={page?.badge} heading={page?.heading} text={page?.text} formHeading={page?.formHeading} {...hero} />
 </BaseLayout>

@@ -1,0 +1,56 @@
+---
+// Liczniki (np. „3 miesiące skupienia”, „100% uwagi na Ciebie”).
+import type { CmsStatItem } from '../../lib/datocms';
+
+interface Props {
+	items: CmsStatItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<dl class="stats">
+	{
+		items.map((item) => (
+			<div class="stat">
+				<dt>
+					{item.value}
+					{item.suffix}
+				</dt>
+				<dd>{item.label}</dd>
+			</div>
+		))
+	}
+</dl>
+
+<style>
+	.stats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem 4rem;
+		margin: 0;
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	dt {
+		font-family: var(--font-family-heading);
+		font-weight: var(--font-weight-h);
+		font-size: clamp(2.5rem, 5vw, 3.5rem);
+		line-height: 1;
+		color: var(--color-energy);
+		background: var(--gradient-energy);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	dd {
+		margin: 0;
+		color: var(--color-muted);
+	}
+</style>

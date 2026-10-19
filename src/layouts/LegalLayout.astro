@@ -16,7 +16,7 @@ const heading = frontmatter.heading || frontmatter.title;
 			</Container>
 		</Section>
 
-		<Section pt={2} pb={6} bgcolor="var(--color-white)">
+		<Section pt={2} pb={6} bgcolor="var(--color-bg)">
 			<Container>
 				<article class="prose">
 					<slot />
@@ -27,14 +27,9 @@ const heading = frontmatter.heading || frontmatter.title;
 </BaseLayout>
 
 <style>
-	.legal-heading {
-		max-width: 48rem;
-		margin-inline: auto;
-	}
-
-	.prose {
-		max-width: 48rem;
-		margin-inline: auto;
+	/* bloki na pełną szerokość kontenera, linie tekstu do --measure */
+	.prose :global(:is(p, ul, ol, h2, h3)) {
+		max-width: var(--measure);
 	}
 
 	.prose :global(h2) {
@@ -62,7 +57,7 @@ const heading = frontmatter.heading || frontmatter.title;
 	}
 
 	.prose :global(a) {
-		color: var(--color-base);
+		color: var(--color-accent);
 	}
 
 	.prose :global(strong) {

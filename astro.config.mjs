@@ -8,4 +8,5 @@ export default defineConfig({
   // TODO: podmień na docelową domenę produkcyjną — używane do sitemap, canonical URL i Open Graph
   site: 'https://trenershop.pl',
   integrations: [sitemap()],
+  redirects: { '/sklep': '/sklep-online' },
 });

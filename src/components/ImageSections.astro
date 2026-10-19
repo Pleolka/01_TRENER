@@ -1,0 +1,154 @@
+---
+// Sekcje „tekst + zdjęcie” z pola Sekcje w DatoCMS (blok image_section).
+// Kolejność: etykieta, nagłówek, tekst, przycisk, zdjęcie.
+// Zdjęcie na przemian: 1. sekcja z prawej, 2. z lewej, 3. z prawej…
+// Co druga sekcja ma jednolite tło (--color-section-alt).
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
+import { accent } from '../lib/accent';
+import type { CmsImageSection } from '../lib/datocms';
+
+interface Props {
+	sections: CmsImageSection[];
+}
+
+const { sections } = Astro.props;
+---
+
+{
+	sections.map((section, i) => {
+		// pierwszy nagłówek na stronie to H1, kolejne H2
+		const Heading = i === 0 ? 'h1' : 'h2';
+		const imageLeft = i % 2 === 1;
+		return (
+			<Section pt={5} pb={section.image ? 0 : 5} bgcolor={i % 2 === 1 ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
+				{/* bez dolnego marginesu kontenera — zdjęcie stoi na samym dole sekcji */}
+				<Container mb={section.image ? '0' : undefined}>
+					<div class:list={['image-section', { 'image-left': imageLeft, 'no-image': !section.image }]}>
+						<div class="text">
+							{section.badge && <p class="eyebrow">{section.badge}</p>}
+							<Heading set:html={accent(section.heading)} />
+							{section.text && <div class="body" set:html={section.text} />}
+							{section.buttonLabel && section.buttonUrl && (
+								<div class="actions">
+									<Button href={section.buttonUrl}>{section.buttonLabel}</Button>
+								</div>
+							)}
+						</div>
+						{section.image && (
+							<figure class="media">
+								<img
+									src={`${section.image.url}?w=900&auto=format&q=85`}
+									srcset={`${section.image.url}?w=500&auto=format&q=85 500w, ${section.image.url}?w=900&auto=format&q=85 900w, ${section.image.url}?w=1300&auto=format&q=85 1300w`}
+									sizes="(max-width: 900px) 90vw, 50vw"
+									alt={section.image.alt ?? ''}
+									width={section.image.width}
+									height={section.image.height}
+									loading={i === 0 ? 'eager' : 'lazy'}
+								/>
+							</figure>
+						)}
+					</div>
+				</Container>
+			</Section>
+		);
+	})
+}
+
+<style>
+	.image-section {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		/* zdjęcie stoi na dolnej krawędzi sekcji (sekcja ze zdjęciem nie ma dolnego paddingu) */
+		align-items: end;
+		gap: clamp(2rem, 6vw, 6rem);
+	}
+
+	/* zdjęcie z lewej: zamiana kolumn */
+	.image-left .media {
+		order: -1;
+	}
+
+	/* sekcja bez zdjęcia: ta sama siatka i tekst w tej samej kolumnie
+	   co w sekcjach ze zdjęciem — szerokość tekstu jest wszędzie jednakowa */
+
+	.text {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		/* odstępy ustawione osobno: etykieta blisko nagłówka,
+		   więcej powietrza przed tekstem i przed przyciskiem */
+		gap: 0;
+		/* tekst wyśrodkowany w pionie, z odstępem od dołu sekcji */
+		align-self: center;
+		padding-bottom: 5rem;
+	}
+
+	.no-image .text {
+		padding-bottom: 0;
+	}
+
+	/* tylko gdy nad nagłówkiem jest etykieta */
+	.text > .eyebrow + :global(:is(h1, h2)) {
+		margin-top: 1rem;
+	}
+
+	.body {
+		margin-top: 2rem;
+	}
+
+	.text :global(.accent) {
+		color: var(--color-energy);
+	}
+
+	.body :global(p) {
+		max-width: var(--measure);
+		margin-bottom: 1rem;
+	}
+
+	.body :global(p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.body :global(a) {
+		color: var(--color-accent);
+	}
+
+	.actions {
+		margin-top: 2.5rem;
+	}
+
+	.media {
+		margin: 0;
+	}
+
+	.media img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	/* węższe ekrany: tekst, pod nim zdjęcie na dole sekcji */
+	@media (max-width: 900px) {
+		.image-section,
+		.image-left,
+		.no-image {
+			grid-template-columns: 1fr;
+		}
+
+		.text {
+			padding-bottom: 2.5rem;
+		}
+
+		.image-left .media {
+			order: 0;
+		}
+
+		.media {
+			max-width: 26rem;
+			width: 100%;
+			margin-inline: auto;
+		}
+	}
+</style>

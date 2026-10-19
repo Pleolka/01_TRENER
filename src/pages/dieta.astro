@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteChrome from '../components/SiteChrome.astro';
+import PageHero from '../components/blocks/PageHero.astro';
+import BlockSection from '../components/blocks/BlockSection.astro';
+import FeatureGrid from '../components/blocks/FeatureGrid.astro';
+import PlanCards from '../components/blocks/PlanCards.astro';
+import OptionCards from '../components/blocks/OptionCards.astro';
+import Testimonials from '../components/blocks/Testimonials.astro';
+import FaqList from '../components/blocks/FaqList.astro';
+import CtaBox from '../components/blocks/CtaBox.astro';
+import Button from '../components/ui/Button.astro';
+import { getDietPage } from '../lib/datocms';
+import { heroBackground } from '../lib/heroBackground';
+import bgImage from '../images/bg-ciezary-5.jpg';
+
+// treści z modelu pojedynczego „Dieta” (diet_page) w DatoCMS
+const page = await getDietPage();
+const hero = await heroBackground(bgImage);
+
+const title = page?.seo?.title || 'Dieta';
+const description = page?.seo?.description || 'Canela Diet — aplikacja dietetyczna z ponad 100 przepisami.';
+
+const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
+---
+
+<BaseLayout title={title} description={description}>
+	<SiteChrome {...hero}>
+		{
+			page && (
+				<Fragment>
+					<PageHero hero={page} />
+
+					<BlockSection id="szczegoly" alt heading={page.benefitsHeading} lead={page.benefitsLead}>
+						<FeatureGrid items={page.benefits} />
+						{(page.benefitsClosingHeading || page.benefitsClosingText) && (
+							<div class="closing">
+								{page.benefitsClosingHeading && <h3>{page.benefitsClosingHeading}</h3>}
+								{page.benefitsClosingText && <p>{page.benefitsClosingText}</p>}
+							</div>
+						)}
+					</BlockSection>
+
+					<BlockSection
+						id="wybierz-plan"
+						heading={page.plansHeading}
+						subheading={page.plansSubheading}
+						lead={page.plansLead}
+					>
+						<PlanCards plans={page.plans} />
+					</BlockSection>
+
+					<BlockSection alt badge={page.audienceBadge} heading={page.audienceHeading}>
+						<ul class="audience">
+							{lines(page.audienceItems).map((item) => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</BlockSection>
+
+					<BlockSection heading={page.optionsHeading} lead={page.optionsLead}>
+						<OptionCards options={page.options} />
+					</BlockSection>
+
+					<BlockSection alt heading={page.testimonialsHeading} lead={page.testimonialsLead}>
+						<Testimonials items={page.testimonials} />
+						{page.testimonialsButtonLabel && page.testimonialsButtonUrl && (
+							<div class="after">
+								<Button href={page.testimonialsButtonUrl}>{page.testimonialsButtonLabel}</Button>
+							</div>
+						)}
+					</BlockSection>
+
+					<BlockSection badge={page.faqBadge} heading={page.faqHeading}>
+						<FaqList items={page.faq} />
+					</BlockSection>
+
+					<BlockSection alt>
+						<CtaBox cta={page} />
+					</BlockSection>
+				</Fragment>
+			)
+		}
+	</SiteChrome>
+</BaseLayout>
+
+<style>
+	.closing {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.closing p {
+		max-width: var(--measure);
+		margin-top: 0.5rem;
+		color: var(--color-muted);
+	}
+
+	/* „dla kogo” — dwie kolumny punktów ze znaczkiem ✓ */
+	.audience {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 1rem 2rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.audience li {
+		position: relative;
+		padding: 1rem 1rem 1rem 3rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+		font-weight: 600;
+	}
+
+	.audience li::before {
+		content: '';
+		position: absolute;
+		left: 1.25rem;
+		top: 50%;
+		width: 0.45rem;
+		height: 0.8rem;
+		border-right: 2px solid var(--color-energy);
+		border-bottom: 2px solid var(--color-energy);
+		transform: translateY(-65%) rotate(45deg);
+	}
+
+	.after {
+		margin-top: 2.5rem;
+	}
+</style>

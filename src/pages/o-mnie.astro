@@ -1,17 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CmsPage from '../components/CmsPage.astro';
-import { getPageBySlug } from '../lib/datocms';
+import SiteChrome from '../components/SiteChrome.astro';
+import ImageSections from '../components/ImageSections.astro';
+import { getAboutPage } from '../lib/datocms';
+import { heroBackground } from '../lib/heroBackground';
+import bgImage from '../images/bg-ciezary-3.jpg';
 
-const page = await getPageBySlug('o-mnie');
+// treści z modelu pojedynczego „O mnie” (about_page) w DatoCMS
+const page = await getAboutPage();
+const hero = await heroBackground(bgImage);
 
-const title = page?.seoTitle || 'O mnie';
+const title = page?.seo?.title || 'O mnie';
 const description =
-	page?.seoDescription || 'Poznaj trenera stojącego za Trener Shop — doświadczenie i podejście do treningu.';
-const heading = page?.heading || page?.title || 'O mnie';
-const content = page?.content || '<p>Historia i doświadczenie trenera — treść w przygotowaniu.</p>';
+	page?.seo?.description ||
+	'Pomagam kobietom, zwłaszcza przedsiębiorczyniom, stworzyć własny katalog ćwiczeń i diety, dzięki czemu stają się silne, zdrowe i pewne siebie.';
 ---
 
 <BaseLayout title={title} description={description}>
-	<CmsPage heading={heading} eyebrow="Poznajmy się" badge={page?.badge} content={content} />
+	<SiteChrome {...hero}>
+		<ImageSections sections={page?.sections ?? []} />
+	</SiteChrome>
 </BaseLayout>

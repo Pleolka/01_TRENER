@@ -1,0 +1,242 @@
+---
+import SiteChrome from './SiteChrome.astro';
+import Section from './ui/Section.astro';
+import Container from './ui/Container.astro';
+import SectionBadge from './ui/SectionBadge.astro';
+import { getImage } from 'astro:assets';
+import type { CmsBlogPost } from '../lib/datocms';
+import { accent } from '../lib/accent';
+import defaultCover from '../images/kobieta-na-silowni.jpg';
+
+// Zdjęcie dla wpisów bez „Zdjęcia głównego” w CMS-ie.
+const fallbackCover = await getImage({ src: defaultCover, width: 640, height: 400, fit: 'cover', format: 'webp' });
+
+interface Props {
+	heroBg?: string;
+	heroAspect?: number;
+	heading?: string | null;
+	badge?: string | null;
+	lead?: string | null;
+	listBadge?: string | null;
+	listHeading?: string | null;
+	posts?: CmsBlogPost[];
+}
+
+const {
+	heading,
+	badge,
+	lead,
+	listBadge = 'OSTATNIO NA BLOGU',
+	listHeading = 'Wiedza, inspiracja, zdrowe nawyki',
+	posts = [],
+} = Astro.props;
+
+const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
+---
+
+<SiteChrome heroBg={Astro.props.heroBg} heroAspect={Astro.props.heroAspect}>
+	<Section pt={5} pb={3}>
+		<Container>
+			<div class="header">
+				{badge && <SectionBadge text={badge} />}
+				<h1 set:html={accent(heading || 'Blog')} />
+				{lead && <p class="lead">{lead}</p>}
+				<div class="filters">
+					{
+						categories.map((cat, i) => (
+							<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={i === 0 ? 'all' : cat}>
+								{cat}
+							</button>
+						))
+					}
+				</div>
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={2} pb={6} bgcolor="var(--color-bg)">
+		<Container>
+			<div class="section-head">
+				{listBadge && <SectionBadge text={listBadge} />}
+				{listHeading && <h2>{listHeading}</h2>}
+			</div>
+
+			{posts.length === 0 && <p class="empty">Wpisy pojawią się już wkrótce.</p>}
+
+			<div class="grid">
+				{
+					posts.map((post) => (
+						<a class="card" href={`/blog/${post.slug}`} data-category={post.category ?? ''}>
+							<span class="card-media">
+								<img
+									class="card-cover"
+									src={post.cover ? `${post.cover.url}?w=640&fit=crop&ar=16:10&auto=format` : fallbackCover.src}
+									alt={post.cover?.alt ?? ''}
+									width="640"
+									height="400"
+									loading="lazy"
+								/>
+							</span>
+							<div class="card-body">
+								{post.label && <span class="card-label">{post.label}</span>}
+								<h3>{post.title}</h3>
+								{post.excerpt && <p>{post.excerpt}</p>}
+								<span class="card-link">Dowiedz się więcej</span>
+							</div>
+						</a>
+					))
+				}
+			</div>
+		</Container>
+	</Section>
+</SiteChrome>
+
+<script>
+	const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+	const cards = document.querySelectorAll<HTMLElement>('.card[data-category]');
+
+	buttons.forEach((button) => {
+		button.addEventListener('click', () => {
+			const key = button.dataset.filter;
+			buttons.forEach((b) => b.classList.toggle('active', b === button));
+			cards.forEach((card) => {
+				card.hidden = key !== 'all' && card.dataset.category !== key;
+			});
+		});
+	});
+</script>
+
+<style>
+	.header,
+	.section-head {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.lead {
+		max-width: var(--measure);
+		color: var(--color-muted);
+	}
+
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem;
+		margin-top: 0.5rem;
+	}
+
+	.filter {
+		padding: 0.5rem 1.1rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+		background: var(--color-surface);
+		color: var(--color-font);
+		font: inherit;
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.filter.active {
+		background: var(--gradient-energy);
+		border-color: transparent;
+		color: var(--color-on-energy);
+	}
+
+	.empty {
+		text-align: center;
+		color: var(--color-muted);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 1.5rem;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 1rem;
+		text-decoration: none;
+		color: inherit;
+		transition:
+			border-color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	.card[hidden] {
+		display: none;
+	}
+
+	.card:hover {
+		border-color: var(--color-border-strong);
+		transform: translateY(-2px);
+	}
+
+	/* łagodniejsza wersja filtra z tła hero (tokens.css: --filter-photo-soft) */
+	.card-media {
+		position: relative;
+		display: block;
+		isolation: isolate;
+	}
+
+	.card-media::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.card-cover {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		display: block;
+		filter: var(--filter-photo-soft);
+	}
+
+	.card-body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.6rem;
+		padding: 1.5rem;
+	}
+
+	.card-label {
+		color: var(--color-energy);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.card h3 {
+		font-size: 1.2rem;
+	}
+
+	.card p {
+		flex: 1;
+		color: var(--color-muted);
+		font-size: 0.95rem;
+	}
+
+	.card-link {
+		font-weight: 600;
+		color: var(--color-accent);
+	}
+</style>

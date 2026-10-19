@@ -45,7 +45,7 @@ const year = new Date().getFullYear();
 
 <style>
 	.footer {
-		background: var(--color-font);
+		background: var(--color-base-extra-dark);
 		color: var(--color-white);
 		text-align: center;
 		padding-top: 3rem;
@@ -62,6 +62,7 @@ const year = new Date().getFullYear();
 	}
 
 	.footer-main h2 {
+		color: var(--color-white);
 		font-size: 1.1rem;
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
@@ -79,7 +80,7 @@ const year = new Date().getFullYear();
 	}
 
 	.mail-link:hover {
-		color: var(--color-base);
+		color: var(--color-accent);
 	}
 
 	.mail-link svg {
@@ -119,7 +120,7 @@ const year = new Date().getFullYear();
 	.footer-credit hr {
 		width: 100%;
 		border: 0;
-		border-top: 1px solid rgba(255, 255, 255, 0.15);
+		border-top: 1px solid var(--color-border);
 		margin: 0 0 0.85rem;
 	}
 

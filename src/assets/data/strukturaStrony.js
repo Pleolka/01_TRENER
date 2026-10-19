@@ -1,15 +1,19 @@
 export const list = [
   {
-    name: "Home",
-    path: "/",
-  },
-  {
     name: "O mnie",
     path: "/o-mnie",
   },
   {
-    name: "Sklep",
-    path: "/sklep",
+    name: "Współpraca 1:1",
+    path: "/wspolpraca-11",
+  },
+  {
+    name: "Dieta",
+    path: "/dieta",
+  },
+  {
+    name: "Sklep online",
+    path: "/sklep-online",
   },
   {
     name: "Blog",

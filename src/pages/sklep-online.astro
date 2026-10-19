@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sklep from '../components/Sklep.astro';
+import { getShopPage, getOffers } from '../lib/datocms';
+import { heroBackground } from '../lib/heroBackground';
+import bgImage from '../images/bg-ciezary-6.jpg';
+
+// wstęp z modelu pojedynczego „Sklep — wstęp” (shop_page), produkty z modelu Offer
+const [page, offers] = await Promise.all([getShopPage(), getOffers()]);
+
+const title = page?.seo?.title || 'Sklep online';
+const description =
+	page?.seo?.description ||
+	'Osiągaj swoje cele sylwetkowe z profesjonalnymi dietami, pakietami treningowymi oraz poradnikami dostosowanymi do Twojego stylu życia.';
+const hero = await heroBackground(bgImage);
+---
+
+<BaseLayout title={title} description={description}>
+	<Sklep heading={page?.heading} badge={page?.badge} lead={page?.lead} listHeading={page?.listHeading} listSubheading={page?.listSubheading} offers={offers} {...hero} />
+</BaseLayout>

@@ -1,0 +1,76 @@
+---
+// FAQ — rozwijane pytania (natywne <details>, bez JS).
+import type { CmsFaqItem } from '../../lib/datocms';
+
+interface Props {
+	items: CmsFaqItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="faq">
+	{
+		items.map((item) => (
+			<details>
+				<summary>{item.question}</summary>
+				<p>{item.answer}</p>
+			</details>
+		))
+	}
+</div>
+
+<style>
+	.faq {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		max-width: calc(var(--measure) + 6rem);
+	}
+
+	details {
+		padding: 1.25rem 1.5rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+		transition: border-color 0.15s ease;
+	}
+
+	details[open] {
+		border-color: var(--color-border-strong);
+	}
+
+	summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		cursor: pointer;
+		font-weight: 600;
+		list-style: none;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	summary::after {
+		content: '';
+		flex-shrink: 0;
+		width: 0.6rem;
+		height: 0.6rem;
+		border-right: 2px solid var(--color-energy);
+		border-bottom: 2px solid var(--color-energy);
+		transform: rotate(45deg);
+		transition: transform 0.2s ease;
+	}
+
+	details[open] summary::after {
+		transform: rotate(-135deg);
+	}
+
+	details p {
+		margin-top: 1rem;
+		color: var(--color-muted);
+	}
+</style>

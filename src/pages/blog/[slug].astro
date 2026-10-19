@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPost from '../../components/BlogPost.astro';
+import { getBlogPosts, getBlogPost } from '../../lib/datocms';
+
+// Każdy opublikowany wpis z DatoCMS dostaje własną podstronę /blog/<slug>.
+// Nowy wpis pojawi się na stronie po kolejnym buildzie.
+export async function getStaticPaths() {
+	const posts = await getBlogPosts();
+	return posts.map((post) => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getBlogPost(slug);
+
+if (!post) {
+	return Astro.redirect('/blog');
+}
+
+const description = post.seoDescription || post.excerpt || post.title;
+---
+
+<BaseLayout title={post.title} description={description}>
+	<BlogPost post={post} />
+</BaseLayout>

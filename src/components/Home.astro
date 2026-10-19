@@ -1,156 +1,219 @@
 ---
+import { Image } from 'astro:assets';
 import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
 import SectionBadge from './ui/SectionBadge.astro';
+import trener from '../images/trener.png';
+import { heroBackground } from '../lib/heroBackground';
+import bgImage from '../images/bg-ciezary-2.jpg';
 
-const teasers = [
-	{
-		title: 'Konsultacje z trenerem personalnym',
-		tagline: 'Pozbądź się wątpliwości na treningu podczas jednej rozmowy!',
-		description:
-			'Stop niepewności na treningu! Ustal raz na zawsze jak zrobić rozgrzewkę, dobierać ciężar do ćwiczeń, albo ustawić się do przysiadów bułgarskich.',
-		path: '/konsultacje-z-trenerem-personalnym',
-		icon: 'chat',
-	},
-	{
-		title: 'Współpraca treningowa online',
-		tagline: 'Zbuduj zdrowe i silne ciało',
-		description:
-			'Tworzę dla Ciebie system, który uwzględnia Twoje preferencje, umiejętności i aktualne możliwości oraz prowadzę Cię prosto do efektów.',
-		path: '/online-coaching',
-		icon: 'monitor',
-	},
-	{
-		title: 'Mocny brzuch w 6 tygodni',
-		tagline: 'Zbuduj silne mięśnie brzucha w zaledwie 1,5 miesiąca',
-		description:
-			'Zamiast wykonywać co trening różne ćwiczenia, które dają niewielkie rezultaty, ja stworzyłam system najskuteczniejszych ćwiczeń — z nim Twój brzuch będzie silny i wyrzeźbiony.',
-		path: '/mocny-brzuch-w-6-tygodni',
-		icon: 'target',
-	},
-];
+const hero = await heroBackground(bgImage, 'center');
 
-const ICONS = {
-	chat: 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z|m9 12 2 2 4-4',
-	monitor: 'M2 3h20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z|M8 21h8|M12 17v4',
-	target: 'M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0|M12 12m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0|M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0',
-};
+import type { HomeContent, CmsImage } from '../lib/datocms';
+import { accent } from '../lib/accent';
 
-const miniProducts = [
-	{
-		title: 'Spontaniczny ruch',
-		description:
-			'Sprawdzone sposoby na więcej spontanicznego ruchu (NEAT) — nawet, jeśli prowadzisz „życie na siedząco”.',
-		price: '59 PLN',
-	},
-	{
-		title: 'Regeneracja ciała',
-		description: 'Metody regeneracji ciała i układu nerwowego po aktywności fizycznej: techniki, schematy, suplementy.',
-		price: '99 PLN',
-	},
-	{
-		title: 'Dyscyplina na co dzień',
-		description: 'System ułatwiający stworzenie i utrzymanie nawyków wspierających Twoje zdrowie.',
-		price: '199 PLN',
-	},
-];
+interface Props {
+	content: HomeContent;
+	/* zdjęcie z pola „Zdjęcie w hero” w DatoCMS; bez niego — trener.png */
+	heroImage?: CmsImage | null;
+}
+
+const { content, heroImage } = Astro.props;
+
+const lines = (text: string) => text.split('\n').map((l) => l.trim()).filter(Boolean);
+const paragraphs = (text: string) => text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+const parts = (line: string) => line.split('|').map((p) => p.trim());
+
+const heroStats = lines(content.heroStats).map((l) => {
+	const [value, suffix, label] = l.split('|').map((p) => p.trim());
+	return { value, suffix, label };
+});
+const coachingStats = lines(content.coachingStats).map((l) => {
+	const [value, suffix, label] = l.split('|').map((p) => p.trim());
+	return { value, suffix, label };
+});
+const pillars = lines(content.pillars).map((l) => {
+	const [title, description] = parts(l);
+	return { title, description };
+});
 ---
 
-<SiteChrome>
-	<Section pt={6} pb={5}>
-		<Container>
+<SiteChrome {...hero}>
+	<Section slot="hero" pt={6} pb={0}>
+		<Container mb="0">
 			<div class="hero">
-				<SectionBadge text="Trening dopasowany do Ciebie" />
-				<h1><span class="accent">Zmień</span> swoje ciało ze mną!</h1>
-				<p class="subtitle">
-					Pomagam ułożyć trening i nawyki tak, by pasowały do Twojego życia — bez chaosu,
-					zgadywania i przypadkowych planów.
-				</p>
-				<div class="hero-actions">
-					<Button href="/konsultacje-z-trenerem-personalnym">Umów konsultację</Button>
-					<Button href="/sklep" variant="outline">Zobacz ofertę</Button>
+				<div class="hero-content">
+					<SectionBadge text={content.heroBadge} />
+					<h1 set:html={accent(content.heroHeading)} />
+					<p class="subtitle">{content.heroText}</p>
+					<div class="hero-actions">
+						<Button href="#cooperation">{content.heroPrimaryButton}</Button>
+						<Button href="/sklep-online" variant="outline">{content.heroSecondaryButton}</Button>
+					</div>
+					<div class="stats">
+						{
+							heroStats.map((stat) => (
+								<div class="stat">
+									<span class="stat-value">
+										{stat.value}
+										{stat.suffix}
+									</span>
+									<span class="stat-label">{stat.label}</span>
+								</div>
+							))
+						}
+					</div>
 				</div>
+				<figure class="hero-image">
+					{
+						heroImage ? (
+							<img
+								src={`${heroImage.url}?w=900&auto=format&q=85`}
+								srcset={`${heroImage.url}?w=500&auto=format&q=85 500w, ${heroImage.url}?w=900&auto=format&q=85 900w, ${heroImage.url}?w=1300&auto=format&q=85 1300w`}
+								sizes="(max-width: 900px) 90vw, 50vw"
+								alt={heroImage.alt ?? ''}
+								width={heroImage.width}
+								height={heroImage.height}
+								loading="eager"
+							/>
+						) : (
+							<Image src={trener} alt="Natalia Figas — trenerka personalna" widths={[400, 624, 749]} sizes="(max-width: 900px) 90vw, 50vw" loading="eager" />
+						)
+					}
+				</figure>
 			</div>
-			<img class="watermark watermark--hero" src="/favicon.svg" alt="" aria-hidden="true" />
 		</Container>
 	</Section>
 
-	<Section pt={4} pb={5} bgcolor="var(--color-white)">
+	<Section pt={4} pb={5} bgcolor="var(--color-section-alt)">
 		<Container>
 			<div class="section-header">
-				<SectionBadge text="Twoja droga do lepszego samopoczucia" />
-				<h2>Wszystko, czego potrzebujesz, by <span class="accent">poczuć się najlepiej</span></h2>
+				<SectionBadge text={content.aboutBadge} />
+				<h2 set:html={accent(content.aboutHeading)} />
+				{paragraphs(content.aboutText).map((p) => <p>{p}</p>)}
 			</div>
 			<div class="teasers">
 				{
-					teasers.map((teaser) => (
-						<a class="teaser" href={teaser.path}>
-							<span class="teaser-icon">
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									{ICONS[teaser.icon as keyof typeof ICONS].split('|').map((d: string) => (
-										<path d={d} />
-									))}
-								</svg>
-							</span>
-							<h3>{teaser.title}</h3>
-							<p class="teaser-tagline">{teaser.tagline}</p>
-							<p class="teaser-description">{teaser.description}</p>
-							<span class="teaser-link">Dowiedz się więcej →</span>
-						</a>
-					))
-				}
-			</div>
-		</Container>
-	</Section>
-
-	<Section pt={3} pb={5} bgcolor="var(--color-white)">
-		<Container>
-			<div class="section-header">
-				<SectionBadge text="Sklep" />
-				<h2>Tworzę praktyczne i <span class="accent">łatwe procedury</span>, które wspomagają zdrowie</h2>
-			</div>
-			<div class="products-grid">
-				{
-					miniProducts.map((product) => (
-						<div class="product-card">
-							<h3>{product.title}</h3>
-							<p>{product.description}</p>
-							<span class="price">{product.price}</span>
+					pillars.map((pillar) => (
+						<div class="teaser">
+							<h3>{pillar.title}</h3>
+							<p class="teaser-description">{pillar.description}</p>
 						</div>
 					))
 				}
 			</div>
+			<div class="section-cta">
+				<Button href="/o-mnie">{content.aboutButton}</Button>
+			</div>
 		</Container>
 	</Section>
 
-	<Section pt={3} pb={6} bgcolor="var(--color-white)">
+	<Section pt={3} pb={5} bgcolor="var(--color-bg)">
 		<Container>
-			<div class="lead-teaser">
-				<img class="watermark watermark--lead" src="/favicon.svg" alt="" aria-hidden="true" />
-				<SectionBadge text="Sprawdź za darmo, jak się ze mną pracuje" />
-				<h2>Pobierz e-booka <span class="accent">„Lekka redukcja”</span></h2>
-				<p>
-					Pobierz darmowego e-booka z 3-dniowym jadłospisem na super łatwą redukcję bez
-					wyrzeczeń. Sprawdź na własnej skórze efekty współpracy ze mną! 🥑🥗
-				</p>
-				<Button href="/lekka-redukcja">Pobierz e-booka</Button>
+			<div class="feature" id="cooperation">
+				<SectionBadge text={content.coachingBadge} />
+				<h2 set:html={accent(content.coachingHeading)} />
+				<p>{content.coachingText}</p>
+				<ul class="feature-list">
+					{lines(content.coachingList).map((item) => <li>{item}</li>)}
+				</ul>
+				<Button href="#apply">{content.coachingButton}</Button>
+				<div class="stats">
+					{
+						coachingStats.map((stat) => (
+							<div class="stat">
+								<span class="stat-value">
+									{stat.value}
+									{stat.suffix}
+								</span>
+								<span class="stat-label">{stat.label}</span>
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={3} pb={5} bgcolor="var(--color-section-alt)">
+		<Container>
+			<div class="feature" id="products">
+				<SectionBadge text={content.dietBadge} />
+				<h2 set:html={accent(content.dietHeading)} />
+				<p>{content.dietText}</p>
+				<ul class="feature-list">
+					{lines(content.dietList).map((item) => <li>{item}</li>)}
+				</ul>
+				<div class="hero-actions">
+					<Button href="#subscribe">{content.dietPrimaryButton}</Button>
+					<Button href="#recipes" variant="outline">{content.dietSecondaryButton}</Button>
+				</div>
+			</div>
+		</Container>
+	</Section>
+
+	<Section pt={3} pb={6} bgcolor="var(--color-bg)">
+		<Container>
+			<div class="lead-teaser" id="newsletter">
+				<SectionBadge text={content.newsletterBadge} />
+				<h2 set:html={accent(content.newsletterHeading)} />
+				<p>{content.newsletterText}</p>
+				<ul class="feature-list">
+					{lines(content.newsletterList).map((item) => <li>{item}</li>)}
+				</ul>
+				{/* zapis przez Netlify Forms — zgłoszenia w panelu Netlify (Forms → newsletter) */}
+				<form
+					class="newsletter-form"
+					name="newsletter"
+					method="POST"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+					action="/dziekujemy"
+				>
+					<input type="hidden" name="form-name" value="newsletter" />
+					<p class="honeypot">
+						<label>
+							Nie wypełniaj tego pola
+							<input name="bot-field" />
+						</label>
+					</p>
+					<label class="visually-hidden" for="newsletter-email">E-mail</label>
+					<input
+						type="email"
+						id="newsletter-email"
+						name="email"
+						autocomplete="email"
+						placeholder={content.newsletterPlaceholder}
+						required
+					/>
+					<button type="submit">{content.newsletterButton}</button>
+				</form>
 			</div>
 		</Container>
 	</Section>
 </SiteChrome>
 
 <style>
+	/* układ jak sekcje na O mnie (ImageSections): pół na pół,
+	   zdjęcie stoi na dolnej krawędzi sekcji */
 	.hero {
-		position: relative;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: end;
+		gap: clamp(2rem, 6vw, 6rem);
+	}
+
+	.hero-content {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		text-align: center;
+		align-items: flex-start;
+		text-align: left;
 		gap: 1.25rem;
-		max-width: 40rem;
-		margin-inline: auto;
+		/* tekst wyśrodkowany w pionie, z odstępem od dołu sekcji */
+		align-self: center;
+		padding-bottom: 5rem;
 	}
 
 	.hero h1 {
@@ -158,7 +221,7 @@ const miniProducts = [
 	}
 
 	.accent {
-		color: var(--color-base);
+		color: var(--color-energy);
 	}
 
 	.subtitle {
@@ -168,30 +231,74 @@ const miniProducts = [
 	.hero-actions {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: center;
+		justify-content: flex-start;
 		gap: 1rem;
 		margin-top: 0.5rem;
 	}
 
-	.watermark {
-		position: absolute;
-		width: 14rem;
-		height: 14rem;
-		opacity: 0.08;
-		pointer-events: none;
-		z-index: -1;
+	.hero-image {
+		margin: 0;
 	}
 
-	.watermark--hero {
-		top: -2rem;
-		right: 0;
+	.hero-image img {
+		display: block;
+		width: 100%;
+		height: auto;
 	}
 
-	.watermark--lead {
-		bottom: -2rem;
-		left: -2rem;
-		width: 10rem;
-		height: 10rem;
+	.stats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		margin-top: 0.5rem;
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.stat-value {
+		font-family: var(--font-family-heading);
+		font-weight: var(--font-weight-h);
+		font-size: 2.25rem;
+		line-height: 1.1;
+		color: var(--color-energy);
+		background: var(--gradient-energy);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	.stat-label {
+		color: var(--color-muted);
+		font-size: 0.9rem;
+	}
+
+	@media (max-width: 900px) {
+		.hero {
+			grid-template-columns: 1fr;
+			text-align: center;
+		}
+
+		.hero-content {
+			align-items: center;
+			text-align: center;
+			padding-bottom: 2.5rem;
+		}
+
+		/* zdjęcie pod tekstem, na dole sekcji */
+		.hero-image {
+			max-width: 26rem;
+			width: 100%;
+			margin-inline: auto;
+		}
+
+		.hero-actions,
+		.stats {
+			justify-content: center;
+		}
 	}
 
 	.section-header {
@@ -200,62 +307,39 @@ const miniProducts = [
 		align-items: center;
 		gap: 1rem;
 		text-align: center;
-		max-width: 40rem;
-		margin: 0 auto 2.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.section-header p {
+		max-width: var(--measure);
+		color: var(--color-muted);
+	}
+
+	.section-cta {
+		display: flex;
+		justify-content: center;
+		margin-top: 2rem;
 	}
 
 	.teasers {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 		gap: 1.5rem;
 	}
 
 	.teaser {
-		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 0.6rem;
 		padding: 1.75rem;
-		background: var(--color-white);
+		background: var(--color-surface);
 		border: 1px solid var(--color-border);
 		border-radius: 1rem;
-		text-decoration: none;
-		color: inherit;
-		transition:
-			border-color 0.15s ease,
-			transform 0.15s ease;
-	}
-
-	.teaser:hover {
-		border-color: var(--color-border-strong);
-		transform: translateY(-2px);
-	}
-
-	.teaser-icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 2.75rem;
-		height: 2.75rem;
-		border-radius: 0.75rem;
-		background: var(--color-surface);
-		color: var(--color-base);
-	}
-
-	.teaser-icon svg {
-		width: 1.4rem;
-		height: 1.4rem;
 	}
 
 	.teaser h3 {
 		font-size: 1.2rem;
-	}
-
-	.teaser-tagline {
-		font-style: italic;
-		color: var(--color-base);
-		font-weight: 600;
 	}
 
 	.teaser-description {
@@ -263,64 +347,134 @@ const miniProducts = [
 		flex: 1;
 	}
 
-	.teaser-link {
-		font-weight: 600;
-		color: var(--color-base);
-	}
-
 	.section-header h2,
+	.feature h2,
 	.lead-teaser h2 {
 		font-size: clamp(1.6rem, 3vw, 2.1rem);
 	}
 
-	.products-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-		gap: 1.25rem;
-	}
-
-	.product-card {
+	.feature {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		padding: 1.5rem;
-		background: var(--color-white);
-		border: 1px solid var(--color-border);
-		border-radius: 0.75rem;
+		align-items: center;
+		gap: 1.25rem;
+		text-align: center;
 	}
 
-	.product-card h3 {
-		font-size: 1.1rem;
-	}
-
-	.product-card p {
+	.feature p {
+		max-width: var(--measure);
 		color: var(--color-muted);
-		font-size: 0.9rem;
-		flex: 1;
 	}
 
-	.product-card .price {
-		font-weight: 700;
-		color: var(--color-base);
+	.feature-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem 1.5rem;
+		font-weight: 600;
+	}
+
+	.feature .stats {
+		justify-content: center;
 	}
 
 	.lead-teaser {
 		position: relative;
 		overflow: hidden;
-		max-width: 40rem;
-		margin-inline: auto;
 		text-align: center;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 1.25rem;
-		padding: 2.5rem;
-		background: var(--color-white);
+	}
+
+	/* pole e-mail + przycisk w jednym rzędzie, na wąskich ekranach jedno pod drugim */
+	.newsletter-form {
+		display: flex;
+		gap: 0.75rem;
+		width: 100%;
+		max-width: 32rem;
+		margin-top: 1rem;
+	}
+
+	.newsletter-form input[type='email'] {
+		flex: 1;
+		min-width: 0;
+		padding: 0.75rem 1rem;
+		font: inherit;
+		color: var(--color-font);
+		background: var(--color-surface);
 		border: 1px solid var(--color-border);
-		border-radius: 1.5rem;
+		border-radius: var(--radius-button);
+	}
+
+	.newsletter-form input[type='email']::placeholder {
+		color: var(--color-muted);
+	}
+
+	.newsletter-form input[type='email']:focus {
+		outline: none;
+		border-color: var(--color-energy);
+	}
+
+	.newsletter-form button {
+		flex-shrink: 0;
+		padding: 0 2rem;
+		min-height: 48px;
+		font: inherit;
+		font-weight: 600;
+		color: var(--color-on-energy);
+		background: var(--gradient-button);
+		border: none;
+		border-radius: var(--radius-button);
+		box-shadow: var(--glow-energy);
+		cursor: pointer;
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
+	}
+
+	.newsletter-form button:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--glow-energy-hover);
+	}
+
+	.honeypot {
+		position: absolute;
+		left: -9999px;
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	@media (max-width: 575px) {
+		.newsletter-form {
+			flex-direction: column;
+		}
 	}
 
 	.lead-teaser p {
+		max-width: var(--measure);
 		color: var(--color-muted);
+	}
+
+	.lead-teaser .feature-list {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem 1.5rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-weight: 600;
 	}
 </style>
