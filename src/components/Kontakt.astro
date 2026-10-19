@@ -5,6 +5,11 @@ import Container from './ui/Container.astro';
 import SectionBadge from './ui/SectionBadge.astro';
 import { info } from '../assets/data/kontakt';
 import { accent } from '../lib/accent';
+import { getSiteConfig } from '../lib/datocms';
+
+const config = await getSiteConfig();
+const email = config?.email || info.mail;
+const phone = config?.phone;
 
 interface Props {
 	heroBg?: import('../lib/heroBackground').HeroImage;
@@ -31,7 +36,8 @@ const {
 				{badge && <SectionBadge text={badge} />}
 				<h1 set:html={accent(heading ?? '')} />
 				{text && <p class="subtitle">{text}</p>}
-				<p class="mail">E-mail <a href={`mailto:${info.mail}`}>{info.mail}</a></p>
+				<p class="mail">E-mail <a href={`mailto:${email}`}>{email}</a></p>
+				{phone && <p class="mail">Telefon <a href={`tel:${phone.replace(/[^+\d]/g, '')}`}>{phone}</a></p>}
 			</div>
 
 			<div class="form-block">

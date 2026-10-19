@@ -25,7 +25,7 @@ const description = page?.seo?.description || 'Canela Diet — aplikacja dietety
 const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
 	<SiteChrome {...hero}>
 		{
 			page && (
@@ -34,12 +34,6 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 
 					<BlockSection id="szczegoly" alt heading={page.benefitsHeading} lead={page.benefitsLead}>
 						<FeatureGrid items={page.benefits} columns={3} icons />
-						{(page.benefitsClosingHeading || page.benefitsClosingText) && (
-							<div class="closing">
-								{page.benefitsClosingHeading && <h3>{page.benefitsClosingHeading}</h3>}
-								{page.benefitsClosingText && <p>{page.benefitsClosingText}</p>}
-							</div>
-						)}
 					</BlockSection>
 
 					<BlockSection
@@ -106,18 +100,6 @@ const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.tri
 </BaseLayout>
 
 <style>
-	.closing {
-		margin-top: 3rem;
-		padding-top: 2rem;
-		border-top: 1px solid var(--color-border);
-	}
-
-	.closing p {
-		max-width: var(--measure);
-		margin-top: 0.5rem;
-		color: var(--color-muted);
-	}
-
 	/* „dla kogo”: zdjęcie po lewej, treść po prawej; na telefonie zdjęcie nad treścią */
 	.audience-layout.has-image {
 		display: grid;

@@ -20,6 +20,6 @@ if (!post) {
 const description = post.seoDescription || post.excerpt || post.title;
 ---
 
-<BaseLayout title={post.title} description={description}>
+<BaseLayout title={post.title} description={description} image={post.cover?.url}>
 	<BlogPost post={post} />
 </BaseLayout>

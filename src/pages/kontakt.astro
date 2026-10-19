@@ -14,6 +14,6 @@ const description =
 const hero = await heroBackground(bgImage);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
 	<Kontakt badge={page?.badge} heading={page?.heading} text={page?.text} formHeading={page?.formHeading} {...hero} />
 </BaseLayout>

@@ -16,7 +16,7 @@ const description =
 	'Pomagam kobietom, zwłaszcza przedsiębiorczyniom, stworzyć własny katalog ćwiczeń i diety, dzięki czemu stają się silne, zdrowe i pewne siebie.';
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
 	<SiteChrome {...hero}>
 		<ImageSections sections={page?.sections ?? []} />
 	</SiteChrome>

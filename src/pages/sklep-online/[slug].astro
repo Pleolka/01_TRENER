@@ -25,6 +25,6 @@ const hero = await heroBackground(bgImage);
 const description = offer.description || offer.title;
 ---
 
-<BaseLayout title={offer.title} description={description}>
+<BaseLayout title={offer.title} description={description} image={offer.image?.url}>
 	<ProductPage offer={offer} {...hero} />
 </BaseLayout>

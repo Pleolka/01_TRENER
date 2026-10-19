@@ -25,7 +25,6 @@ const OFFERS_QUERY = `
     allOffers {
       title
       description
-      path
       badge
       price
       category
@@ -83,7 +82,6 @@ export interface CmsImageSection {
 export interface CmsOffer {
   title: string;
   description: string;
-  path: string;
   badge: string | null;
   price: string | null;
   category: string | null;
@@ -375,8 +373,6 @@ ${HERO_FIELDS}
       benefitsHeading
       benefitsLead
       benefits { ${FEATURE_ITEM} }
-      benefitsClosingHeading
-      benefitsClosingText
       plansHeading
       plansSubheading
       plansLead
@@ -484,7 +480,6 @@ export interface CmsCooperationPage extends CmsHero, CmsTestimonialsFaqCta {
 
 export interface CmsDietPage extends CmsHero, CmsTestimonialsFaqCta {
   benefitsHeading: Text; benefitsLead: Text; benefits: CmsFeatureItem[];
-  benefitsClosingHeading: Text; benefitsClosingText: Text;
   plansHeading: Text; plansSubheading: Text; plansLead: Text; plans: CmsPlan[];
   audienceBadge: Text; audienceHeading: Text; audienceItems: Text; audienceImage: CmsImage | null;
   optionsHeading: Text; optionsLead: Text; options: CmsOptionItem[];
@@ -550,17 +545,31 @@ export const getBlogPage = () => getSingleton<CmsBlogPage>(BLOG_PAGE_QUERY, 'blo
 const SITE_CONFIG_QUERY = `
   query SiteConfig {
     siteConfig {
+      email
+      phone
       instagramUrl
       facebookUrl
       youtubeUrl
+      companyName
+      companyAddress
+      companyNip
+      defaultSeoImage {
+        url
+      }
     }
   }
 `;
 
 export interface CmsSiteConfig {
+  email: Text;
+  phone: Text;
   instagramUrl: Text;
   facebookUrl: Text;
   youtubeUrl: Text;
+  companyName: Text;
+  companyAddress: Text;
+  companyNip: Text;
+  defaultSeoImage: { url: string } | null;
 }
 
 export const getSiteConfig = () => getSingleton<CmsSiteConfig>(SITE_CONFIG_QUERY, 'siteConfig', 'ustawienia');

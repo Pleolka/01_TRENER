@@ -15,6 +15,6 @@ const description =
 const hero = await heroBackground(bgImage);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
 	<Sklep heading={page?.heading} badge={page?.badge} lead={page?.lead} listHeading={page?.listHeading} listSubheading={page?.listSubheading} offers={offers} {...hero} />
 </BaseLayout>

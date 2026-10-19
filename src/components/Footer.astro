@@ -11,6 +11,12 @@ import { getSiteConfig } from '../lib/datocms';
 // Tymczasowo: ikony wyświetlają się zawsze — dopóki pole w CMS-ie jest
 // puste, ikona prowadzi na stronę główną (external = prawdziwy link z CMS-u).
 const config = await getSiteConfig();
+// e-mail i telefon z CMS-u; plik assets/data/kontakt.js tylko jako zapas
+const email = config?.email || info.mail;
+const phone = config?.phone;
+const company = [config?.companyName, config?.companyAddress?.replace(/\n+/g, ', '), config?.companyNip && `NIP ${config.companyNip}`]
+	.filter(Boolean)
+	.join(' · ');
 const socials = [
 	{ name: 'Instagram', url: config?.instagramUrl, icon: instagramIcon },
 	{ name: 'Facebook', url: config?.facebookUrl, icon: facebookIcon },
@@ -29,13 +35,22 @@ const year = new Date().getFullYear();
 	<div class="footer-main">
 		<h2>Napisz do mnie!</h2>
 
-		<a class="mail-link" href={`mailto:${info.mail}`}>
+		<a class="mail-link" href={`mailto:${email}`}>
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<rect x="2" y="4" width="20" height="16" rx="2"></rect>
 				<path d="m22 7-10 6L2 7"></path>
 			</svg>
-			{info.mail}
+			{email}
 		</a>
+
+		{phone && (
+			<a class="mail-link" href={`tel:${phone.replace(/[^+\d]/g, '')}`}>
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"></path>
+				</svg>
+				{phone}
+			</a>
+		)}
 
 		{
 			socials.length > 0 && (
@@ -69,6 +84,7 @@ const year = new Date().getFullYear();
 	<div class="footer-credit">
 		<hr />
 		<span>&copy; {year} {info.imie}</span>
+		{company && <span class="company">{company}</span>}
 		<a href="https://iksdesign.pl/" target="_blank" rel="noopener noreferrer">
 			<Image src={iksLogo} alt="" width={31} height={20} densities={[1, 2]} />
 			IKS Design
