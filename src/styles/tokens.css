@@ -56,6 +56,8 @@
 
   /* zaokrąglenie wszystkich przycisków (też filtry Sklepu i Bloga) */
   --radius-button: 4px;
+  /* szerokość każdego przycisku na telefonie (do 575px) */
+  --btn-mobile-width: 18rem;
 
   /* przycisk obrysowy — jeden wygląd w Button, pasku nawigacji i treściach CMS */
   --btn-outline-width: 2px;
@@ -97,6 +99,16 @@
   --container-max: 1200px;
   --container-gutter: clamp(1rem, 4vw, 2.5rem);
   --measure: 68ch;
+
+  /* === odstępy — jedna skala dla wszystkich podstron ===
+     Pionowy rytm każdej sekcji: odstęp sekcji (góra/dół), a w nagłówku
+     etykieta → nagłówek → tekst → przyciski / tabela / formularz. */
+  --section-py: clamp(3.5rem, 2.5rem + 3vw, 6rem); /* góra i dół każdej sekcji */
+  --space-eyebrow: 1.25rem; /* etykieta → nagłówek */
+  --space-heading: 1.5rem; /* nagłówek → tekst */
+  --space-text: 1rem; /* akapit → akapit */
+  --space-actions: 2.5rem; /* tekst → przyciski, lista, tabela, formularz */
+  --space-content: 3.5rem; /* nagłówek sekcji → karty / treść pod nim */
 
   /* === rodzina i grubości fontu === */
   --font-family-heading: "Playfair Display Variable", Georgia, serif;
@@ -295,6 +307,22 @@ label {
   line-height: var(--line-h-label);
 }
 
+/* telefony: każdy przycisk wyśrodkowany i tej samej szerokości. Kontener,
+   w którym bezpośrednio stoi przycisk, rozciąga się na całą szerokość —
+   inaczej przycisk centrowałby się tylko w obrębie swojego wąskiego pudełka. */
+@media (max-width: 575px) {
+  :where(*):has(> .btn, > .submit-btn) {
+    align-self: stretch;
+  }
+}
+
+/* wyróżnienie w nagłówkach — fragment w gwiazdkach (*tekst*) z CMS-u,
+   zamieniany na <span class="accent"> (src/lib/accent.ts). Reguła globalna,
+   bo span wstawiany przez set:html nie podlega stylom komponentów. */
+.accent {
+  color: var(--color-energy);
+}
+
 /* etykieta nad nagłówkiem — wersaliki, rozstrzelone, w kolorze energy.
    Do użycia wszędzie: w komponentach i w treściach z CMS-u (<p class="eyebrow">). */
 .eyebrow {
@@ -307,4 +335,42 @@ label {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-energy);
+}
+
+/* telefony: 2rem między etykietą a nagłówkiem; nad etykietą jest odstęp
+   sekcji (--section-py, min. 3.5rem) */
+@media (max-width: 575px) {
+  :root {
+    --space-eyebrow: 2rem;
+  }
+}
+
+/* .stack — kolumna z odstępami ze skali (zamiast gap i marginesów w każdym
+   komponencie). Odstęp zależy od tego, CO stoi wyżej:
+     etykieta → --space-eyebrow, nagłówek → --space-heading,
+     zwykle → --space-text; element z klasą .stack-gap (przyciski, lista,
+     tabela, formularz) → --space-actions. */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack > * {
+  margin-block: 0;
+}
+
+.stack > * + * {
+  margin-top: var(--space-text);
+}
+
+.stack > .eyebrow + * {
+  margin-top: var(--space-eyebrow);
+}
+
+.stack > :is(h1, h2) + * {
+  margin-top: var(--space-heading);
+}
+
+.stack > .stack-gap.stack-gap {
+  margin-top: var(--space-actions);
 }

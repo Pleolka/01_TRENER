@@ -37,6 +37,19 @@ const { href, variant = "base", target } = Astro.props;
       border-color 0.3s ease;
   }
 
+  /* telefony: mniejszy przycisk (wysokość 44px — wygodna dla palca) */
+  @media (max-width: 575px) {
+    .btn {
+      display: flex;
+      width: 100%;
+      max-width: var(--btn-mobile-width);
+      margin-inline: auto;
+      min-height: 44px;
+      padding: 0 1.5rem;
+      font-size: 16px;
+    }
+  }
+
   .btn--base {
     color: var(--color-on-energy);
     background: var(--gradient-button);

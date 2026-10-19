@@ -12,7 +12,7 @@ import defaultCover from '../images/kobieta-na-silowni.jpg';
 const fallbackCover = await getImage({ src: defaultCover, width: 640, height: 400, fit: 'cover', format: 'webp' });
 
 interface Props {
-	heroBg?: string;
+	heroBg?: import('../lib/heroBackground').HeroImage;
 	heroAspect?: number;
 	heading?: string | null;
 	badge?: string | null;
@@ -35,13 +35,13 @@ const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
 ---
 
 <SiteChrome heroBg={Astro.props.heroBg} heroAspect={Astro.props.heroAspect}>
-	<Section pt={5} pb={3}>
+	<Section pb={0}>
 		<Container>
-			<div class="header">
+			<div class="header stack">
 				{badge && <SectionBadge text={badge} />}
 				<h1 set:html={accent(heading || 'Blog')} />
 				{lead && <p class="lead">{lead}</p>}
-				<div class="filters">
+				<div class="filters stack-gap">
 					{
 						categories.map((cat, i) => (
 							<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={i === 0 ? 'all' : cat}>
@@ -54,9 +54,9 @@ const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
 		</Container>
 	</Section>
 
-	<Section pt={2} pb={6} bgcolor="var(--color-bg)">
+	<Section pt="var(--space-content)" bgcolor="var(--color-bg)">
 		<Container>
-			<div class="section-head">
+			<div class="section-head stack">
 				{listBadge && <SectionBadge text={listBadge} />}
 				{listHeading && <h2>{listHeading}</h2>}
 			</div>
@@ -112,9 +112,11 @@ const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1rem;
 		text-align: center;
-		margin-bottom: 2.5rem;
+	}
+
+	.section-head {
+		margin-bottom: var(--space-content);
 	}
 
 	.lead {
@@ -127,7 +129,6 @@ const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: 0.6rem;
-		margin-top: 0.5rem;
 	}
 
 	.filter {

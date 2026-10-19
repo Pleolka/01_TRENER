@@ -10,13 +10,13 @@ const heading = frontmatter.heading || frontmatter.title;
 
 <BaseLayout title={frontmatter.title} description={frontmatter.description}>
 	<SiteChrome>
-		<Section pt={4} pb={3}>
+		<Section pb={0}>
 			<Container>
 				<h1 class="legal-heading">{heading}</h1>
 			</Container>
 		</Section>
 
-		<Section pt={2} pb={6} bgcolor="var(--color-bg)">
+		<Section pt="var(--space-content)" bgcolor="var(--color-bg)">
 			<Container>
 				<article class="prose">
 					<slot />

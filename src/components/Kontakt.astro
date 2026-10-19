@@ -7,7 +7,7 @@ import { info } from '../assets/data/kontakt';
 import { accent } from '../lib/accent';
 
 interface Props {
-	heroBg?: string;
+	heroBg?: import('../lib/heroBackground').HeroImage;
 	heroAspect?: number;
 	badge?: string | null;
 	heading?: string | null;
@@ -24,10 +24,10 @@ const {
 ---
 
 <SiteChrome heroBg={Astro.props.heroBg} heroAspect={Astro.props.heroAspect}>
-	<Section pt={5} pb={6}>
+	<Section>
 		<Container>
 			<div class="contact-layout">
-			<div class="intro">
+			<div class="intro stack">
 				{badge && <SectionBadge text={badge} />}
 				<h1 set:html={accent(heading ?? '')} />
 				{text && <p class="subtitle">{text}</p>}
@@ -100,7 +100,6 @@ const {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 1rem;
 	}
 
 	.mail a {
@@ -108,11 +107,7 @@ const {
 	}
 
 	.form-title {
-		margin-bottom: 1.5rem;
-	}
-
-	.accent {
-		color: var(--color-energy);
+		margin-bottom: var(--space-heading);
 	}
 
 	.subtitle {
@@ -156,6 +151,15 @@ const {
 	.field textarea:focus {
 		outline: none;
 		border-color: var(--color-accent);
+	}
+
+	@media (max-width: 575px) {
+		.submit-btn {
+			width: 100%;
+			max-width: var(--btn-mobile-width);
+			padding: 0 1.5rem;
+			font-size: 16px;
+		}
 	}
 
 	.submit-btn {

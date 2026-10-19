@@ -1,9 +1,10 @@
 ---
 import Footer from './Footer.astro';
 import Navbar from './Navbar.astro';
+import type { HeroImage } from '../lib/heroBackground';
 
 interface Props {
-	heroBg?: string;
+	heroBg?: HeroImage;
 	/* proporcje zdjęcia tła (szerokość / wysokość) — tło ma wysokość całego zdjęcia */
 	heroAspect?: number;
 }
@@ -15,7 +16,17 @@ const { heroBg, heroAspect = 16 / 9 } = Astro.props;
 	{
 		heroBg && (
 			<div class="hero-bg" style={`--hero-aspect:${heroAspect}`} aria-hidden="true">
-				<div class="hero-bg-img" style={`background:${heroBg}`} />
+				{/* element LCP — od razu w HTML, z wysokim priorytetem pobierania */}
+				<img
+					class="hero-bg-img"
+					src={heroBg.src}
+					srcset={heroBg.srcset}
+					sizes="100vw"
+					alt=""
+					fetchpriority="high"
+					decoding="async"
+					style={`object-position:${heroBg.position}`}
+				/>
 			</div>
 		)
 	}
@@ -61,6 +72,9 @@ const { heroBg, heroAspect = 16 / 9 } = Astro.props;
 	.hero-bg-img {
 		position: absolute;
 		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 		filter: var(--filter-photo);
 	}
 

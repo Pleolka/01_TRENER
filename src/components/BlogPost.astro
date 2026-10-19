@@ -1,6 +1,6 @@
 ---
 import CmsPage from './CmsPage.astro';
-import { getImage } from 'astro:assets';
+import { heroBackground, heroBackgroundFromUrl } from '../lib/heroBackground';
 import type { CmsBlogPost } from '../lib/datocms';
 import defaultCover from '../images/kobieta-na-silowni.jpg';
 
@@ -15,20 +15,17 @@ const date = new Date(post.date).toLocaleDateString('pl-PL', { day: 'numeric', m
 // Jedno zdjęcie na wpis („Zdjęcie główne”) — po otwarciu artykułu jest tłem
 // nagłówka, tak jak bg-main na stronie głównej (przygaszone, wygasa w dół).
 // Wpis bez zdjęcia dostaje zdjęcie domyślne.
-const fallback = await getImage({ src: defaultCover, format: 'webp', quality: 90 });
-const coverSrc = post.cover ? `${post.cover.url}?w=2560&auto=format&q=90` : fallback.src;
 // Nagłówek jest szeroki i niski, więc zdjęcie jest mocno przycinane w pionie.
 // Kadrujemy od punktu ostrości ustawionego w DatoCMS (focal point), a bez
 // niego od góry — żeby nie ucinać głów.
 const fp = post.cover?.focalPoint;
 const position = fp ? `${Math.round(fp.x * 100)}% ${Math.round(fp.y * 100)}%` : 'center top';
-const heroBg = `url(${coverSrc}) ${position} / cover no-repeat`;
-const heroAspect = post.cover
-	? post.cover.width / post.cover.height
-	: Number(fallback.attributes.width) / Number(fallback.attributes.height);
+const hero = post.cover
+	? heroBackgroundFromUrl(post.cover.url, post.cover.width, post.cover.height, position)
+	: await heroBackground(defaultCover, position);
 
 const body = post.content || '<p>Treść wpisu pojawi się już wkrótce.</p>';
 const back = '<p><a href="/blog">← Wróć do bloga</a></p>';
 ---
 
-<CmsPage heading={post.title} eyebrow={post.label ?? undefined} badge={date} content={body + back} heroBg={heroBg} heroAspect={heroAspect} />
+<CmsPage heading={post.title} eyebrow={post.label ?? undefined} badge={date} content={body + back} {...hero} />

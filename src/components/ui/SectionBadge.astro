@@ -1,5 +1,7 @@
 ---
-// Mały "pill badge" nad nagłówkami sekcji — sam tekst, wersalikami.
+// Etykieta nad nagłówkiem sekcji — ten sam styl co na podstronie O mnie:
+// globalna klasa .eyebrow z tokens.css (wersaliki, rozstrzelone, kolor energy,
+// bez pastylki).
 interface Props {
   text: string;
 }
@@ -7,22 +9,4 @@ interface Props {
 const { text } = Astro.props;
 ---
 
-<span class="section-badge">{text}</span>
-
-<style>
-  .section-badge {
-    margin-bottom: 2rem;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.7rem 1.5rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-font);
-  }
-</style>
+<p class="eyebrow">{text}</p>

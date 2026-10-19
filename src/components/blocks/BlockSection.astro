@@ -19,12 +19,12 @@ const { id, alt = false, badge, heading, subheading, lead } = Astro.props;
 const hasHeader = badge || heading || subheading || lead;
 ---
 
-<Section pt={5} pb={5} bgcolor={alt ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
+<Section bgcolor={alt ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
 	<Container mt="0" mb="0">
 		<div id={id} class="block-section">
 			{
 				hasHeader && (
-					<header class="block-header">
+					<header class="block-header stack">
 						{badge && <p class="eyebrow">{badge}</p>}
 						{heading && <h2 set:html={accent(heading)} />}
 						{subheading && <p class="subheading">{subheading}</p>}
@@ -47,11 +47,7 @@ const hasHeader = badge || heading || subheading || lead;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		margin-bottom: 3rem;
-	}
-
-	.block-header .eyebrow + h2 {
-		margin-top: 1rem;
+		margin-bottom: var(--space-content);
 	}
 
 	.block-header :global(.accent) {
@@ -59,14 +55,12 @@ const hasHeader = badge || heading || subheading || lead;
 	}
 
 	.subheading {
-		margin-top: 1rem;
 		font-weight: 600;
 		color: var(--color-font);
 	}
 
 	.lead {
 		max-width: var(--measure);
-		margin-top: 1rem;
 		color: var(--color-muted);
 	}
 </style>

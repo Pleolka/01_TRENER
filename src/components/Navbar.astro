@@ -1,5 +1,6 @@
 ---
 import { list as navItems } from "../assets/data/strukturaStrony";
+import { Image } from "astro:assets";
 import logo from "../images/Logo.webp";
 import Container from "./ui/Container.astro";
 
@@ -15,11 +16,11 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
   <Container mt="0" mb="0" mtMobile="0">
   <header class="bar">
     <a class="logo" href="/">
-      <img src={logo.src} alt="Natalia Figas" />
+      <Image src={logo} alt="Natalia Figas" height={54} densities={[1, 2]} loading="eager" />
     </a>
 
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-    <label for="nav-toggle" class="nav-toggle-label" aria-label="Otwórz menu">
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Otwórz menu" />
+    <label for="nav-toggle" class="nav-toggle-label">
       <span></span>
     </label>
 
@@ -251,6 +252,13 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
       padding: 1.25rem;
       background: var(--color-page);
       border-bottom: 1px solid var(--color-border);
+    }
+
+    .nav-cta {
+      width: 100%;
+      max-width: var(--btn-mobile-width);
+      min-height: 44px;
+      font-size: 16px;
     }
 
     .nav-links {

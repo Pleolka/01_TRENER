@@ -34,6 +34,25 @@ const coachingStats = lines(content.coachingStats).map((l) => {
 	const [value, suffix, label] = l.split('|').map((p) => p.trim());
 	return { value, suffix, label };
 });
+// ikony filarów (linie SVG, kolor energy) — w kolejności pozycji z CMS-u;
+// pozycje dodane ponad cztery dostają ostatnią ikonę
+const PILLAR_ICONS = [
+	'M6 7v10|M18 7v10|M3 10v4|M21 10v4|M6 12h12', // hantla — trening, dieta, mentoring
+	'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z|M7 12h2.5l1.5-2.5 2 5 1.5-2.5H17', // serce z tętnem — ścieżka zdrowia
+	'M3 20l6.5-11 4 6.5 2.5-4L21 20z', // góry — społeczność, wyjścia w góry
+	'M9 18h6|M10 21h4|M12 3a6 6 0 0 0-3.6 10.8c.6.5 1.1 1.3 1.1 2.2h5c0-.9.5-1.7 1.1-2.2A6 6 0 0 0 12 3z', // żarówka — wsparcie mentalne
+];
+// ikony punktów sekcji Canela — w kolejności pozycji z CMS-u
+const DIET_ICONS = [
+	'M4 19.5A2.5 2.5 0 0 1 6.5 17H20|M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z|M9 7h7|M9 11h5', // książka z przepisami
+	'M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z|M3 6h18|M16 10a4 4 0 0 1-8 0', // torba na zakupy
+	'M17 1l4 4-4 4|M3 11V9a4 4 0 0 1 4-4h14|M7 23l-4-4 4-4|M21 13v2a4 4 0 0 1-4 4H3', // strzałki wymiany
+	'M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0-18 0|M12 7v5l3 2', // zegar
+];
+const dietIcon = (i: number) => DIET_ICONS[Math.min(i, DIET_ICONS.length - 1)].split('|');
+
+const pillarIcon = (i: number) => PILLAR_ICONS[Math.min(i, PILLAR_ICONS.length - 1)].split('|');
+
 const pillars = lines(content.pillars).map((l) => {
 	const [title, description] = parts(l);
 	return { title, description };
@@ -41,24 +60,25 @@ const pillars = lines(content.pillars).map((l) => {
 ---
 
 <SiteChrome {...hero}>
-	<Section slot="hero" pt={6} pb={0}>
+	<Section slot="hero" pb={0}>
 		<Container mb="0">
 			<div class="hero">
-				<div class="hero-content">
+				<div class="hero-content stack">
 					<SectionBadge text={content.heroBadge} />
 					<h1 set:html={accent(content.heroHeading)} />
 					<p class="subtitle">{content.heroText}</p>
-					<div class="hero-actions">
-						<Button href="#cooperation">{content.heroPrimaryButton}</Button>
+					<div class="hero-actions stack-gap">
+						<Button href="/wspolpraca-11">{content.heroPrimaryButton}</Button>
 						<Button href="/sklep-online" variant="outline">{content.heroSecondaryButton}</Button>
 					</div>
-					<div class="stats">
+					<div class="stats stack-gap">
 						{
 							heroStats.map((stat) => (
 								<div class="stat">
 									<span class="stat-value">
-										{stat.value}
-										{stat.suffix}
+										{/* liczba odlicza się od 0 po pojawieniu się na ekranie (skrypt niżej) */}
+										<span class="count" data-target={stat.value}>{stat.value}</span>
+										{stat.suffix && <span class="suffix">{stat.suffix}</span>}
 									</span>
 									<span class="stat-label">{stat.label}</span>
 								</div>
@@ -87,17 +107,20 @@ const pillars = lines(content.pillars).map((l) => {
 		</Container>
 	</Section>
 
-	<Section pt={4} pb={5} bgcolor="var(--color-section-alt)">
+	<Section bgcolor="var(--color-section-alt)">
 		<Container>
-			<div class="section-header">
-				<SectionBadge text={content.aboutBadge} />
+			<div class="section-header stack">
+				<p class="eyebrow">{content.aboutBadge}</p>
 				<h2 set:html={accent(content.aboutHeading)} />
 				{paragraphs(content.aboutText).map((p) => <p>{p}</p>)}
 			</div>
 			<div class="teasers">
 				{
-					pillars.map((pillar) => (
+					pillars.map((pillar, i) => (
 						<div class="teaser">
+							<svg class="teaser-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								{pillarIcon(i).map((d) => <path d={d} />)}
+							</svg>
 							<h3>{pillar.title}</h3>
 							<p class="teaser-description">{pillar.description}</p>
 						</div>
@@ -110,23 +133,26 @@ const pillars = lines(content.pillars).map((l) => {
 		</Container>
 	</Section>
 
-	<Section pt={3} pb={5} bgcolor="var(--color-bg)">
+	<Section bgcolor="var(--color-bg)">
 		<Container>
-			<div class="feature" id="cooperation">
+			<div class="feature stack" id="cooperation">
 				<SectionBadge text={content.coachingBadge} />
 				<h2 set:html={accent(content.coachingHeading)} />
 				<p>{content.coachingText}</p>
-				<ul class="feature-list">
+				<ul class="feature-list stack-gap">
 					{lines(content.coachingList).map((item) => <li>{item}</li>)}
 				</ul>
-				<Button href="#apply">{content.coachingButton}</Button>
-				<div class="stats">
+				<div class="stack-gap">
+					<Button href="#apply">{content.coachingButton}</Button>
+				</div>
+				<div class="stats stack-gap">
 					{
 						coachingStats.map((stat) => (
 							<div class="stat">
 								<span class="stat-value">
-									{stat.value}
-									{stat.suffix}
+									{/* liczba odlicza się od 0 po pojawieniu się na ekranie (skrypt niżej) */}
+									<span class="count" data-target={stat.value}>{stat.value}</span>
+									{stat.suffix && <span class="suffix">{stat.suffix}</span>}
 								</span>
 								<span class="stat-label">{stat.label}</span>
 							</div>
@@ -137,16 +163,25 @@ const pillars = lines(content.pillars).map((l) => {
 		</Container>
 	</Section>
 
-	<Section pt={3} pb={5} bgcolor="var(--color-section-alt)">
+	<Section bgcolor="var(--color-section-alt)">
 		<Container>
-			<div class="feature" id="products">
+			<div class="feature stack" id="products">
 				<SectionBadge text={content.dietBadge} />
 				<h2 set:html={accent(content.dietHeading)} />
 				<p>{content.dietText}</p>
-				<ul class="feature-list">
-					{lines(content.dietList).map((item) => <li>{item}</li>)}
+				<ul class="icon-table stack-gap">
+					{
+						lines(content.dietList).map((item, i) => (
+							<li>
+								<svg class="icon-table-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									{dietIcon(i).map((d) => <path d={d} />)}
+								</svg>
+								{item}
+							</li>
+						))
+					}
 				</ul>
-				<div class="hero-actions">
+				<div class="hero-actions stack-gap">
 					<Button href="#subscribe">{content.dietPrimaryButton}</Button>
 					<Button href="#recipes" variant="outline">{content.dietSecondaryButton}</Button>
 				</div>
@@ -154,18 +189,18 @@ const pillars = lines(content.pillars).map((l) => {
 		</Container>
 	</Section>
 
-	<Section pt={3} pb={6} bgcolor="var(--color-bg)">
+	<Section bgcolor="var(--color-bg)">
 		<Container>
-			<div class="lead-teaser" id="newsletter">
+			<div class="lead-teaser stack" id="newsletter">
 				<SectionBadge text={content.newsletterBadge} />
 				<h2 set:html={accent(content.newsletterHeading)} />
 				<p>{content.newsletterText}</p>
-				<ul class="feature-list">
+				<ul class="feature-list stack-gap">
 					{lines(content.newsletterList).map((item) => <li>{item}</li>)}
 				</ul>
 				{/* zapis przez Netlify Forms — zgłoszenia w panelu Netlify (Forms → newsletter) */}
 				<form
-					class="newsletter-form"
+					class="newsletter-form stack-gap"
 					name="newsletter"
 					method="POST"
 					data-netlify="true"
@@ -195,6 +230,44 @@ const pillars = lines(content.pillars).map((l) => {
 	</Section>
 </SiteChrome>
 
+<script>
+	// Odliczanie liczb w licznikach (.count[data-target]) od 0 do wartości,
+	// gdy licznik pojawi się na ekranie. W HTML od początku jest wartość
+	// docelowa — bez JS i dla wyszukiwarek liczby są poprawne. Przy
+	// ograniczonej animacji (prefers-reduced-motion) liczby się nie animują.
+	const counters = document.querySelectorAll<HTMLElement>('.count[data-target]');
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const animate = (el: HTMLElement) => {
+		const target = Number(el.dataset.target);
+		if (!Number.isFinite(target) || target === 0) return;
+		const duration = 1600;
+		const start = performance.now();
+		const step = (now: number) => {
+			const progress = Math.min((now - start) / duration, 1);
+			const eased = 1 - Math.pow(1 - progress, 3); // szybki start, łagodny koniec
+			el.textContent = String(Math.round(target * eased));
+			if (progress < 1) requestAnimationFrame(step);
+		};
+		el.textContent = '0';
+		requestAnimationFrame(step);
+	};
+
+	if (!reduceMotion && 'IntersectionObserver' in window) {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (!entry.isIntersecting) continue;
+					animate(entry.target as HTMLElement);
+					observer.unobserve(entry.target);
+				}
+			},
+			{ threshold: 0.6 },
+		);
+		counters.forEach((el) => observer.observe(el));
+	}
+</script>
+
 <style>
 	/* układ jak sekcje na O mnie (ImageSections): pół na pół,
 	   zdjęcie stoi na dolnej krawędzi sekcji */
@@ -210,20 +283,17 @@ const pillars = lines(content.pillars).map((l) => {
 		flex-direction: column;
 		align-items: flex-start;
 		text-align: left;
-		gap: 1.25rem;
 		/* tekst wyśrodkowany w pionie, z odstępem od dołu sekcji */
 		align-self: center;
-		padding-bottom: 5rem;
+		padding-bottom: var(--section-py);
 	}
 
 	.hero h1 {
 		max-width: 30rem;
 	}
 
-	.accent {
-		color: var(--color-energy);
-	}
-
+	/* odstęp nad tekstem hero 2.5rem, pod nim 3rem
+	   (gap 1.25rem + margines; pod spodem dochodzi 0.5rem z .hero-actions) */
 	.subtitle {
 		color: var(--color-muted);
 	}
@@ -233,7 +303,6 @@ const pillars = lines(content.pillars).map((l) => {
 		flex-wrap: wrap;
 		justify-content: flex-start;
 		gap: 1rem;
-		margin-top: 0.5rem;
 	}
 
 	.hero-image {
@@ -246,34 +315,56 @@ const pillars = lines(content.pillars).map((l) => {
 		height: auto;
 	}
 
+	/* liczniki jako delikatna tabelka: równe kolumny, cienkie linie
+	   między nimi, zawartość wyśrodkowana */
 	.stats {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 2rem;
-		margin-top: 0.5rem;
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+		width: 100%;
+		max-width: 36rem;
+		background: rgba(193, 232, 255, 0.03);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
 	}
 
 	.stat {
 		display: flex;
 		flex-direction: column;
-		gap: 0.2rem;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+		padding: 1.25rem 0.75rem;
+		text-align: center;
+	}
+
+	.stat + .stat {
+		border-left: 1px solid var(--color-border);
 	}
 
 	.stat-value {
-		font-family: var(--font-family-heading);
-		font-weight: var(--font-weight-h);
-		font-size: 2.25rem;
+		font-family: var(--font-family-body);
+		font-weight: 700;
+		/* cyfry o stałej szerokości — liczba nie „skacze” podczas odliczania */
+		font-variant-numeric: tabular-nums;
+		/* mniejsze na wąskich ekranach, żeby 3 kolumny się mieściły */
+		font-size: clamp(1.5rem, 5vw, 2.25rem);
 		line-height: 1.1;
+		white-space: nowrap;
+		/* jednolity kolor zamiast gradientu na tekście — gradient nie obejmował
+		   dopisku (lat, +, %) we wszystkich przeglądarkach */
 		color: var(--color-energy);
-		background: var(--gradient-energy);
-		-webkit-background-clip: text;
-		background-clip: text;
-		-webkit-text-fill-color: transparent;
+	}
+
+	/* odstęp między liczbą a dopiskiem (14 lat, 5000 +, 100 %) */
+	.suffix {
+		margin-left: 0.25em;
 	}
 
 	.stat-label {
 		color: var(--color-muted);
-		font-size: 0.9rem;
+		font-size: 0.85rem;
+		line-height: 1.3;
 	}
 
 	@media (max-width: 900px) {
@@ -285,19 +376,22 @@ const pillars = lines(content.pillars).map((l) => {
 		.hero-content {
 			align-items: center;
 			text-align: center;
-			padding-bottom: 2.5rem;
+			padding-bottom: var(--space-actions);
 		}
 
 		/* zdjęcie pod tekstem, na dole sekcji */
 		.hero-image {
-			max-width: 26rem;
+			max-width: 18rem;
 			width: 100%;
 			margin-inline: auto;
 		}
 
-		.hero-actions,
-		.stats {
+		.hero-actions {
 			justify-content: center;
+		}
+
+		.stats {
+			margin-inline: auto;
 		}
 	}
 
@@ -305,12 +399,12 @@ const pillars = lines(content.pillars).map((l) => {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1rem;
 		text-align: center;
-		margin-bottom: 2.5rem;
+		/* odstęp między tekstem a tabelką pod nim */
+		margin-bottom: var(--space-content);
 	}
 
-	.section-header p {
+	.section-header p:not(.eyebrow) {
 		max-width: var(--measure);
 		color: var(--color-muted);
 	}
@@ -318,24 +412,39 @@ const pillars = lines(content.pillars).map((l) => {
 	.section-cta {
 		display: flex;
 		justify-content: center;
-		margin-top: 2rem;
+		margin-top: var(--space-actions);
 	}
 
+	/* filary jako delikatna tabelka (jak liczniki w hero): równe pola,
+	   cienkie linie między nimi — linie to tło siatki widoczne w 1px odstępach,
+	   więc działają też, gdy pola zawijają się do kolejnych rzędów */
 	.teasers {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
-		gap: 1.5rem;
+		gap: 1px;
+		background: var(--color-border);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+		overflow: hidden;
 	}
 
 	.teaser {
 		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.6rem;
-		padding: 1.75rem;
-		background: var(--color-surface);
-		border: 1px solid var(--color-border);
-		border-radius: 1rem;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 2.25rem 1.5rem;
+		text-align: center;
+		background:
+			linear-gradient(rgba(193, 232, 255, 0.03), rgba(193, 232, 255, 0.03)),
+			var(--color-section-alt);
+	}
+
+	.teaser-icon {
+		width: 2.5rem;
+		height: 2.5rem;
+		margin-bottom: 0.5rem;
+		color: var(--color-energy);
 	}
 
 	.teaser h3 {
@@ -357,28 +466,81 @@ const pillars = lines(content.pillars).map((l) => {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1.25rem;
 		text-align: center;
 	}
 
-	.feature p {
+	.feature p:not(.eyebrow) {
 		max-width: var(--measure);
 		color: var(--color-muted);
 	}
 
-	.feature-list {
-		list-style: none;
+	/* tabelka punktów z ikonami (sekcja Canela) — ten sam styl co filary
+	   w sekcji O mnie: równe pola, cienkie linie między nimi, wyśrodkowane */
+	.icon-table {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
+		gap: 1px;
+		width: 100%;
 		margin: 0;
 		padding: 0;
+		list-style: none;
+		background: var(--color-border);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+		overflow: hidden;
+	}
+
+	.icon-table li {
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.6rem 1.5rem;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 2rem 1.25rem;
+		text-align: center;
+		font-weight: 600;
+		background:
+			linear-gradient(rgba(193, 232, 255, 0.03), rgba(193, 232, 255, 0.03)),
+			var(--color-section-alt);
+	}
+
+	.icon-table-icon {
+		width: 2.5rem;
+		height: 2.5rem;
+		color: var(--color-energy);
+	}
+
+	/* lista z ptaszkami w kolorze energy (jak w pakietach na Diecie);
+	   lista jako blok jest wyśrodkowana w sekcji, punkty wyrównane do lewej */
+	.feature-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		text-align: left;
 		font-weight: 600;
 	}
 
+	.feature-list li {
+		position: relative;
+		padding-left: 2rem;
+	}
+
+	.feature-list li::before {
+		content: '';
+		position: absolute;
+		left: 0.35rem;
+		top: 0.2em;
+		width: 0.45rem;
+		height: 0.8rem;
+		border-right: 2px solid var(--color-energy);
+		border-bottom: 2px solid var(--color-energy);
+		transform: rotate(45deg);
+	}
+
 	.feature .stats {
-		justify-content: center;
+		margin-inline: auto;
 	}
 
 	.lead-teaser {
@@ -388,7 +550,6 @@ const pillars = lines(content.pillars).map((l) => {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1.25rem;
 	}
 
 	/* pole e-mail + przycisk w jednym rzędzie, na wąskich ekranach jedno pod drugim */
@@ -397,7 +558,6 @@ const pillars = lines(content.pillars).map((l) => {
 		gap: 0.75rem;
 		width: 100%;
 		max-width: 32rem;
-		margin-top: 1rem;
 	}
 
 	.newsletter-form input[type='email'] {
@@ -460,21 +620,19 @@ const pillars = lines(content.pillars).map((l) => {
 		.newsletter-form {
 			flex-direction: column;
 		}
+
+		.newsletter-form button {
+			align-self: center;
+			width: 100%;
+			max-width: var(--btn-mobile-width);
+			min-height: 44px;
+			font-size: 16px;
+		}
 	}
 
-	.lead-teaser p {
+	.lead-teaser p:not(.eyebrow) {
 		max-width: var(--measure);
 		color: var(--color-muted);
 	}
 
-	.lead-teaser .feature-list {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.6rem 1.5rem;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		font-weight: 600;
-	}
 </style>

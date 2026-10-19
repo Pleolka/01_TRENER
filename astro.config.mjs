@@ -9,4 +9,7 @@ export default defineConfig({
   site: 'https://trenershop.pl',
   integrations: [sitemap()],
   redirects: { '/sklep': '/sklep-online' },
+  // CSS wstawiany do HTML — bez osobnych plików blokujących pierwsze
+  // wyświetlenie strony (Lighthouse: render-blocking resources)
+  build: { inlineStylesheets: 'always' },
 });

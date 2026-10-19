@@ -7,7 +7,7 @@ import type { CmsOffer } from '../lib/datocms';
 import { accent } from '../lib/accent';
 
 interface Props {
-	heroBg?: string;
+	heroBg?: import('../lib/heroBackground').HeroImage;
 	heroAspect?: number;
 	heading?: string | null;
 	badge?: string | null;
@@ -38,9 +38,9 @@ const categories = [
 ---
 
 <SiteChrome heroBg={Astro.props.heroBg} heroAspect={Astro.props.heroAspect}>
-	<Section pt={5} pb={3}>
+	<Section pb={0}>
 		<Container>
-			<div class="header">
+			<div class="header stack">
 				{badge && <SectionBadge text={badge} />}
 				<h1 class="title" set:html={accent(heading ?? '')} />
 				{lead && <p class="lead">{lead}</p>}
@@ -48,12 +48,12 @@ const categories = [
 		</Container>
 	</Section>
 
-	<Section pt={2} pb={6} bgcolor="var(--color-bg)">
+	<Section pt="var(--space-content)" bgcolor="var(--color-bg)">
 		<Container>
-			<div class="shop-head">
+			<div class="shop-head stack">
 				{listHeading && <h2>{listHeading}</h2>}
 				{listSubheading && <p class="shop-sub">{listSubheading}</p>}
-				<div class="filters" role="tablist">
+				<div class="filters stack-gap" role="tablist">
 					{
 						categories.map((cat, i) => (
 							<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={cat.key}>
@@ -100,9 +100,7 @@ const categories = [
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 1rem;
 		text-align: center;
-		margin-bottom: 2.5rem;
 	}
 
 	.lead,
@@ -115,9 +113,8 @@ const categories = [
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.75rem;
 		text-align: center;
-		margin-bottom: 2rem;
+		margin-bottom: var(--space-content);
 	}
 
 	.filters {
@@ -125,7 +122,6 @@ const categories = [
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: 0.6rem;
-		margin-top: 0.5rem;
 	}
 
 	.filter {

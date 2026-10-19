@@ -22,16 +22,16 @@ const { sections } = Astro.props;
 		const Heading = i === 0 ? 'h1' : 'h2';
 		const imageLeft = i % 2 === 1;
 		return (
-			<Section pt={5} pb={section.image ? 0 : 5} bgcolor={i % 2 === 1 ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
+			<Section pb={section.image ? 0 : undefined} bgcolor={i % 2 === 1 ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
 				{/* bez dolnego marginesu kontenera — zdjęcie stoi na samym dole sekcji */}
 				<Container mb={section.image ? '0' : undefined}>
 					<div class:list={['image-section', { 'image-left': imageLeft, 'no-image': !section.image }]}>
-						<div class="text">
+						<div class="text stack">
 							{section.badge && <p class="eyebrow">{section.badge}</p>}
 							<Heading set:html={accent(section.heading)} />
 							{section.text && <div class="body" set:html={section.text} />}
 							{section.buttonLabel && section.buttonUrl && (
-								<div class="actions">
+								<div class="actions stack-gap">
 									<Button href={section.buttonUrl}>{section.buttonLabel}</Button>
 								</div>
 							)}
@@ -77,25 +77,13 @@ const { sections } = Astro.props;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		/* odstępy ustawione osobno: etykieta blisko nagłówka,
-		   więcej powietrza przed tekstem i przed przyciskiem */
-		gap: 0;
 		/* tekst wyśrodkowany w pionie, z odstępem od dołu sekcji */
 		align-self: center;
-		padding-bottom: 5rem;
+		padding-bottom: var(--section-py);
 	}
 
 	.no-image .text {
 		padding-bottom: 0;
-	}
-
-	/* tylko gdy nad nagłówkiem jest etykieta */
-	.text > .eyebrow + :global(:is(h1, h2)) {
-		margin-top: 1rem;
-	}
-
-	.body {
-		margin-top: 2rem;
 	}
 
 	.text :global(.accent) {
@@ -113,10 +101,6 @@ const { sections } = Astro.props;
 
 	.body :global(a) {
 		color: var(--color-accent);
-	}
-
-	.actions {
-		margin-top: 2.5rem;
 	}
 
 	.media {
@@ -138,7 +122,7 @@ const { sections } = Astro.props;
 		}
 
 		.text {
-			padding-bottom: 2.5rem;
+			padding-bottom: var(--space-actions);
 		}
 
 		.image-left .media {
@@ -146,7 +130,7 @@ const { sections } = Astro.props;
 		}
 
 		.media {
-			max-width: 26rem;
+			max-width: 18rem;
 			width: 100%;
 			margin-inline: auto;
 		}

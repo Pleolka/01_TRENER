@@ -6,7 +6,8 @@ interface Props {
 	mtMobile?: string;
 }
 
-const { mt = '2rem', mb = '2rem', mtMobile } = Astro.props;
+// domyślnie bez marginesów — pionowy odstęp daje Section (--section-py)
+const { mt = '0', mb = '0', mtMobile } = Astro.props;
 
 const style = [`--mt:${mt}`, `--mb:${mb}`, mtMobile ? `--mt-mobile:${mtMobile}` : '']
 	.filter(Boolean)
@@ -31,13 +32,7 @@ const style = [`--mt:${mt}`, `--mb:${mb}`, mtMobile ? `--mt-mobile:${mtMobile}` 
 
 	@media (max-width: 979px) {
 		.container {
-			margin-top: var(--mt-mobile, 1rem);
-		}
-	}
-
-	@media (max-width: 575px) {
-		.container {
-			margin-top: var(--mt-mobile, 0rem);
+			margin-top: var(--mt-mobile, var(--mt));
 		}
 	}
 </style>

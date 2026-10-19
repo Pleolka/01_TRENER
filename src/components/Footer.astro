@@ -1,5 +1,6 @@
 ---
 import { info } from '../assets/data/kontakt';
+import { Image } from 'astro:assets';
 import iksLogo from '../images/logo_white_iks.png';
 
 const legalLinks = [
@@ -37,7 +38,7 @@ const year = new Date().getFullYear();
 		<hr />
 		<span>&copy; {year} {info.imie}</span>
 		<a href="https://iksdesign.pl/" target="_blank" rel="noopener noreferrer">
-			<img src={iksLogo.src} alt="" width="31" height="20" />
+			<Image src={iksLogo} alt="" width={31} height={20} densities={[1, 2]} />
 			IKS Design
 		</a>
 	</div>

@@ -13,16 +13,16 @@ interface Props {
 const { hero } = Astro.props;
 ---
 
-<Section pt={6} pb={5}>
+<Section>
 	<Container mt="0" mb="0">
-		<div class="page-hero">
+		<div class="page-hero stack">
 			{hero.heroBadge && <p class="eyebrow">{hero.heroBadge}</p>}
 			{hero.heroLabel && <p class="label">{hero.heroLabel}</p>}
 			<h1 set:html={accent(hero.heroHeading)} />
 			{hero.heroText && <div class="text" set:html={hero.heroText} />}
 			{
 				(hero.heroPrimaryLabel || hero.heroSecondaryLabel) && (
-					<div class="actions">
+					<div class="actions stack-gap">
 						{hero.heroPrimaryLabel && hero.heroPrimaryUrl && <Button href={hero.heroPrimaryUrl}>{hero.heroPrimaryLabel}</Button>}
 						{hero.heroSecondaryLabel && hero.heroSecondaryUrl && (
 							<Button href={hero.heroSecondaryUrl} variant="outline">
@@ -45,7 +45,6 @@ const { hero } = Astro.props;
 
 	/* nazwa programu (np. 2halves) — duża, w kroju nagłówków */
 	.label {
-		margin-top: 1rem;
 		font-family: var(--font-family-heading);
 		font-size: var(--font-size-h3);
 		font-style: italic;
@@ -53,7 +52,6 @@ const { hero } = Astro.props;
 	}
 
 	h1 {
-		margin-top: 0.5rem;
 		max-width: 20ch;
 	}
 
@@ -63,7 +61,6 @@ const { hero } = Astro.props;
 
 	.text {
 		max-width: var(--measure);
-		margin-top: 2rem;
 	}
 
 	.text :global(p) {
@@ -74,6 +71,5 @@ const { hero } = Astro.props;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 1rem;
-		margin-top: 2.5rem;
 	}
 </style>
