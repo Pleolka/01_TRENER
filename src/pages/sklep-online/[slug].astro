@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProductPage from '../../components/ProductPage.astro';
 import { getOffers, getOffer } from '../../lib/datocms';
+import { product } from '../../lib/structuredData';
 import { heroBackground } from '../../lib/heroBackground';
 import bgImage from '../../images/bg-ciezary-6.jpg';
 
@@ -23,8 +24,9 @@ if (!offer) {
 
 const hero = await heroBackground(bgImage);
 const description = offer.description || offer.title;
+const jsonLd = [product(offer, new URL(`/sklep-online/${slug}`, Astro.site).toString())];
 ---
 
-<BaseLayout title={offer.title} description={description} image={offer.image?.url}>
+<BaseLayout title={offer.title} description={description} image={offer.image?.url} jsonLd={jsonLd}>
 	<ProductPage offer={offer} {...hero} />
 </BaseLayout>

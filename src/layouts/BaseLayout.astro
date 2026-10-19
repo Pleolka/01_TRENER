@@ -13,6 +13,7 @@ import montserratLatinExt from '@fontsource-variable/montserrat/files/montserrat
 const preloadFonts = [playfairLatin, playfairLatinExt, montserratLatin, montserratLatinExt];
 
 import { getSiteConfig } from '../lib/datocms';
+import { siteGraph, BUSINESS_DESCRIPTION } from '../lib/structuredData';
 
 interface Props {
 	title: string;
@@ -20,9 +21,11 @@ interface Props {
 	/* obrazek do udostępnień (adres z DatoCMS); bez niego — domyślny
 	   z „Ustawień strony” */
 	image?: string | null;
+	/* dane strukturalne właściwe dla podstrony (FAQ, produkt, wpis…) */
+	jsonLd?: (object | null)[];
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image, jsonLd = [] } = Astro.props;
 
 // obrazek przy udostępnianiu (Facebook, Messenger, LinkedIn, X):
 // 1200×630 w JPG — rozmiar i format, które wszystkie serwisy obsługują
@@ -31,14 +34,22 @@ const shareSource = image || config?.defaultSeoImage?.url;
 const shareImage = shareSource ? `${shareSource}?w=1200&h=630&fit=crop&fm=jpg&q=80` : null;
 
 const pageTitle = `${title} — Natalia Figas`;
+
+// JSON-LD: wspólny opis (strona, Natalia, działalność) + dane podstrony
+const structuredData = {
+	'@context': 'https://schema.org',
+	'@graph': [...siteGraph(config, Astro.site, BUSINESS_DESCRIPTION), ...jsonLd.filter(Boolean)],
+};
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <html lang="pl">
 	<head>
 		<meta charset="utf-8" />
+		<!-- favicon: niebieska kropka z logo (#0AC1F3) -->
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 
@@ -69,6 +80,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 		{shareImage && <meta name="twitter:image" content={shareImage} />}
 		<meta name="twitter:title" content={pageTitle} />
 		<meta name="twitter:description" content={description} />
+
+		<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 	</head>
 	<body>
 		<slot />

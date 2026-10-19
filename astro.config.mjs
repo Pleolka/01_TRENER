@@ -5,8 +5,9 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // TODO: podmień na docelową domenę produkcyjną — używane do sitemap, canonical URL i Open Graph
-  site: 'https://trenershop.pl',
+  // domena produkcyjna — z niej powstają canonical URL, sitemap, Open Graph,
+  // dane strukturalne (JSON-LD), robots.txt i llms.txt
+  site: 'https://nataliafigas.pl',
   integrations: [sitemap()],
   redirects: { '/sklep': '/sklep-online' },
   // CSS wstawiany do HTML — bez osobnych plików blokujących pierwsze

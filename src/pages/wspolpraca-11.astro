@@ -10,6 +10,7 @@ import FaqList from '../components/blocks/FaqList.astro';
 import CtaBox from '../components/blocks/CtaBox.astro';
 import Button from '../components/ui/Button.astro';
 import { getCooperationPage } from '../lib/datocms';
+import { faqPage, service } from '../lib/structuredData';
 import { heroBackground } from '../lib/heroBackground';
 import bgImage from '../images/bg-ciezary-4.jpg';
 
@@ -17,13 +18,24 @@ import bgImage from '../images/bg-ciezary-4.jpg';
 const page = await getCooperationPage();
 const hero = await heroBackground(bgImage);
 
+const jsonLd = page
+	? [
+			service(
+				'2halves — współpraca trenerska 1:1',
+				'Indywidualny 12-tygodniowy program treningowy, plan dietetyczny w aplikacji, mobility i stały kontakt z trenerką Natalią Figas — online.',
+				new URL('/wspolpraca-11', Astro.site).toString(),
+			),
+			faqPage(page.faq),
+		]
+	: [];
+
 const title = page?.seo?.title || 'Współpraca 1:1';
 const description =
 	page?.seo?.description ||
 	'Program 2halves — indywidualny program treningowy, dieta i wsparcie na każdym etapie Twojej drogi.';
 ---
 
-<BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
+<BaseLayout title={title} description={description} image={page?.seo?.image?.url} jsonLd={jsonLd}>
 	<SiteChrome {...hero}>
 		{
 			page && (

@@ -11,6 +11,7 @@ import FaqList from '../components/blocks/FaqList.astro';
 import CtaBox from '../components/blocks/CtaBox.astro';
 import Button from '../components/ui/Button.astro';
 import { getDietPage } from '../lib/datocms';
+import { faqPage, service } from '../lib/structuredData';
 import { heroBackground } from '../lib/heroBackground';
 import { accent } from '../lib/accent';
 import bgImage from '../images/bg-ciezary-5.jpg';
@@ -19,13 +20,25 @@ import bgImage from '../images/bg-ciezary-5.jpg';
 const page = await getDietPage();
 const hero = await heroBackground(bgImage);
 
+const jsonLd = page
+	? [
+			service(
+				'Canela Diet — dieta w aplikacji',
+				'Aplikacja dietetyczna z ponad 100 przepisami kuchni śródziemnomorskiej, listą zakupów i wymianą dań — dieta przeciwzapalna lub klasyczna w subskrypcji.',
+				new URL('/dieta', Astro.site).toString(),
+				page.plans.map((p) => ({ name: p.name, price: p.price })),
+			),
+			faqPage(page.faq),
+		]
+	: [];
+
 const title = page?.seo?.title || 'Dieta';
 const description = page?.seo?.description || 'Canela Diet — aplikacja dietetyczna z ponad 100 przepisami.';
 
 const lines = (text: string | null) => (text ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
 ---
 
-<BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
+<BaseLayout title={title} description={description} image={page?.seo?.image?.url} jsonLd={jsonLd}>
 	<SiteChrome {...hero}>
 		{
 			page && (

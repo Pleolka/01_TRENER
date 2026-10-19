@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogPost from '../../components/BlogPost.astro';
 import { getBlogPosts, getBlogPost } from '../../lib/datocms';
+import { blogPosting } from '../../lib/structuredData';
 
 // Każdy opublikowany wpis z DatoCMS dostaje własną podstronę /blog/<slug>.
 // Nowy wpis pojawi się na stronie po kolejnym buildzie.
@@ -18,8 +19,9 @@ if (!post) {
 }
 
 const description = post.seoDescription || post.excerpt || post.title;
+const jsonLd = [blogPosting(post, new URL(`/blog/${slug}`, Astro.site).toString())];
 ---
 
-<BaseLayout title={post.title} description={description} image={post.cover?.url}>
+<BaseLayout title={post.title} description={description} image={post.cover?.url} jsonLd={jsonLd}>
 	<BlogPost post={post} />
 </BaseLayout>
