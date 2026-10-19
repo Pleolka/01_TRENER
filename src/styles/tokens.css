@@ -226,6 +226,13 @@
   box-sizing: border-box;
 }
 
+/* zabezpieczenie: element szerszy niż ekran nie może poszerzyć strony —
+   na telefonie przeglądarka zmniejszyłaby wtedy całą stronę */
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   background: var(--color-page);
