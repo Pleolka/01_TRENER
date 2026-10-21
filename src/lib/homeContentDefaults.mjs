@@ -11,7 +11,9 @@ export const homeContentDefaults = {
 	heroText:
 		'Programy treningowe, dieta w aplikacji i prowadzenie 1:1 dla kobiet biznesu. Budowanie siły, kształtowanie sylwetki i zdrowe życie.',
 	heroPrimaryButton: 'Współpracuj 1:1',
+	heroPrimaryUrl: '/wspolpraca-11',
 	heroSecondaryButton: 'Sprawdź produkty online',
+	heroSecondaryUrl: '/sklep-online',
 	heroStats: ['14 |  lat | Praktyki', '4 |  | Programy online', '5000 | + | Kcal dziennie spalonych'].join('\n'),
 
 	aboutBadge: 'O MNIE',
@@ -27,6 +29,7 @@ export const homeContentDefaults = {
 		'Wsparcie mentalne | Praca nad mindsetem i konkretne, psychologiczne metody działania.',
 	].join('\n'),
 	aboutButton: 'Poznaj mnie lepiej',
+	aboutButtonUrl: '/o-mnie',
 
 	coachingBadge: '2halves',
 	coachingHeading: '*Indywidualna* opieka trenerska. *Autorska* metoda.',
@@ -34,6 +37,7 @@ export const homeContentDefaults = {
 		'Stwórz silne ciało i zdrowy mindset do prowadzenia biznesu. Prowadzę Cię od zera do pełnego sukcesu krok po kroku, dzień po dniu. Skupiamy Twoją uwagę na tym, co przynosi realne rezultaty – bez wymówek.',
 	coachingList: ['Audyt przed startem', 'Trening i dieta szyte na miarę', 'Wsparcie mentalne i kontakt'].join('\n'),
 	coachingButton: 'Aplikuj o współpracę',
+	coachingButtonUrl: '/kontakt',
 	coachingStats: ['0 |  | wymówek', '100 | % | skupienia'].join('\n'),
 
 	dietBadge: 'Canela, aplikacja dietetyczna',
@@ -42,7 +46,9 @@ export const homeContentDefaults = {
 		'Indywidualny plan żywieniowy, który daje Ci paliwo do prowadzenia biznesu. Zbilansowane dania inspirowane kuchnią śródziemnomorską, wygodny widok, proste wskazówki żywieniowe.',
 	dietList: ['100+ przepisów', 'Wygodna lista zakupów', 'Wymiany produktów/dań', '15 min / danie'].join('\n'),
 	dietPrimaryButton: 'Wypróbuj subskrypcję',
+	dietPrimaryUrl: '/dieta#wybierz-plan',
 	dietSecondaryButton: 'Zobacz przepisy',
+	dietSecondaryUrl: '/dieta#szczegoly',
 
 	newsletterBadge: 'Zdobywaj dodatkową wiedzę',
 	newsletterHeading: 'Newsletter 2halves',

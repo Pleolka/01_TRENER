@@ -69,8 +69,8 @@ const pillars = lines(content.pillars).map((l) => {
 					<h1 set:html={accent(content.heroHeading)} />
 					<p class="subtitle">{content.heroText}</p>
 					<div class="hero-actions stack-gap">
-						<Button href="/wspolpraca-11">{content.heroPrimaryButton}</Button>
-						<Button href="/sklep-online" variant="outline">{content.heroSecondaryButton}</Button>
+						<Button href={content.heroPrimaryUrl}>{content.heroPrimaryButton}</Button>
+						<Button href={content.heroSecondaryUrl} variant="outline">{content.heroSecondaryButton}</Button>
 					</div>
 					<StatsTable items={heroStats} class="stack-gap" />
 				</div>
@@ -116,7 +116,7 @@ const pillars = lines(content.pillars).map((l) => {
 				}
 			</div>
 			<div class="section-cta">
-				<Button href="/o-mnie">{content.aboutButton}</Button>
+				<Button href={content.aboutButtonUrl}>{content.aboutButton}</Button>
 			</div>
 		</Container>
 	</Section>
@@ -131,7 +131,7 @@ const pillars = lines(content.pillars).map((l) => {
 					{lines(content.coachingList).map((item) => <li>{item}</li>)}
 				</ul>
 				<div class="stack-gap">
-					<Button href="#apply">{content.coachingButton}</Button>
+					<Button href={content.coachingButtonUrl}>{content.coachingButton}</Button>
 				</div>
 				<StatsTable items={coachingStats} class="stack-gap" center />
 			</div>
@@ -157,8 +157,8 @@ const pillars = lines(content.pillars).map((l) => {
 					}
 				</ul>
 				<div class="hero-actions stack-gap">
-					<Button href="#subscribe">{content.dietPrimaryButton}</Button>
-					<Button href="#recipes" variant="outline">{content.dietSecondaryButton}</Button>
+					<Button href={content.dietPrimaryUrl}>{content.dietPrimaryButton}</Button>
+					<Button href={content.dietSecondaryUrl} variant="outline">{content.dietSecondaryButton}</Button>
 				</div>
 			</div>
 		</Container>

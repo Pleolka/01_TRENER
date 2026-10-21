@@ -11,10 +11,28 @@ interface Props {
   target?: string;
 }
 
-const { href, variant = "base", size = "md", target } = Astro.props;
+const { href: raw, variant = "base", size = "md", target: targetProp } = Astro.props;
+
+// adresy wpisywane w CMS-ie: „kontakt” → „/kontakt”, „www.x.pl” → „https://www.x.pl”;
+// /ścieżka, #sekcja, https://…, mailto: i tel: zostają bez zmian
+const value = raw.trim();
+const href = /^([/#?]|[a-z][a-z0-9+.-]*:)/i.test(value)
+  ? value
+  : value.startsWith("www.")
+    ? `https://${value}`
+    : `/${value}`;
+
+// link do innej strony otwiera się w nowej karcie
+const external = /^https?:\/\//i.test(href) && !href.startsWith(Astro.site?.origin ?? "\0");
+const target = targetProp ?? (external ? "_blank" : undefined);
 ---
 
-<a class:list={["btn", `btn--${variant}`, { "btn--sm": size === "sm" }]} href={href} target={target}>
+<a
+  class:list={["btn", `btn--${variant}`, { "btn--sm": size === "sm" }]}
+  href={href}
+  target={target}
+  rel={target === "_blank" ? "noopener noreferrer" : undefined}
+>
   <slot />
 </a>
 
