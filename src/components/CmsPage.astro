@@ -10,39 +10,142 @@ interface Props {
 	heading: string;
 	eyebrow?: string;
 	badge?: string | null;
+	/* zajawka pod tytułem */
+	lead?: string | null;
+	/* spis treści z nagłówków H2 — na szerokich ekranach po lewej od tekstu */
+	toc?: { id: string; label: string }[];
 	content?: string | null;
 	/* tło nagłówka — działa jak bg-main na stronie głównej (patrz SiteChrome) */
 	heroBg?: import('../lib/heroBackground').HeroImage;
 	heroAspect?: number;
 }
 
-const { heading, eyebrow, badge, content, heroBg, heroAspect } = Astro.props;
+const { heading, eyebrow, badge, lead, toc = [], content, heroBg, heroAspect } = Astro.props;
+// spis ma sens dopiero przy kilku sekcjach
+const showToc = toc.length >= 3;
 ---
 
 <SiteChrome heroBg={heroBg} heroAspect={heroAspect}>
-	<Section pb={0}>
+	<Section pb="calc(var(--space-content) * 2)" bgcolor="linear-gradient(to bottom, transparent 40%, var(--color-page))">
 		<Container>
 			<div class="prose-header stack">
-				{eyebrow && <SectionBadge text={eyebrow} />}
-				{badge && <p class="eyebrow">{badge}</p>}
+				{(eyebrow || badge) && (
+					<div class="post-meta">
+						{eyebrow && <SectionBadge text={eyebrow} />}
+						{badge && <p class="post-date">{badge}</p>}
+					</div>
+				)}
 				<h1 set:html={accent(heading)} />
+				{lead && <p class="post-lead">{lead}</p>}
 			</div>
 		</Container>
 	</Section>
 
-	<Section pt="var(--space-content)" bgcolor="var(--color-bg)">
+	<Section pt={0} bgcolor="var(--color-page)">
 		<Container>
-			<article class="prose">
-				{content && <Fragment set:html={content} />}
-			</article>
+			<div class:list={['post-body', { 'has-toc': showToc }]}>
+				<article class="prose">
+					{content && <Fragment set:html={content} />}
+				</article>
+				{
+					showToc && (
+						<nav class="toc" aria-label="Spis treści">
+							<p class="toc-title">Spis treści</p>
+							<ol>
+								{toc.map((item) => (
+									<li>
+										<a href={`#${item.id}`} set:html={item.label} />
+									</li>
+								))}
+							</ol>
+						</nav>
+					)
+				}
+			</div>
 		</Container>
 	</Section>
 </SiteChrome>
 
+<script>
+	// spis treści: podświetla sekcję, którą właśnie czytasz, i płynnie do niej przewija
+	const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc a')];
+	const targets = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))));
+
+	if (links.length) {
+		let last = -1;
+		const update = () => {
+			const line = window.innerHeight * 0.3;
+			let current = -1;
+			targets.forEach((target, i) => {
+				if (target && target.getBoundingClientRect().top <= line) current = i;
+			});
+			links.forEach((link, i) => {
+				if (i === current) link.setAttribute('aria-current', 'true');
+				else link.removeAttribute('aria-current');
+			});
+
+			// spis wyższy niż okno: aktywna pozycja zostaje widoczna
+			const toc = links[0].closest<HTMLElement>('.toc');
+			const active = links[current];
+			if (toc && active && current !== last) {
+				const top = active.offsetTop;
+				const bottom = top + active.offsetHeight;
+				if (top < toc.scrollTop) toc.scrollTop = top;
+				else if (bottom > toc.scrollTop + toc.clientHeight) toc.scrollTop = bottom - toc.clientHeight;
+			}
+			last = current;
+		};
+
+		let queued = false;
+		window.addEventListener(
+			'scroll',
+			() => {
+				if (queued) return;
+				queued = true;
+				requestAnimationFrame(() => {
+					queued = false;
+					update();
+				});
+			},
+			{ passive: true },
+		);
+		update();
+
+		const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		links.forEach((link, i) => {
+			link.addEventListener('click', (event) => {
+				event.preventDefault();
+				targets[i]?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
+				history.pushState(null, '', link.hash);
+			});
+		});
+	}
+</script>
+
 <style>
-	/* bloki na pełną szerokość kontenera, linie tekstu do --measure */
-	.prose :global(:is(p, ul, ol, blockquote, details, h2, h3)) {
-		max-width: var(--measure);
+	/* kolumna do czytania: ok. 70 znaków w wierszu, większa interlinia niż na
+	   reszcie strony i jaśniejszy tekst — wpisy to długie teksty */
+	/* wspólny rozmiar tekstu wpisu i spisu treści */
+	.post-body {
+		--prose-size: 18px;
+	}
+
+	.prose {
+		width: 100%;
+		max-width: 42rem;
+		margin-inline: auto;
+		--prose-line: 1.75;
+		--prose-color: #e6f2fb;
+	}
+
+	.prose :global(:is(p, li, th, td)) {
+		font-size: var(--prose-size);
+		line-height: var(--prose-line);
+		color: var(--prose-color);
+	}
+
+	.prose :global(strong) {
+		color: var(--color-white);
 	}
 
 	.prose-header {
@@ -50,6 +153,41 @@ const { heading, eyebrow, badge, content, heroBg, heroAspect } = Astro.props;
 		flex-direction: column;
 		align-items: flex-start;
 		text-align: left;
+	}
+
+	/* kategoria z lewej, data z prawej, w jednym wierszu nad tytułem */
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.25rem 1.5rem;
+		width: 100%;
+	}
+
+	.post-meta + :global(h1) {
+		margin-top: var(--space-eyebrow);
+	}
+
+	.post-lead {
+		max-width: var(--measure);
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--color-energy);
+	}
+
+	.post-date {
+		margin-left: auto;
+		font-size: 1rem;
+		white-space: nowrap;
+		color: var(--color-font);
+	}
+
+	@media (max-width: 575px) {
+		.prose {
+			--prose-size: 17px;
+			--prose-line: 1.7;
+		}
 	}
 
 	/* *fragment* w nagłówku z CMS-u */
@@ -63,7 +201,9 @@ const { heading, eyebrow, badge, content, heroBg, heroAspect } = Astro.props;
 	}
 
 	.prose :global(h3) {
-		margin: 1.5rem 0 0.5rem;
+		margin: 2.5rem 0 0.75rem;
+		font-size: clamp(1.2rem, 2vw, 1.4rem);
+		line-height: 1.3;
 	}
 
 	@media (max-width: 575px) {
@@ -146,12 +286,140 @@ const { heading, eyebrow, badge, content, heroBg, heroAspect } = Astro.props;
 	}
 
 	.prose :global(h2) {
-		margin-top: 2.5rem;
+		margin-top: 4rem;
+		margin-bottom: 1.25rem;
+		font-size: clamp(1.6rem, 3vw, 2.1rem);
+		line-height: 1.25;
+	}
+
+	.prose :global(h2:first-child) {
+		margin-top: 0;
+	}
+
+	/* kotwice ze spisu treści: nagłówek nie chowa się pod menu, także gdy pasek
+	   kurczy się w trakcie przewijania od góry strony */
+	.prose :global(h2) {
+		scroll-margin-top: 9rem;
+	}
+
+	.toc {
+		display: none;
+	}
+
+	/* szeroki ekran: spis treści przyklejony po lewej, tekst po prawej */
+	@media (min-width: 1200px) {
+		.has-toc {
+			display: grid;
+			/* tekst zajmuje całą resztę szerokości — stały odstęp od spisu */
+			grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+			align-items: start;
+			gap: 4rem;
+		}
+
+		.has-toc .prose {
+			max-width: none;
+			margin-inline: 0;
+		}
+
+		.toc {
+			order: -1;
+			position: sticky;
+			top: 6rem;
+			display: block;
+			max-height: calc(100vh - 7rem);
+			overflow-y: auto;
+			scrollbar-width: thin;
+			scrollbar-color: var(--color-border) transparent;
+		}
+	}
+
+	/* --toc-indent: odstęp tekstu pozycji od lewej krawędzi spisu (linia + padding) */
+	.toc {
+		--toc-indent: 1.125rem;
+	}
+
+	.toc-title {
 		margin-bottom: 1rem;
+		padding-left: var(--toc-indent);
+		font-size: var(--font-size-label);
+		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--color-energy);
+	}
+
+	.toc ol {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border-left: 1px solid var(--color-border);
+	}
+
+	.toc a {
+		display: block;
+		margin-left: -1px;
+		padding: 0.4rem 0 0.4rem calc(var(--toc-indent) - 2px);
+		font-size: var(--prose-size);
+		line-height: 1.35;
+		color: var(--color-muted);
+		text-decoration: none;
+		border-left: 2px solid transparent;
+		transition:
+			color 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.toc a:hover {
+		color: var(--color-white);
+	}
+
+	/* bez pogrubienia — zmieniałoby łamanie wierszy i lista by skakała */
+	.toc a[aria-current] {
+		color: var(--color-energy);
+		border-left-color: var(--color-energy);
 	}
 
 	.prose :global(p) {
-		margin-bottom: 1rem;
+		margin-bottom: 1.25rem;
+	}
+
+	.prose :global(hr) {
+		margin: 4rem 0;
+		border: 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	/* tabela z edytora: pełna szerokość tekstu, linie między wierszami */
+	.prose :global(table) {
+		width: 100%;
+		margin: 0 0 1.5rem;
+		border-collapse: collapse;
+	}
+
+	.prose :global(:is(th, td)) {
+		padding: 0.75rem 1rem;
+		text-align: left;
+		vertical-align: top;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.prose :global(th) {
+		font-weight: var(--font-weight-bold);
+		--prose-color: var(--color-energy);
+		border-bottom-color: var(--color-energy);
+	}
+
+	.prose :global(td:first-child) {
+		font-weight: 600;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 575px) {
+		.prose :global(:is(th, td)) {
+			padding: 0.6rem 0.5rem;
+		}
 	}
 
 	.prose :global(p.price) {
@@ -163,11 +431,16 @@ const { heading, eyebrow, badge, content, heroBg, heroAspect } = Astro.props;
 	.prose :global(ul),
 	.prose :global(ol) {
 		padding-left: 1.5rem;
-		margin: 0 0 1rem;
+		margin: 0 0 1.25rem;
 	}
 
+	/* znaczniki list w kolorze energy */
 	.prose :global(li) {
-		margin-bottom: 0.4rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.prose :global(li::marker) {
+		color: var(--color-energy);
 	}
 
 	.prose :global(a) {

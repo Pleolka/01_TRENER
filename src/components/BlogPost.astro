@@ -1,6 +1,7 @@
 ---
 import CmsPage from './CmsPage.astro';
 import { heroBackground, heroBackgroundFromUrl } from '../lib/heroBackground';
+import { cleanHtml, withToc } from '../lib/cleanHtml.mjs';
 import type { CmsBlogPost } from '../lib/datocms';
 import defaultCover from '../images/kobieta-na-silowni.jpg';
 
@@ -24,8 +25,8 @@ const hero = post.cover
 	? heroBackgroundFromUrl(post.cover.url, post.cover.width, post.cover.height, position)
 	: await heroBackground(defaultCover, position);
 
-const body = post.content || '<p>Treść wpisu pojawi się już wkrótce.</p>';
+const { html: body, toc } = withToc(cleanHtml(post.content ?? '') || '<p>Treść wpisu pojawi się już wkrótce.</p>');
 const back = '<p><a href="/blog">← Wróć do bloga</a></p>';
 ---
 
-<CmsPage heading={post.title} eyebrow={post.label ?? undefined} badge={date} content={body + back} {...hero} />
+<CmsPage heading={post.title} eyebrow={post.label ?? undefined} badge={date} lead={post.excerpt} {toc} content={body + back} {...hero} />
