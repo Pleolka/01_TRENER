@@ -121,11 +121,11 @@ export const product = (offer: CmsOffer, url: string) => ({
   ...(offer.image ? { image: `${offer.image.url}?w=1200&auto=format` } : {}),
   ...(offer.badge ? { category: offer.badge } : {}),
   brand: { '@type': 'Brand', name: 'Natalia Figas' },
-  ...(priceValue(offer.price)
+  ...(offer.priceAmount || priceValue(offer.price)
     ? {
         offers: {
           '@type': 'Offer',
-          price: priceValue(offer.price),
+          price: offer.priceAmount || priceValue(offer.price),
           priceCurrency: 'PLN',
           availability: 'https://schema.org/InStock',
           url,

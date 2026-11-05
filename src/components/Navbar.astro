@@ -1,5 +1,6 @@
 ---
-import { list as navItems } from "../assets/data/strukturaStrony";
+import { list as navItems, SHOP_PUBLISHED } from "../assets/data/strukturaStrony";
+import cartIcon from "@phosphor-icons/core/assets/regular/shopping-bag.svg?raw";
 import Logo from "../images/logo.svg";
 import Container from "./ui/Container.astro";
 
@@ -45,6 +46,15 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
         )
       }
     </nav>
+
+    {
+      SHOP_PUBLISHED && (
+        <a class="cart-link" href="/koszyk" aria-label="Koszyk" data-cart-link>
+          <span class="cart-icon" set:html={cartIcon} />
+          <span class="cart-count" data-cart-count hidden>0</span>
+        </a>
+      )
+    }
   </header>
   </Container>
 </div>
@@ -76,6 +86,11 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") close();
   });
+</script>
+
+<script>
+  import { initCart } from "../scripts/cart";
+  initCart();
 </script>
 
 <style>
@@ -222,6 +237,49 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
     display: none;
   }
 
+  /* ikona koszyka z licznikiem — tylko gdy sklep jest widoczny */
+  .cart-link {
+    position: relative;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--color-white);
+    transition: color 0.2s ease;
+  }
+
+  .cart-link:hover {
+    color: var(--color-energy);
+  }
+
+  .cart-icon :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+    fill: currentColor;
+  }
+
+  .cart-count {
+    position: absolute;
+    top: 0.1rem;
+    right: 0;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    background: var(--color-energy);
+    color: var(--color-on-energy);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.2rem;
+    text-align: center;
+  }
+
+  .cart-count[hidden] {
+    display: none;
+  }
+
   .nav-toggle-label {
     margin-right: 1rem;
     display: none;
@@ -284,6 +342,17 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
     .nav-toggle-label {
       display: flex;
       margin-left: auto;
+    }
+
+    /* koszyk obok hamburgera, po prawej */
+    .cart-link {
+      order: 1;
+      margin-left: auto;
+    }
+
+    .bar:has(.cart-link) .nav-toggle-label {
+      order: 2;
+      margin-left: 0.5rem;
     }
 
     .nav {

@@ -1,0 +1,247 @@
+---
+// Strona po płatności: /zamowienie?session_id=… (adres ustawia Stripe).
+// Pobiera stan zamówienia z /api/order i pokazuje linki do plików.
+// Ten sam adres jest w e-mailu — klient może tu wrócić i pobrać pliki ponownie.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteChrome from '../components/SiteChrome.astro';
+import Section from '../components/ui/Section.astro';
+import Container from '../components/ui/Container.astro';
+import SectionBadge from '../components/ui/SectionBadge.astro';
+---
+
+<BaseLayout title="Zamówienie" description="Twoje zamówienie w sklepie Natalii Figas." noindex>
+	<SiteChrome>
+		<Section>
+			<Container>
+				<div class="order stack" data-order>
+					<div class="head stack">
+						<SectionBadge text="Zamówienie" />
+						<h1 data-order-heading>Sprawdzam płatność…</h1>
+						<p class="lead" data-order-lead></p>
+					</div>
+
+					<ul class="items" data-order-items></ul>
+
+					<p class="small" data-order-footer hidden>
+						Pytania? Napisz na <a href="mailto:kontakt@nataliafigas.pl">kontakt@nataliafigas.pl</a>.
+					</p>
+				</div>
+			</Container>
+		</Section>
+	</SiteChrome>
+</BaseLayout>
+
+<script>
+	import { readCart, setCart } from '../scripts/cart';
+
+	type OrderItem = { slug: string; title: string; type: 'plik' | 'subskrypcja' | 'usluga'; downloadUrl?: string; availableFrom?: string };
+	type Order = {
+		id: string;
+		status: 'paid' | 'pending' | 'open' | 'expired';
+		mode: 'payment' | 'subscription';
+		email: string | null;
+		immediate: boolean;
+		value: number;
+		items: OrderItem[];
+		error?: string;
+	};
+
+	const root = document.querySelector<HTMLElement>('[data-order]')!;
+	const heading = root.querySelector('[data-order-heading]')!;
+	const lead = root.querySelector('[data-order-lead]')!;
+	const list = root.querySelector('[data-order-items]')!;
+	const footer = root.querySelector<HTMLElement>('[data-order-footer]')!;
+	const sessionId = new URLSearchParams(location.search).get('session_id') ?? '';
+
+	const dateLabel = (iso: string) =>
+		new Date(iso).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
+
+	function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string) {
+		const node = document.createElement(tag);
+		node.className = className;
+		if (text) node.textContent = text;
+		return node;
+	}
+
+	function itemRow(item: OrderItem) {
+		const li = el('li', 'item');
+		const text = el('div', 'item-text');
+		text.append(el('strong', 'item-title', item.title));
+
+		if (item.type === 'plik' && item.downloadUrl && item.availableFrom) {
+			text.append(el('span', 'item-note', `Plik będzie dostępny od ${dateLabel(item.availableFrom)} — link wysłaliśmy też e-mailem.`));
+		} else if (item.type === 'plik' && item.downloadUrl) {
+			const link = el('a', 'action', 'Pobierz');
+			link.href = item.downloadUrl;
+			li.append(text, link);
+			return li;
+		} else if (item.type === 'plik') {
+			text.append(el('span', 'item-note', 'Plik wyślę Ci e-mailem.'));
+		} else if (item.type === 'subskrypcja') {
+			text.append(el('span', 'item-note', 'Dostęp do aplikacji wyślę Ci e-mailem w ciągu 24 godzin (w dni robocze).'));
+		} else {
+			text.append(el('span', 'item-note', 'Odezwę się w ciągu 2 dni roboczych, żeby umówić start.'));
+		}
+		li.append(text);
+		return li;
+	}
+
+	let tries = 0;
+
+	async function load() {
+		if (!sessionId) {
+			heading.textContent = 'Nie znaleziono zamówienia';
+			lead.textContent = 'Brakuje numeru zamówienia w adresie. Użyj linku z e-maila.';
+			footer.hidden = false;
+			return;
+		}
+
+		let order: Order;
+		try {
+			const res = await fetch(`/api/order?session_id=${encodeURIComponent(sessionId)}`);
+			order = (await res.json()) as Order;
+			if (!res.ok) throw new Error(order.error || 'Nie znaleziono zamówienia.');
+		} catch (error) {
+			heading.textContent = 'Nie udało się wczytać zamówienia';
+			lead.textContent = error instanceof Error ? error.message : String(error);
+			footer.hidden = false;
+			return;
+		}
+
+		footer.hidden = false;
+
+		if (order.status === 'paid') {
+			heading.textContent = 'Dziękuję za zakup!';
+			lead.textContent = order.email
+				? `Płatność przyjęta. Potwierdzenie i linki wysłaliśmy na ${order.email}.`
+				: 'Płatność przyjęta.';
+			list.replaceChildren(...order.items.map(itemRow));
+
+			// kupione produkty znikają z koszyka
+			const bought = new Set(order.items.map((i) => i.slug));
+			setCart(readCart().filter((slug) => !bought.has(slug)));
+
+			// zdarzenie zakupu dla analityki / piksela (Google Tag Manager), raz na zamówienie
+			const key = `nf-purchase-${order.id}`;
+			try {
+				if (!sessionStorage.getItem(key)) {
+					sessionStorage.setItem(key, '1');
+					(window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
+						event: 'purchase',
+						ecommerce: {
+							transaction_id: order.id,
+							value: order.value,
+							currency: 'PLN',
+							items: order.items.map((i) => ({ item_id: i.slug, item_name: i.title })),
+						},
+					});
+				}
+			} catch {
+				// sessionStorage niedostępny — bez zdarzenia
+			}
+			return;
+		}
+
+		if (order.status === 'pending') {
+			heading.textContent = 'Czekamy na potwierdzenie płatności';
+			lead.textContent =
+				'Bank jeszcze nie potwierdził przelewu (przy Przelewy24 to może chwilę potrwać). Strona odświeży się sama, a linki dostaniesz też e-mailem.';
+			if (tries++ < 24) setTimeout(load, 5000);
+			return;
+		}
+
+		heading.textContent = 'Płatność nie została dokończona';
+		lead.textContent = 'Nic nie zostało pobrane z Twojego konta. Możesz wrócić do koszyka i spróbować ponownie.';
+		const back = el('a', 'action', 'Wróć do koszyka');
+		back.href = '/koszyk';
+		list.replaceChildren(back);
+	}
+
+	load();
+</script>
+
+<style>
+	.order [hidden] {
+		display: none !important;
+	}
+
+	.order {
+		max-width: 52rem;
+		margin-inline: auto;
+	}
+
+	.head {
+		align-items: flex-start;
+	}
+
+	.lead {
+		color: var(--color-muted);
+		max-width: var(--measure);
+	}
+
+	.items {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.items:empty {
+		display: none;
+	}
+
+	.items :global(.item) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.25rem 0;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.items :global(.item-text) {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+	}
+
+	.items :global(.item-title) {
+		color: var(--color-white);
+	}
+
+	.items :global(.item-note) {
+		font-size: 0.95rem;
+		color: var(--color-muted);
+	}
+
+	/* wygląd jak Button variant="base" — linki budowane w skrypcie */
+	.order :global(.action) {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 40px;
+		padding: 0 2rem;
+		border-radius: var(--radius-button);
+		background: var(--gradient-button);
+		box-shadow: var(--glow-energy);
+		color: var(--color-on-energy);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.order :global(.action:hover) {
+		filter: brightness(1.08);
+	}
+
+	.small {
+		font-size: 0.9rem;
+		color: var(--color-muted);
+	}
+
+	.small a {
+		color: var(--color-accent);
+	}
+</style>

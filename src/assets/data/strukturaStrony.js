@@ -1,6 +1,9 @@
-// sklep chwilowo ukryty. Żeby go przywrócić: ustaw true, zmień nazwę folderu
-// src/pages/_sklep-online na sklep-online i usuń przekierowania w astro.config.mjs
-export const SHOP_PUBLISHED = false;
+// Sklep (lista produktów, podstrony, pozycja w menu) widać tylko, gdy w Netlify
+// ustawiona jest zmienna PUBLIC_SHOP_PUBLISHED=true. Można ją włączyć tylko dla
+// podglądów (Deploy Previews), żeby testować sklep, zanim pokaże się klientom.
+// Koszyk (/koszyk) i strona zamówienia działają zawsze — np. dla subskrypcji
+// diety kupowanej z przycisku na stronie Dieta.
+export const SHOP_PUBLISHED = import.meta.env.PUBLIC_SHOP_PUBLISHED === 'true';
 
 export const list = [
   {

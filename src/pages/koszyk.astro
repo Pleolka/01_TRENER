@@ -1,0 +1,440 @@
+---
+// Koszyk. Lista produktów jest w przeglądarce (src/scripts/cart.ts), a nazwy,
+// ceny i rodzaje — w danych zbudowanych z DatoCMS poniżej. Przycisk płatności
+// wysyła tylko slugi do /api/checkout; cenę liczy serwer.
+// /koszyk?subskrypcja=<slug> — zakup subskrypcji (osobno od koszyka).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteChrome from '../components/SiteChrome.astro';
+import Section from '../components/ui/Section.astro';
+import Container from '../components/ui/Container.astro';
+import SectionBadge from '../components/ui/SectionBadge.astro';
+import Button from '../components/ui/Button.astro';
+import { getOffers } from '../lib/datocms';
+import { displayPrice, isPurchasable, productTypeOf } from '../lib/shop-core';
+import { SHOP_PUBLISHED } from '../assets/data/strukturaStrony';
+
+const offers = await getOffers();
+const catalog = Object.fromEntries(
+	offers
+		.filter((o) => o.slug && isPurchasable(o))
+		.map((o) => [
+			o.slug,
+			{
+				title: o.title,
+				type: productTypeOf(o.productType),
+				price: displayPrice(o),
+				amount: o.priceAmount ?? 0,
+				image: o.image ? `${o.image.url}?w=160&h=160&fit=crop&auto=format&q=70` : null,
+				url: SHOP_PUBLISHED ? `/sklep-online/${o.slug}` : null,
+			},
+		]),
+);
+const shopUrl = SHOP_PUBLISHED ? '/sklep-online' : '/';
+---
+
+<BaseLayout title="Koszyk" description="Twój koszyk w sklepie Natalii Figas." noindex>
+	<SiteChrome>
+		<Section>
+			<Container>
+				<div class="cart stack" data-cart data-shop-url={shopUrl}>
+					<div class="head stack">
+						<SectionBadge text="Sklep" />
+						<h1 data-cart-heading>Koszyk</h1>
+					</div>
+
+					<p class="notice" data-cart-notice hidden></p>
+
+					<div class="empty stack" data-cart-empty hidden>
+						<p>Koszyk jest pusty.</p>
+						<Button href={shopUrl} variant="outline">Wróć do sklepu</Button>
+					</div>
+
+					<ul class="items" data-cart-list></ul>
+
+					<template id="cart-item">
+						<li class="item">
+							<img class="thumb" alt="" width="80" height="80" loading="lazy" />
+							<div class="item-text">
+								<a class="item-title"></a>
+								<span class="item-type"></span>
+							</div>
+							<span class="item-price"></span>
+							<button type="button" class="remove" aria-label="Usuń z koszyka">×</button>
+						</li>
+					</template>
+
+					<form class="summary stack" data-cart-summary hidden novalidate>
+						<p class="total">
+							<span data-total-label>Razem</span>
+							<strong data-cart-total></strong>
+						</p>
+						<p class="renewal" data-renewal hidden>
+							Subskrypcja odnawia się automatycznie co okres rozliczeniowy. Zrezygnujesz w każdej chwili — link do
+							zarządzania subskrypcją dostaniesz w e-mailu.
+						</p>
+
+						<label class="check">
+							<input type="checkbox" name="acceptTerms" required />
+							<span>
+								Akceptuję <a href="/regulamin" target="_blank">Regulamin</a> i <a href="/polityka-prywatnosci" target="_blank">Politykę prywatności</a>.{' '}
+								<span class="req">(wymagane)</span>
+							</span>
+						</label>
+
+						<label class="check">
+							<input type="checkbox" name="immediate" />
+							<span>
+								<span data-immediate-text></span>
+								<small class="hint" data-immediate-hint hidden>
+									Bez tej zgody pliki będą dostępne do pobrania po 14 dniach od zakupu.
+								</small>
+							</span>
+						</label>
+
+						<p class="error" role="alert" data-cart-error hidden></p>
+
+						<div class="pay">
+							<Button data-checkout>Przejdź do płatności</Button>
+							<p class="methods">BLIK, Przelewy24 lub karta — płatność obsługuje Stripe.</p>
+						</div>
+					</form>
+				</div>
+			</Container>
+		</Section>
+	</SiteChrome>
+</BaseLayout>
+
+<script is:inline type="application/json" id="shop-catalog" set:html={JSON.stringify(catalog)} />
+
+<script>
+	import { readCart, removeFromCart, setCart } from '../scripts/cart';
+
+	type Item = { title: string; type: 'plik' | 'subskrypcja' | 'usluga'; price: string; amount: number; image: string | null; url: string | null };
+
+	const catalog = JSON.parse(document.getElementById('shop-catalog')?.textContent || '{}') as Record<string, Item>;
+	const root = document.querySelector<HTMLElement>('[data-cart]')!;
+	const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+	const list = $<HTMLUListElement>('[data-cart-list]');
+	const form = $<HTMLFormElement>('[data-cart-summary]');
+	const errorBox = $('[data-cart-error]');
+	const payButton = $<HTMLButtonElement>('[data-checkout]');
+
+	const TYPE_LABEL = { plik: 'Plik do pobrania', usluga: 'Usługa', subskrypcja: 'Subskrypcja' } as const;
+	const pln = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
+
+	const subscription = new URLSearchParams(location.search).get('subskrypcja');
+	const subscriptionMode = Boolean(subscription && catalog[subscription]?.type === 'subskrypcja');
+
+	function showNotice(text: string) {
+		const notice = $('[data-cart-notice]');
+		notice.textContent = text;
+		notice.hidden = false;
+	}
+
+	/* slugi do zapłaty: subskrypcja z adresu albo koszyk (bez produktów,
+	   których nie da się już kupić, i bez subskrypcji — te kupuje się osobno) */
+	function currentSlugs(): string[] {
+		if (subscriptionMode) return [subscription!];
+		const cart = readCart();
+		const valid = cart.filter((slug) => catalog[slug] && catalog[slug].type !== 'subskrypcja');
+		if (valid.length !== cart.length) {
+			setCart(valid);
+			showNotice('Część produktów nie jest już dostępna i została usunięta z koszyka.');
+		}
+		return valid;
+	}
+
+	function render() {
+		const slugs = currentSlugs();
+		const items = slugs.map((slug) => ({ slug, ...catalog[slug] }));
+		const template = document.querySelector<HTMLTemplateElement>('#cart-item')!;
+
+		list.replaceChildren(
+			...items.map((item) => {
+				const li = template.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+				const img = li.querySelector('img')!;
+				if (item.image) img.src = item.image;
+				else img.remove();
+				const title = li.querySelector<HTMLAnchorElement>('.item-title')!;
+				title.textContent = item.title;
+				if (item.url) title.href = item.url;
+				li.querySelector('.item-type')!.textContent = TYPE_LABEL[item.type];
+				li.querySelector('.item-price')!.textContent = item.price;
+				const remove = li.querySelector<HTMLButtonElement>('.remove')!;
+				if (subscriptionMode) remove.remove();
+				else remove.addEventListener('click', () => removeFromCart(item.slug));
+				return li;
+			}),
+		);
+
+		$('[data-cart-empty]').hidden = items.length > 0;
+		form.hidden = items.length === 0;
+		if (!items.length) return;
+
+		const hasFile = items.some((i) => i.type === 'plik');
+		const hasService = items.some((i) => i.type !== 'plik');
+		$('[data-cart-heading]').textContent = subscriptionMode ? 'Subskrypcja' : 'Koszyk';
+		$('[data-total-label]').textContent = subscriptionMode ? 'Płatność cykliczna' : 'Razem';
+		$('[data-cart-total]').textContent = subscriptionMode
+			? items[0].price
+			: pln.format(items.reduce((sum, i) => sum + i.amount, 0));
+		$('[data-renewal]').hidden = !subscriptionMode;
+		$('[data-immediate-hint]').hidden = !hasFile;
+		$('[data-immediate-text]').textContent =
+			hasFile && hasService
+				? 'Proszę o dostarczenie treści cyfrowych i rozpoczęcie usługi przed upływem 14 dni od zawarcia umowy. Wiem, że tracę wtedy prawo do odstąpienia od umowy (przy usłudze — po jej pełnym wykonaniu).'
+				: hasFile
+					? 'Proszę o dostarczenie treści cyfrowych od razu po płatności, przed upływem 14 dni od zawarcia umowy. Wiem, że tracę wtedy prawo do odstąpienia od umowy.'
+					: 'Proszę o rozpoczęcie usługi przed upływem 14 dni od zawarcia umowy. Wiem, że po jej pełnym wykonaniu tracę prawo do odstąpienia od umowy.';
+
+		if (subscriptionMode && readCart().length) {
+			showNotice('Subskrypcję opłacasz osobno. Produkty z koszyka zostają w nim — kupisz je w kolejnym kroku.');
+		}
+	}
+
+	async function pay() {
+		errorBox.hidden = true;
+		const terms = form.elements.namedItem('acceptTerms') as HTMLInputElement;
+		if (!terms.checked) {
+			errorBox.textContent = 'Zaznacz akceptację regulaminu i polityki prywatności.';
+			errorBox.hidden = false;
+			terms.focus();
+			return;
+		}
+		const immediate = (form.elements.namedItem('immediate') as HTMLInputElement).checked;
+		const slugs = currentSlugs();
+		const body = subscriptionMode
+			? { subscription: slugs[0], acceptTerms: true, immediate }
+			: { items: slugs, acceptTerms: true, immediate };
+
+		const label = payButton.textContent;
+		payButton.disabled = true;
+		payButton.textContent = 'Przekierowuję do płatności…';
+		try {
+			const res = await fetch('/api/checkout', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(body),
+			});
+			const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
+			if (data.url) {
+				location.assign(data.url);
+				return;
+			}
+			throw new Error(data.error || 'Nie udało się rozpocząć płatności.');
+		} catch (error) {
+			errorBox.textContent = error instanceof Error ? error.message : String(error);
+			errorBox.hidden = false;
+			payButton.disabled = false;
+			payButton.textContent = label;
+		}
+	}
+
+	payButton.addEventListener('click', pay);
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		pay();
+	});
+	window.addEventListener('cart:change', render);
+	render();
+</script>
+
+<style>
+	/* .stack ustawia display — bez tego atrybut hidden nie chowałby bloków */
+	.cart [hidden] {
+		display: none !important;
+	}
+
+	.cart {
+		max-width: 52rem;
+		margin-inline: auto;
+	}
+
+	.head {
+		align-items: flex-start;
+	}
+
+	.notice {
+		padding: 0.9rem 1.1rem;
+		border-left: 3px solid var(--color-energy);
+		background: var(--color-surface);
+		color: var(--color-font);
+	}
+
+	.empty {
+		align-items: flex-start;
+		color: var(--color-muted);
+	}
+
+	.items {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.items:empty {
+		display: none;
+	}
+
+	.item {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto auto;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 0;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.thumb {
+		width: 4rem;
+		height: 4rem;
+		object-fit: cover;
+		border-radius: var(--radius-button);
+	}
+
+	.item-text {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.item-title {
+		color: var(--color-white);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	a.item-title[href]:hover {
+		color: var(--color-energy);
+	}
+
+	.item-type {
+		font-size: 0.85rem;
+		color: var(--color-muted);
+	}
+
+	.item-price {
+		font-weight: 700;
+		color: var(--color-energy);
+		white-space: nowrap;
+	}
+
+	.remove {
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+		background: transparent;
+		color: var(--color-muted);
+		font-size: 1.4rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	.remove:hover {
+		border-color: var(--color-energy);
+		color: var(--color-energy);
+	}
+
+	.summary {
+		padding: 1.75rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-top: 2px solid var(--color-energy);
+		border-radius: var(--radius-button);
+	}
+
+	.total {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		font-size: 1.15rem;
+	}
+
+	.total strong {
+		font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+		color: var(--color-energy);
+		white-space: nowrap;
+	}
+
+	.renewal,
+	.hint,
+	.methods {
+		font-size: 0.9rem;
+		color: var(--color-muted);
+	}
+
+	.check {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.75rem;
+		align-items: start;
+		font-size: 0.95rem;
+		line-height: 1.5;
+		cursor: pointer;
+	}
+
+	.check input {
+		width: 1.25rem;
+		height: 1.25rem;
+		margin-top: 0.15rem;
+		accent-color: var(--color-energy);
+	}
+
+	.check a {
+		color: var(--color-accent);
+	}
+
+	.req {
+		color: var(--color-muted);
+		font-size: 0.85rem;
+	}
+
+	.hint {
+		display: block;
+		margin-top: 0.4rem;
+	}
+
+	.error {
+		padding: 0.75rem 1rem;
+		border-radius: var(--radius-button);
+		background: rgba(255, 99, 99, 0.12);
+		color: #ffb4b4;
+	}
+
+	.pay {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+	}
+
+	.pay :global(.btn[disabled]) {
+		opacity: 0.6;
+		cursor: wait;
+	}
+
+	@media (max-width: 575px) {
+		.item {
+			grid-template-columns: auto minmax(0, 1fr) auto;
+		}
+
+		.item-price {
+			grid-column: 2;
+		}
+
+		.remove {
+			grid-column: 3;
+			grid-row: 1;
+		}
+
+		.methods {
+			text-align: center;
+			width: 100%;
+		}
+	}
+</style>

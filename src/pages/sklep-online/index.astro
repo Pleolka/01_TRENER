@@ -4,6 +4,10 @@ import Sklep from '../../components/Sklep.astro';
 import { getShopPage, getOffers } from '../../lib/datocms';
 import { heroBackground } from '../../lib/heroBackground';
 import bgImage from '../../images/bg-ciezary-6.jpg';
+import { SHOP_PUBLISHED } from '../../assets/data/strukturaStrony';
+
+// sklep ukryty — adres prowadzi na stronę główną
+if (!SHOP_PUBLISHED) return Astro.redirect('/');
 
 // wstęp z modelu pojedynczego „Sklep — wstęp” (shop_page), produkty z modelu Offer
 const [page, offers] = await Promise.all([getShopPage(), getOffers()]);

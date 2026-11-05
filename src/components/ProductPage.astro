@@ -6,7 +6,9 @@ import SiteChrome from './SiteChrome.astro';
 import Section from './ui/Section.astro';
 import Container from './ui/Container.astro';
 import Button from './ui/Button.astro';
-import { buyHref, type CmsOffer } from '../lib/datocms';
+import BuyButton from './BuyButton.astro';
+import type { CmsOffer } from '../lib/datocms';
+import { displayPrice } from '../lib/shop-core';
 import type { HeroImage } from '../lib/heroBackground';
 
 interface Props {
@@ -42,10 +44,10 @@ const tabs = (offer.tabs ?? []).filter((t) => t.content);
 				<div class="info stack">
 					{offer.badge && <p class="eyebrow">{offer.badge}</p>}
 					<h1>{offer.title}</h1>
-					{offer.price && <p class="price">{offer.price}</p>}
+					{displayPrice(offer) && <p class="price">{displayPrice(offer)}</p>}
 					{offer.description && <p class="description">{offer.description}</p>}
 					<div class="actions stack-gap">
-						<Button href={buyHref(offer)}>Dodaj do koszyka</Button>
+						<BuyButton offer={offer} />
 						<Button href="/sklep-online" variant="outline">Wróć do sklepu</Button>
 					</div>
 				</div>

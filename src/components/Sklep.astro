@@ -6,7 +6,8 @@ import SectionBadge from './ui/SectionBadge.astro';
 import type { CmsOffer } from '../lib/datocms';
 import { accent } from '../lib/accent';
 import Button from './ui/Button.astro';
-import { buyHref } from '../lib/datocms';
+import BuyButton from './BuyButton.astro';
+import { displayPrice } from '../lib/shop-core';
 
 interface Props {
 	heroBg?: import('../lib/heroBackground').HeroImage;
@@ -29,7 +30,7 @@ const {
 } = Astro.props;
 
 // Produkty to oferty z ceną — oferty bez ceny (stare podstrony) nie są pokazywane.
-const products = offers.filter((offer) => offer.price);
+const products = offers.filter((offer) => displayPrice(offer));
 
 // filtry z kategorii produktów w DatoCMS (pole „Kategoria”), tylko te, które
 // mają produkty; znane klucze dostają ładną nazwę, nowe — swoją nazwę z CMS-u
@@ -98,9 +99,9 @@ const categories =
 							{offer.badge && <span class="card-badge">{offer.badge}</span>}
 							<h3>{offer.title}</h3>
 							<p>{offer.description}</p>
-							<span class="price">{offer.price}</span>
+							<span class="price">{displayPrice(offer)}</span>
 							<div class="card-actions">
-								<Button href={buyHref(offer)}>Dodaj do koszyka</Button>
+								<BuyButton offer={offer} />
 								{offer.slug && (
 									<Button href={`/sklep-online/${offer.slug}`} variant="outline">
 										Więcej

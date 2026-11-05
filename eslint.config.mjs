@@ -24,4 +24,12 @@ export default tseslint.config(
       globals: globals.browser,
     },
   },
+
+  // konfiguracja, skrypty i funkcje Netlify działają w Node
+  {
+    files: ['*.{js,mjs}', 'scripts/**', 'netlify/**'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 );

@@ -1,0 +1,30 @@
+---
+// Główny przycisk produktu w sklepie:
+// - produkt z „Linkiem zakupu” w CMS-ie → link zewnętrzny,
+// - plik / usługa gotowe do sprzedaży → „Do koszyka”,
+// - subskrypcja → koszyk w trybie subskrypcji (osobna, cykliczna płatność),
+// - brak ceny / pliku → formularz kontaktowy.
+import Button from './ui/Button.astro';
+import type { CmsOffer } from '../lib/datocms';
+import { isPurchasable, productTypeOf } from '../lib/shop-core';
+
+interface Props {
+	offer: CmsOffer;
+}
+
+const { offer } = Astro.props;
+const type = productTypeOf(offer.productType);
+const purchasable = Boolean(offer.slug) && isPurchasable(offer);
+---
+
+{
+	offer.buyUrl ? (
+		<Button href={offer.buyUrl}>Kup teraz</Button>
+	) : purchasable && type === 'subskrypcja' ? (
+		<Button href={`/koszyk?subskrypcja=${offer.slug}`}>Subskrybuj</Button>
+	) : purchasable ? (
+		<Button data-add-to-cart={offer.slug!}>Do koszyka</Button>
+	) : (
+		<Button href="/kontakt">Zapytaj o produkt</Button>
+	)
+}

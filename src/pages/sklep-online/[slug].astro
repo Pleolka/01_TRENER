@@ -5,13 +5,16 @@ import { getOffers, getOffer } from '../../lib/datocms';
 import { product } from '../../lib/structuredData';
 import { heroBackground } from '../../lib/heroBackground';
 import bgImage from '../../images/bg-ciezary-6.jpg';
+import { SHOP_PUBLISHED } from '../../assets/data/strukturaStrony';
 
 // Każdy produkt sklepu z ceną i adresem (slug) w DatoCMS dostaje własną
 // podstronę /sklep-online/<slug>. Nowy produkt pojawi się po kolejnym buildzie.
 export async function getStaticPaths() {
+	// sklep ukryty — bez podstron produktów
+	if (!SHOP_PUBLISHED) return [];
 	const offers = await getOffers();
 	return offers
-		.filter((o): o is typeof o & { slug: string } => Boolean(o.price && o.slug))
+		.filter((o): o is typeof o & { slug: string } => Boolean((o.price || o.priceAmount) && o.slug))
 		.map((o) => ({ params: { slug: o.slug } }));
 }
 

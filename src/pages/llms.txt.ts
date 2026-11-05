@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCooperationPage, getDietPage, getOffers, getBlogPosts, getSiteConfig } from '../lib/datocms';
 import { SHOP_PUBLISHED } from '../assets/data/strukturaStrony';
+import { displayPrice } from '../lib/shop-core';
 
 // llms.txt (llmstxt.org) — krótkie podsumowanie strony w Markdownie dla
 // asystentów AI: kim jest Natalia Figas, co oferuje, za ile, gdzie szukać
@@ -14,7 +15,7 @@ export const GET: APIRoute = async ({ site }) => {
 		getSiteConfig(),
 	]);
 	const url = (path: string) => new URL(path, site).toString();
-	const products = offers.filter((o) => o.price && o.slug);
+	const products = offers.filter((o) => displayPrice(o) && o.slug);
 
 	const lines = [
 		'# Natalia Figas — trenerka personalna',
@@ -33,7 +34,7 @@ export const GET: APIRoute = async ({ site }) => {
 
 	if (products.length) {
 		lines.push('## Sklep — plany treningowe, diety i e-booki', '');
-		for (const p of products) lines.push(`- [${p.title}](${url(`/sklep-online/${p.slug}`)}): ${p.description} Cena: ${p.price}.`);
+		for (const p of products) lines.push(`- [${p.title}](${url(`/sklep-online/${p.slug}`)}): ${p.description} Cena: ${displayPrice(p)}.`);
 		lines.push('');
 	}
 

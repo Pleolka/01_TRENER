@@ -1,9 +1,10 @@
 import { executeQuery } from '@datocms/cda-client';
 import { homeContentDefaults } from './homeContentDefaults.mjs';
 
-const OFFERS_QUERY = `
-  query Offers {
-    allOffers {
+// pola sklepu (rodzaj, cena liczbowa, okres subskrypcji, czy jest plik) —
+// dodaje je skrypt scripts/datocms-sklep.mjs. Dopóki nie zostaną dodane
+// w DatoCMS, zapytania wracają do wersji bez nich (OFFER_FIELDS_LEGACY).
+const OFFER_FIELDS_LEGACY = `
       title
       description
       badge
@@ -16,21 +17,24 @@ const OFFERS_QUERY = `
         alt
         width
         height
-      }
+      }`;
+
+const OFFER_SHOP_FIELDS = `
+      productType
+      priceAmount
+      billingMonths
+      file { id }`;
+
+const offersQuery = (shop: boolean) => `
+  query Offers {
+    allOffers(first: 100) {${OFFER_FIELDS_LEGACY}${shop ? OFFER_SHOP_FIELDS : ''}
     }
   }
 `;
 
-const OFFER_BY_SLUG_QUERY = `
+const offerBySlugQuery = (shop: boolean) => `
   query OfferBySlug($slug: String!) {
-    offer(filter: { slug: { eq: $slug } }) {
-      title
-      description
-      badge
-      price
-      category
-      slug
-      buyUrl
+    offer(filter: { slug: { eq: $slug } }) {${OFFER_FIELDS_LEGACY}${shop ? OFFER_SHOP_FIELDS : ''}
       content
       tabs {
         ... on ProductTabRecord {
@@ -38,12 +42,6 @@ const OFFER_BY_SLUG_QUERY = `
           title
           content
         }
-      }
-      image {
-        url
-        alt
-        width
-        height
       }
     }
   }
@@ -69,6 +67,11 @@ export interface CmsOffer {
   slug: string | null;
   buyUrl: string | null;
   image: { url: string; alt: string | null; width: number; height: number } | null;
+  /* pola sklepu (puste, dopóki nie dodano ich w DatoCMS) */
+  productType?: string | null;
+  priceAmount?: number | null;
+  billingMonths?: number | null;
+  file?: { id: string } | null;
   /* pełny opis i zakładki — tylko na podstronie produktu */
   content?: string | null;
   tabs?: { id: string; title: string; content: string | null }[];
@@ -83,11 +86,23 @@ interface OffersResponse {
 // empty value instead of failing the whole site build — callers fall back to
 // their own hardcoded copy.
 
+// najpierw z polami sklepu; gdy DatoCMS ich jeszcze nie zna — bez nich
+async function queryWithShopFallback<T, V = Record<string, unknown>>(
+  build: (shop: boolean) => string,
+  variables?: V,
+): Promise<T> {
+  const token = import.meta.env.DATOCMS_API_TOKEN;
+  try {
+    return await executeQuery<T, V>(build(true), { token, variables });
+  } catch {
+    console.warn('[datocms] Brak pól sklepu w modelu Offer — uruchom scripts/datocms-sklep.mjs. Pobieram bez nich.');
+    return executeQuery<T, V>(build(false), { token, variables });
+  }
+}
+
 export async function getOffers(): Promise<CmsOffer[]> {
   try {
-    const data = await executeQuery<OffersResponse>(OFFERS_QUERY, {
-      token: import.meta.env.DATOCMS_API_TOKEN,
-    });
+    const data = await queryWithShopFallback<OffersResponse>(offersQuery);
     return data.allOffers;
   } catch (error) {
     console.warn('[datocms] Nie udało się pobrać ofert:', error);
@@ -97,20 +112,13 @@ export async function getOffers(): Promise<CmsOffer[]> {
 
 export async function getOffer(slug: string): Promise<CmsOffer | null> {
   try {
-    const data = await executeQuery<{ offer: CmsOffer | null }, { slug: string }>(OFFER_BY_SLUG_QUERY, {
-      token: import.meta.env.DATOCMS_API_TOKEN,
-      variables: { slug },
-    });
+    const data = await queryWithShopFallback<{ offer: CmsOffer | null }, { slug: string }>(offerBySlugQuery, { slug });
     return data.offer;
   } catch (error) {
     console.warn(`[datocms] Nie udało się pobrać produktu "${slug}":`, error);
     return null;
   }
 }
-
-// adres przycisku „Dodaj do koszyka”: link zakupu z CMS-u, a bez niego —
-// formularz kontaktowy (strona nie ma jeszcze własnego koszyka)
-export const buyHref = (offer: Pick<CmsOffer, 'buyUrl'>) => offer.buyUrl || '/kontakt';
 
 const HOME_CONTENT_QUERY = `
   query HomeContent {
