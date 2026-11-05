@@ -14,6 +14,7 @@ const hero = await heroBackground(bgImage, 'center');
 
 import type { HomeContent, CmsImage } from '../lib/datocms';
 import { accent } from '../lib/accent';
+import { iconFor } from '../lib/icons';
 
 interface Props {
 	content: HomeContent;
@@ -35,14 +36,6 @@ const coachingStats = lines(content.coachingStats).map((l) => {
 	const [value, suffix, label] = l.split('|').map((p) => p.trim());
 	return { value, suffix, label };
 });
-// ikony filarów (linie SVG, kolor energy) — w kolejności pozycji z CMS-u;
-// pozycje dodane ponad cztery dostają ostatnią ikonę
-const PILLAR_ICONS = [
-	'M6 7v10|M18 7v10|M3 10v4|M21 10v4|M6 12h12', // hantla — trening, dieta, mentoring
-	'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z|M7 12h2.5l1.5-2.5 2 5 1.5-2.5H17', // serce z tętnem — ścieżka zdrowia
-	'M3 20l6.5-11 4 6.5 2.5-4L21 20z', // góry — społeczność, wyjścia w góry
-	'M9 18h6|M10 21h4|M12 3a6 6 0 0 0-3.6 10.8c.6.5 1.1 1.3 1.1 2.2h5c0-.9.5-1.7 1.1-2.2A6 6 0 0 0 12 3z', // żarówka — wsparcie mentalne
-];
 // ikony punktów sekcji Canela — w kolejności pozycji z CMS-u
 const DIET_ICONS = [
 	'M4 19.5A2.5 2.5 0 0 1 6.5 17H20|M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z|M9 7h7|M9 11h5', // książka z przepisami
@@ -51,8 +44,6 @@ const DIET_ICONS = [
 	'M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0-18 0|M12 7v5l3 2', // zegar
 ];
 const dietIcon = (i: number) => DIET_ICONS[Math.min(i, DIET_ICONS.length - 1)].split('|');
-
-const pillarIcon = (i: number) => PILLAR_ICONS[Math.min(i, PILLAR_ICONS.length - 1)].split('|');
 
 const pillars = lines(content.pillars).map((l) => {
 	const [title, description] = parts(l);
@@ -70,7 +61,6 @@ const pillars = lines(content.pillars).map((l) => {
 					<p class="subtitle">{content.heroText}</p>
 					<div class="hero-actions stack-gap">
 						<Button href={content.heroPrimaryUrl}>{content.heroPrimaryButton}</Button>
-						<Button href={content.heroSecondaryUrl} variant="outline">{content.heroSecondaryButton}</Button>
 					</div>
 					<StatsTable items={heroStats} class="stack-gap" />
 				</div>
@@ -106,9 +96,7 @@ const pillars = lines(content.pillars).map((l) => {
 				{
 					pillars.map((pillar, i) => (
 						<div class="teaser">
-							<svg class="teaser-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-								{pillarIcon(i).map((d) => <path d={d} />)}
-							</svg>
+							<span class="teaser-icon" set:html={iconFor(pillar.title)} />
 							<h3>{pillar.title}</h3>
 							<p class="teaser-description">{pillar.description}</p>
 						</div>
@@ -143,7 +131,7 @@ const pillars = lines(content.pillars).map((l) => {
 			<div class="feature stack" id="products">
 				<SectionBadge text={content.dietBadge} />
 				<h2 set:html={accent(content.dietHeading)} />
-				<p>{content.dietText}</p>
+				{lines(content.dietText).map((p) => <p>{p}</p>)}
 				<ul class="icon-table stack-gap">
 					{
 						lines(content.dietList).map((item, i) => (
@@ -324,10 +312,18 @@ const pillars = lines(content.pillars).map((l) => {
 	}
 
 	.teaser-icon {
+		display: block;
 		width: 2.5rem;
 		height: 2.5rem;
 		margin-bottom: 0.5rem;
 		color: var(--color-energy);
+	}
+
+	.teaser-icon :global(svg) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		fill: currentColor;
 	}
 
 	.teaser h3 {

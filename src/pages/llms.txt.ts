@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCooperationPage, getDietPage, getOffers, getBlogPosts, getSiteConfig } from '../lib/datocms';
+import { SHOP_PUBLISHED } from '../assets/data/strukturaStrony';
 
 // llms.txt (llmstxt.org) — krótkie podsumowanie strony w Markdownie dla
 // asystentów AI: kim jest Natalia Figas, co oferuje, za ile, gdzie szukać
@@ -8,7 +9,7 @@ export const GET: APIRoute = async ({ site }) => {
 	const [coop, diet, offers, posts, config] = await Promise.all([
 		getCooperationPage(),
 		getDietPage(),
-		getOffers(),
+		SHOP_PUBLISHED ? getOffers() : [],
 		getBlogPosts(),
 		getSiteConfig(),
 	]);
@@ -20,15 +21,13 @@ export const GET: APIRoute = async ({ site }) => {
 		'',
 		'> Natalia Figas (Nati Figas) to trenerka personalna z ponad 25-letnim doświadczeniem w sporcie. Prowadzi kobiety — zwłaszcza przedsiębiorczynie — przez trening siłowy, dietę i budowanie zdrowych nawyków. Współpraca odbywa się online, w całej Polsce, w języku polskim.',
 		'',
-		'Specjalizacje: trening personalny online, trening siłowy kobiet, kształtowanie sylwetki i redukcja, dieta i żywienie, mobility, nawyki i mindset. Autorski program współpracy 1:1 „2halves” oraz aplikacja dietetyczna „Canela Diet”.',
+		'Specjalizacje: trening personalny online, trening siłowy kobiet, kształtowanie sylwetki i redukcja, dieta i żywienie, mobility, nawyki i mindset. Autorski program współpracy 1:1 „2halves” oraz aplikacja dietetyczna „NF DIET”.',
 		'',
 		'## Oferta',
 		'',
 		`- [Współpraca 1:1 — program 2halves](${url('/wspolpraca-11')}): 12-tygodniowy indywidualny program treningowy, plan dietetyczny w aplikacji, mobility, stały kontakt (raporty, chat), comiesięczne wyjścia w góry. Cena ustalana indywidualnie po wypełnieniu formularza.`,
-		`- [Dieta — Canela Diet](${url('/dieta')}): aplikacja z ponad 100 przepisami kuchni śródziemnomorskiej, listą zakupów i wymianą dań.${
-			diet?.plans?.length ? ' Pakiety: ' + diet.plans.map((p) => `${p.name} — ${p.price}`).join('; ') + '.' : ''
-		}`,
-		`- [O mnie](${url('/o-mnie')}): doświadczenie, misja i marki Soltura oraz Canela.`,
+		`- [Dieta — NF DIET](${url('/dieta')}): aplikacja z ponad 100 przepisami, listą gotowych produktów z dyskontów i dzienniczkiem żywienia.`,
+		`- [O mnie](${url('/o-mnie')}): doświadczenie i misja.`,
 		'',
 	];
 

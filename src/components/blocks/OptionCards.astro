@@ -1,7 +1,6 @@
 ---
-// Warianty z przyciskiem (np. długość subskrypcji).
+// Karty funkcjonalności: tytuł i opis.
 // Opcjonalne zdjęcie z CMS-u na górze karty — z łagodnym filtrem marki.
-import Button from '../ui/Button.astro';
 import type { CmsOptionItem } from '../../lib/datocms';
 
 interface Props {
@@ -31,13 +30,6 @@ const { options } = Astro.props;
 				)}
 				<h3>{option.title}</h3>
 				{option.description && <p>{option.description}</p>}
-				{option.buttonLabel && option.buttonUrl && (
-					<div class="action">
-						<Button href={option.buttonUrl} variant="outline">
-							{option.buttonLabel}
-						</Button>
-					</div>
-				)}
 			</article>
 		))
 	}
@@ -99,10 +91,5 @@ const { options } = Astro.props;
 
 	p {
 		color: var(--color-muted);
-	}
-
-	.action {
-		margin-top: auto;
-		padding-top: 1rem;
 	}
 </style>

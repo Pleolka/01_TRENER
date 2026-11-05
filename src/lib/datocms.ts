@@ -1,25 +1,6 @@
 import { executeQuery } from '@datocms/cda-client';
 import { homeContentDefaults } from './homeContentDefaults.mjs';
 
-// pola bloku „Sekcja ze zdjęciem” — wspólne dla każdego modelu z polem Sekcje
-const IMAGE_SECTIONS_FIELDS = `
-      sections {
-        ... on ImageSectionRecord {
-          id
-          badge
-          heading
-          text
-          buttonLabel
-          buttonUrl
-          image {
-            url
-            alt
-            width
-            height
-          }
-        }
-      }`;
-
 const OFFERS_QUERY = `
   query Offers {
     allOffers {
@@ -249,7 +230,13 @@ export async function getBlogPost(slug: string): Promise<CmsBlogPost | null> {
 const ABOUT_PAGE_QUERY = `
   query AboutPage {
     aboutPage {
-${IMAGE_SECTIONS_FIELDS}
+${[1, 2, 3].map((n) => `
+      section${n}Badge
+      section${n}Heading
+      section${n}Text
+      section${n}ButtonLabel
+      section${n}ButtonUrl
+      section${n}Image { url alt width height }`).join('')}
       seo {
         title
         description
@@ -274,10 +261,24 @@ export interface CmsAboutPage {
 
 export async function getAboutPage(): Promise<CmsAboutPage | null> {
   try {
-    const data = await executeQuery<{ aboutPage: CmsAboutPage | null }>(ABOUT_PAGE_QUERY, {
+    const data = await executeQuery<{ aboutPage: Record<string, any> | null }>(ABOUT_PAGE_QUERY, {
       token: import.meta.env.DATOCMS_API_TOKEN,
     });
-    return data.aboutPage;
+    const page = data.aboutPage;
+    if (!page) return null;
+    // w CMS-ie każda sekcja ma własny zestaw pól; sekcje bez nagłówka są pomijane
+    const sections: CmsImageSection[] = [1, 2, 3]
+      .map((n) => ({
+        id: `section${n}`,
+        badge: page[`section${n}Badge`],
+        heading: page[`section${n}Heading`],
+        text: page[`section${n}Text`],
+        buttonLabel: page[`section${n}ButtonLabel`],
+        buttonUrl: page[`section${n}ButtonUrl`],
+        image: page[`section${n}Image`],
+      }))
+      .filter((section) => section.heading);
+    return { sections, seo: page.seo };
   } catch (error) {
     console.warn('[datocms] Nie udało się pobrać strony O mnie:', error);
     return null;
@@ -302,11 +303,9 @@ const HERO_FIELDS = `
       heroHeading
       heroText
       heroPrimaryLabel
-      heroPrimaryUrl
-      heroSecondaryLabel
-      heroSecondaryUrl`;
+      heroPrimaryUrl`;
 
-const TESTIMONIALS_FAQ_CTA_FIELDS = `
+const TESTIMONIALS_FIELDS = `
       testimonialsHeading
       testimonialsLead
       testimonials {
@@ -320,7 +319,9 @@ const TESTIMONIALS_FAQ_CTA_FIELDS = `
         }
       }
       testimonialsButtonLabel
-      testimonialsButtonUrl
+      testimonialsButtonUrl`;
+
+const FAQ_CTA_FIELDS = `
       faqBadge
       faqHeading
       faq {
@@ -360,7 +361,8 @@ ${HERO_FIELDS}
       stepsBadge
       stepsHeading
       steps { ${FEATURE_ITEM} }
-${TESTIMONIALS_FAQ_CTA_FIELDS}
+${TESTIMONIALS_FIELDS}
+${FAQ_CTA_FIELDS}
 ${SEO_FIELDS}
     }
   }
@@ -377,23 +379,19 @@ ${HERO_FIELDS}
       plansSubheading
       plansLead
       plans {
-        ... on PlanRecord { id name description features price priceNote buttonLabel buttonUrl image { url alt width height } }
+        ... on PlanRecord { id name description features image { url alt width height } }
       }
-      audienceBadge
-      audienceHeading
-      audienceItems
-      audienceImage {
-        url
-        alt
-        width
-        height
+      dishesBadge
+      dishesHeading
+      dishes {
+        ... on DishRecord { id title description image { url alt width height } }
       }
       optionsHeading
       optionsLead
       options {
-        ... on OptionItemRecord { id title description buttonLabel buttonUrl image { url alt width height } }
+        ... on OptionItemRecord { id title description image { url alt width height } }
       }
-${TESTIMONIALS_FAQ_CTA_FIELDS}
+${FAQ_CTA_FIELDS}
 ${SEO_FIELDS}
     }
   }
@@ -449,28 +447,31 @@ export interface CmsTestimonial {
 export interface CmsFaqItem { id: string; question: string; answer: string }
 export interface CmsPlan {
   id: string; name: string; description: Text; features: Text;
-  price: Text; priceNote: Text; buttonLabel: Text; buttonUrl: Text;
   image?: CmsImage | null;
 }
 export interface CmsOptionItem {
-  id: string; title: string; description: Text; buttonLabel: Text; buttonUrl: Text;
+  id: string; title: string; description: Text;
   image?: CmsImage | null;
 }
+export interface CmsDish { id: string; title: string; description: Text; image: CmsImage }
 
 export interface CmsHero {
   heroBadge: Text; heroLabel: Text; heroHeading: string; heroText: Text;
-  heroPrimaryLabel: Text; heroPrimaryUrl: Text; heroSecondaryLabel: Text; heroSecondaryUrl: Text;
+  heroPrimaryLabel: Text; heroPrimaryUrl: Text;
 }
 
-export interface CmsTestimonialsFaqCta {
+export interface CmsTestimonials {
   testimonialsHeading: Text; testimonialsLead: Text; testimonials: CmsTestimonial[];
   testimonialsButtonLabel: Text; testimonialsButtonUrl: Text;
+}
+
+export interface CmsFaqCta {
   faqBadge: Text; faqHeading: Text; faq: CmsFaqItem[];
   ctaHeading: Text; ctaText: Text; ctaSubheading: Text; ctaSubtext: Text;
   ctaButtonLabel: Text; ctaButtonUrl: Text;
 }
 
-export interface CmsCooperationPage extends CmsHero, CmsTestimonialsFaqCta {
+export interface CmsCooperationPage extends CmsHero, CmsTestimonials, CmsFaqCta {
   scopeBadge: Text; scopeHeading: Text; scopeLead: Text; scopeItems: CmsFeatureItem[];
   resultsBadge: Text; resultsHeading: Text; resultsText: Text; resultsStats: CmsStatItem[];
   resultsButtonLabel: Text; resultsButtonUrl: Text; resultsImage: CmsImage | null;
@@ -478,10 +479,10 @@ export interface CmsCooperationPage extends CmsHero, CmsTestimonialsFaqCta {
   seo: CmsSeo | null;
 }
 
-export interface CmsDietPage extends CmsHero, CmsTestimonialsFaqCta {
+export interface CmsDietPage extends CmsHero, CmsFaqCta {
   benefitsHeading: Text; benefitsLead: Text; benefits: CmsFeatureItem[];
   plansHeading: Text; plansSubheading: Text; plansLead: Text; plans: CmsPlan[];
-  audienceBadge: Text; audienceHeading: Text; audienceItems: Text; audienceImage: CmsImage | null;
+  dishesBadge: Text; dishesHeading: Text; dishes: CmsDish[];
   optionsHeading: Text; optionsLead: Text; options: CmsOptionItem[];
   seo: CmsSeo | null;
 }

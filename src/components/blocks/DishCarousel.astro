@@ -1,0 +1,192 @@
+---
+// Karuzela przykładowych dań: przewijanie palcem na telefonie, strzałki na
+// komputerze. Strzałki znikają, gdy wszystkie dania mieszczą się na ekranie.
+import type { CmsDish } from '../../lib/datocms';
+
+interface Props {
+	dishes: CmsDish[];
+}
+
+const { dishes } = Astro.props;
+---
+
+<div class="carousel" role="group" aria-roledescription="karuzela" aria-label="Przykładowe dania">
+	<ul class="track" tabindex="0">
+		{
+			dishes.map((dish) => (
+				<li class="dish">
+					<span class="photo-wrap">
+						<img
+							class="photo"
+							src={`${dish.image.url}?w=640&h=480&fit=crop&auto=format&q=80`}
+							srcset={`${dish.image.url}?w=400&h=300&fit=crop&auto=format&q=80 400w, ${dish.image.url}?w=640&h=480&fit=crop&auto=format&q=80 640w, ${dish.image.url}?w=960&h=720&fit=crop&auto=format&q=80 960w`}
+							sizes="(max-width: 640px) 80vw, 24rem"
+							alt={dish.image.alt ?? ''}
+							width="640"
+							height="480"
+							loading="lazy"
+						/>
+					</span>
+					<h3>{dish.title}</h3>
+					{dish.description && <p>{dish.description}</p>}
+				</li>
+			))
+		}
+	</ul>
+	<div class="arrows" hidden>
+		<button type="button" class="arrow" data-dir="-1" aria-label="Poprzednie dania">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+		</button>
+		<button type="button" class="arrow" data-dir="1" aria-label="Następne dania">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+		</button>
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.carousel').forEach((carousel) => {
+		const track = carousel.querySelector<HTMLElement>('.track');
+		const arrows = carousel.querySelector<HTMLElement>('.arrows');
+		const buttons = carousel.querySelectorAll<HTMLButtonElement>('.arrow');
+		if (!track || !arrows) return;
+
+		const update = () => {
+			const max = track.scrollWidth - track.clientWidth;
+			arrows.hidden = max <= 1;
+			buttons.forEach((button) => {
+				button.disabled = button.dataset.dir === '-1' ? track.scrollLeft <= 1 : track.scrollLeft >= max - 1;
+			});
+		};
+
+		buttons.forEach((button) => {
+			button.addEventListener('click', () => {
+				const card = track.querySelector<HTMLElement>('.dish');
+				const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+				const step = (card?.offsetWidth ?? track.clientWidth) + gap;
+				track.scrollBy({ left: step * Number(button.dataset.dir), behavior: 'smooth' });
+			});
+		});
+
+		track.addEventListener('scroll', update, { passive: true });
+		new ResizeObserver(update).observe(track);
+		update();
+	});
+</script>
+
+<style>
+	.track {
+		display: flex;
+		gap: 1.5rem;
+		margin: 0;
+		padding: 0 0 0.5rem;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		list-style: none;
+	}
+
+	.track::-webkit-scrollbar {
+		display: none;
+	}
+
+	.track:focus-visible {
+		outline: 2px solid var(--color-energy);
+		outline-offset: 4px;
+	}
+
+	/* trzy karty obok siebie, na telefonie jedna z widocznym brzegiem kolejnej */
+	.dish {
+		display: flex;
+		flex: 0 0 calc((100% - 3rem) / 3);
+		flex-direction: column;
+		gap: 0.75rem;
+		min-width: min(17rem, 80%);
+		padding: 2rem;
+		overflow: hidden;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-top: 2px solid var(--color-energy);
+		border-radius: var(--radius-button);
+		scroll-snap-align: start;
+	}
+
+	/* zdjęcie od krawędzi do krawędzi, łagodny filtr marki — jak w pozostałych kartach */
+	.photo-wrap {
+		position: relative;
+		display: block;
+		margin: -2rem -2rem 0.5rem;
+		isolation: isolate;
+	}
+
+	.photo-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--tint-photo);
+		mix-blend-mode: color;
+		opacity: var(--tint-photo-soft-opacity);
+		pointer-events: none;
+	}
+
+	.photo {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
+		filter: var(--filter-photo-soft);
+	}
+
+	h3 {
+		font-size: 1.4rem;
+	}
+
+	p {
+		color: var(--color-muted);
+	}
+
+	.arrows {
+		display: flex;
+		justify-content: center;
+		gap: 0.75rem;
+		margin-top: 1.5rem;
+	}
+
+	.arrows[hidden] {
+		display: none;
+	}
+
+	.arrow {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		padding: 0;
+		color: var(--btn-outline-color);
+		background: transparent;
+		border: var(--btn-outline-width) solid var(--btn-outline-color);
+		border-radius: var(--radius-button);
+		cursor: pointer;
+		transition:
+			background 0.2s ease,
+			color 0.2s ease,
+			opacity 0.2s ease;
+	}
+
+	.arrow:hover:not(:disabled) {
+		color: var(--color-on-energy);
+		background: var(--btn-outline-color);
+	}
+
+	.arrow:disabled {
+		opacity: 0.35;
+		cursor: default;
+	}
+
+	.arrow svg {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+</style>

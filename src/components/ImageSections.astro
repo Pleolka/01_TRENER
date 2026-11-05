@@ -1,5 +1,5 @@
 ---
-// Sekcje „tekst + zdjęcie” z pola Sekcje w DatoCMS (blok image_section).
+// Sekcje „tekst + zdjęcie” z podstrony O mnie w DatoCMS.
 // Kolejność: etykieta, nagłówek, tekst, przycisk, zdjęcie.
 // Zdjęcie na przemian: 1. sekcja z prawej, 2. z lewej, 3. z prawej…
 // Co druga sekcja ma jednolite tło (--color-section-alt).
@@ -97,6 +97,41 @@ const { sections } = Astro.props;
 
 	.body :global(p:last-child) {
 		margin-bottom: 0;
+	}
+
+	/* listy z edytora: ten sam rozmiar co akapity, znaczek ✓ w kolorze energy */
+	.body :global(ul) {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		max-width: var(--measure);
+		margin: 0 0 1rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.body :global(ul:last-child) {
+		margin-bottom: 0;
+	}
+
+	.body :global(li) {
+		position: relative;
+		padding-left: 1.75rem;
+		font-size: var(--font-size-p);
+		line-height: var(--line-h-p);
+		color: var(--color-font);
+	}
+
+	.body :global(li::before) {
+		content: '';
+		position: absolute;
+		left: 0.25rem;
+		top: 0.3em;
+		width: 0.4rem;
+		height: 0.75rem;
+		border-right: 2px solid var(--color-energy);
+		border-bottom: 2px solid var(--color-energy);
+		transform: rotate(45deg);
 	}
 
 	.body :global(a) {

@@ -2,10 +2,10 @@
 // Zakończenie podstrony: hasło, tekst, podtytuł, przycisk — w wyróżnionej ramce.
 import Button from '../ui/Button.astro';
 import { accent } from '../../lib/accent';
-import type { CmsTestimonialsFaqCta } from '../../lib/datocms';
+import type { CmsFaqCta } from '../../lib/datocms';
 
 interface Props {
-	cta: Pick<CmsTestimonialsFaqCta, 'ctaHeading' | 'ctaText' | 'ctaSubheading' | 'ctaSubtext' | 'ctaButtonLabel' | 'ctaButtonUrl'>;
+	cta: Pick<CmsFaqCta, 'ctaHeading' | 'ctaText' | 'ctaSubheading' | 'ctaSubtext' | 'ctaButtonLabel' | 'ctaButtonUrl'>;
 }
 
 const { cta } = Astro.props;

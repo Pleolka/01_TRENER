@@ -35,7 +35,7 @@ const hasHeader = badge || heading || subheading || lead;
 							{badge && <p class="eyebrow">{badge}</p>}
 							{heading && <h2 set:html={accent(heading)} />}
 							{subheading && <p class="subheading">{subheading}</p>}
-							{lead && <p class="lead">{lead}</p>}
+							{lead?.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => <p class="lead">{l}</p>)}
 						</header>
 					)
 				}

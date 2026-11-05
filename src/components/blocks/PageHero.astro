@@ -1,5 +1,5 @@
 ---
-// Hero podstrony: etykieta, nazwa programu, H1, tekst, dwa przyciski.
+// Hero podstrony: etykieta, nazwa programu, H1, tekst, przycisk.
 import Section from '../ui/Section.astro';
 import Container from '../ui/Container.astro';
 import Button from '../ui/Button.astro';
@@ -21,14 +21,9 @@ const { hero } = Astro.props;
 			<h1 set:html={accent(hero.heroHeading)} />
 			{hero.heroText && <div class="text" set:html={hero.heroText} />}
 			{
-				(hero.heroPrimaryLabel || hero.heroSecondaryLabel) && (
+				hero.heroPrimaryLabel && hero.heroPrimaryUrl && (
 					<div class="actions stack-gap">
-						{hero.heroPrimaryLabel && hero.heroPrimaryUrl && <Button href={hero.heroPrimaryUrl}>{hero.heroPrimaryLabel}</Button>}
-						{hero.heroSecondaryLabel && hero.heroSecondaryUrl && (
-							<Button href={hero.heroSecondaryUrl} variant="outline">
-								{hero.heroSecondaryLabel}
-							</Button>
-						)}
+						<Button href={hero.heroPrimaryUrl}>{hero.heroPrimaryLabel}</Button>
 					</div>
 				)
 			}

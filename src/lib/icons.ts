@@ -15,11 +15,12 @@ import calculator from '@phosphor-icons/core/assets/duotone/calculator-duotone.s
 import barcode from '@phosphor-icons/core/assets/duotone/barcode-duotone.svg?raw';
 import shoppingCart from '@phosphor-icons/core/assets/duotone/shopping-cart-duotone.svg?raw';
 import leaf from '@phosphor-icons/core/assets/duotone/leaf-duotone.svg?raw';
+import handshake from '@phosphor-icons/core/assets/duotone/handshake-duotone.svg?raw';
 
 // słowo w tytule (małe litery) → ikona; pierwsze dopasowanie wygrywa,
 // dlatego dokładniejsze reguły są wyżej (np. „aplikacja mobilna” przed „mobility”)
 const KEYWORDS: [RegExp, string][] = [
-  // Dieta — „Zobacz, co zyskujesz z Canela Diet”
+  // Dieta — „Zobacz, co zyskujesz”
   [/aplikac/, deviceMobile],
   [/przepis/, cookingPot],
   [/kalori|makro/, calculator],
@@ -32,6 +33,10 @@ const KEYWORDS: [RegExp, string][] = [
   [/mobil|ruch/, taiChi],
   [/kontakt|wsparci/, chats],
   [/gór|wyjści/, mountains],
+  // Strona główna — tabelka w sekcji „O mnie”
+  [/współprac/, handshake],
+  [/program/, barbell],
+  [/konsult/, chats],
 ];
 
 // zwraca kod SVG ikony (kolor z currentColor) — do wstawienia przez set:html

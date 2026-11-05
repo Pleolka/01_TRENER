@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteChrome from '../components/SiteChrome.astro';
+import Section from '../components/ui/Section.astro';
+import Container from '../components/ui/Container.astro';
+---
+
+<BaseLayout title="Wypisz się z newslettera" description="Wpisz swój adres e-mail, aby wypisać się z newslettera.">
+	<SiteChrome>
+		<Section>
+			<Container mt="0" mb="0">
+				<div class="unsubscribe stack">
+					<h1>Wypisz się z newslettera</h1>
+					<p>Wpisz adres, na który dostajesz newsletter.</p>
+					{/* przez Netlify Forms — powiadomienia ustawia się w panelu Netlify (Forms → newsletter-wypisz) */}
+					<form
+						class="stack-gap"
+						name="newsletter-wypisz"
+						method="POST"
+						data-netlify="true"
+						netlify-honeypot="bot-field"
+						action="/newsletter-wypisano"
+					>
+						<input type="hidden" name="form-name" value="newsletter-wypisz" />
+						<p class="honeypot">
+							<label>
+								Nie wypełniaj tego pola
+								<input name="bot-field" />
+							</label>
+						</p>
+						<label class="visually-hidden" for="unsubscribe-email">E-mail</label>
+						<input type="email" id="unsubscribe-email" name="email" autocomplete="email" placeholder="Twój adres e-mail" required />
+						<button type="submit">Wypisz mnie</button>
+					</form>
+				</div>
+			</Container>
+		</Section>
+	</SiteChrome>
+</BaseLayout>
+
+<style>
+	.unsubscribe {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	form {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.75rem;
+		width: 100%;
+	}
+
+	input[type='email'] {
+		flex: 1 1 16rem;
+		max-width: 24rem;
+		min-height: 44px;
+		padding: 0 1rem;
+		font: inherit;
+		font-size: 16px;
+		color: var(--color-white);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-button);
+	}
+
+	button {
+		min-height: 44px;
+		padding: 0 2rem;
+		font: inherit;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--btn-outline-color);
+		background: transparent;
+		border: var(--btn-outline-width) solid var(--btn-outline-color);
+		border-radius: var(--radius-button);
+		cursor: pointer;
+	}
+
+	.honeypot,
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+</style>

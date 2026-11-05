@@ -9,7 +9,8 @@ export default defineConfig({
   // dane strukturalne (JSON-LD), robots.txt i llms.txt
   site: 'https://nataliafigas.pl',
   integrations: [sitemap()],
-  redirects: { '/sklep': '/sklep-online' },
+  // sklep chwilowo ukryty (patrz src/assets/data/strukturaStrony.js)
+  redirects: { '/sklep': '/', '/sklep-online': '/' },
   // CSS wstawiany do HTML — bez osobnych plików blokujących pierwsze
   // wyświetlenie strony (Lighthouse: render-blocking resources)
   build: { inlineStylesheets: 'always' },

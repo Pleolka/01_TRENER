@@ -3,12 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteChrome from '../components/SiteChrome.astro';
 import ImageSections from '../components/ImageSections.astro';
 import { getAboutPage } from '../lib/datocms';
+import { SHOP_PUBLISHED } from '../assets/data/strukturaStrony';
 import { heroBackground } from '../lib/heroBackground';
 import bgImage from '../images/bg-ciezary-3.jpg';
 
 // treści z modelu pojedynczego „O mnie” (about_page) w DatoCMS
 const page = await getAboutPage();
 const hero = await heroBackground(bgImage);
+
+// póki sklep jest ukryty, przyciski prowadzące do niego nie są wyświetlane
+const sections = (page?.sections ?? []).map((section) =>
+	!SHOP_PUBLISHED && section.buttonUrl?.includes('sklep-online') ? { ...section, buttonLabel: null } : section,
+);
 
 const title = page?.seo?.title || 'O mnie';
 const description =
@@ -18,6 +24,6 @@ const description =
 
 <BaseLayout title={title} description={description} image={page?.seo?.image?.url}>
 	<SiteChrome {...hero}>
-		<ImageSections sections={page?.sections ?? []} />
+		<ImageSections {sections} />
 	</SiteChrome>
 </BaseLayout>

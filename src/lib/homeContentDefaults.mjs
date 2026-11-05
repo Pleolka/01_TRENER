@@ -12,8 +12,6 @@ export const homeContentDefaults = {
 		'Programy treningowe, dieta w aplikacji i prowadzenie 1:1 dla kobiet biznesu. Budowanie siły, kształtowanie sylwetki i zdrowe życie.',
 	heroPrimaryButton: 'Współpracuj 1:1',
 	heroPrimaryUrl: '/wspolpraca-11',
-	heroSecondaryButton: 'Sprawdź produkty online',
-	heroSecondaryUrl: '/sklep-online',
 	heroStats: ['14 |  lat | Praktyki', '4 |  | Programy online', '5000 | + | Kcal dziennie spalonych'].join('\n'),
 
 	aboutBadge: 'O MNIE',

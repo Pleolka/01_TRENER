@@ -1,3 +1,7 @@
+// sklep chwilowo ukryty. Żeby go przywrócić: ustaw true, zmień nazwę folderu
+// src/pages/_sklep-online na sklep-online i usuń przekierowania w astro.config.mjs
+export const SHOP_PUBLISHED = false;
+
 export const list = [
   {
     name: "O mnie",
@@ -11,10 +15,7 @@ export const list = [
     name: "Dieta",
     path: "/dieta",
   },
-  {
-    name: "Sklep online",
-    path: "/sklep-online",
-  },
+  ...(SHOP_PUBLISHED ? [{ name: "Sklep online", path: "/sklep-online" }] : []),
   {
     name: "Blog",
     path: "/blog",

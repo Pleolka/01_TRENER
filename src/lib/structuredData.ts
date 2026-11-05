@@ -31,7 +31,7 @@ export function siteGraph(config: CmsSiteConfig | null, site: URL | undefined, d
     alternateName: 'Nati Figas',
     jobTitle: 'Trenerka personalna',
     description:
-      'Trenerka personalna z ponad 25-letnim doświadczeniem w sporcie. Prowadzi kobiety, zwłaszcza przedsiębiorczynie, przez trening siłowy, dietę i budowanie zdrowych nawyków — w autorskim programie 2halves i aplikacji dietetycznej Canela Diet.',
+      'Trenerka personalna z ponad 25-letnim doświadczeniem w sporcie. Prowadzi kobiety, zwłaszcza przedsiębiorczynie, przez trening siłowy, dietę i budowanie zdrowych nawyków — w autorskim programie 2halves i aplikacji dietetycznej NF DIET.',
     url: abs('/o-mnie', site),
     image,
     knowsAbout: [
@@ -95,7 +95,7 @@ export const faqPage = (items: CmsFaqItem[]) =>
       }
     : null;
 
-// usługa z ofertą (np. współpraca 2halves, dieta Canela)
+// usługa z ofertą (np. współpraca 2halves, dieta NF DIET)
 export const service = (name: string, description: string, url: string, offers: { name: string; price: string | null }[] = []) => ({
   '@type': 'Service',
   name,

@@ -23,6 +23,7 @@ export const GET: APIRoute = ({ site }) => {
 		'User-agent: *',
 		'Allow: /',
 		'Disallow: /dziekujemy',
+		'Disallow: /newsletter-wypisano',
 		'',
 		...AI_BOTS.flatMap((bot) => [`User-agent: ${bot}`, 'Allow: /', '']),
 		`Sitemap: ${new URL('/sitemap-index.xml', site)}`,
