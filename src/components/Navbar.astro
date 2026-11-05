@@ -1,7 +1,6 @@
 ---
 import { list as navItems } from "../assets/data/strukturaStrony";
-import { Image } from "astro:assets";
-import logo from "../images/Logo.webp";
+import Logo from "../images/logo.svg";
 import Container from "./ui/Container.astro";
 
 const links = navItems.filter((item) => !item.cta);
@@ -15,8 +14,8 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
 <div class="navbar">
   <Container mt="0" mb="0" mtMobile="0">
   <header class="bar">
-    <a class="logo" href="/">
-      <Image src={logo} alt="Natalia Figas" height={54} densities={[1, 2]} loading="eager" />
+    <a class="logo" href="/" aria-label="Natalia Figas">
+      <Logo aria-hidden="true" />
     </a>
 
     <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Otwórz menu" />
@@ -97,17 +96,27 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    /* mniejszy odstęp pod logo; wysokość paska i położenie przycisków bez zmian */
+    transform: translateY(0.4rem);
+    transition: transform 0.25s ease;
   }
 
-  .logo img {
-    height: 3.4rem;
+  .navbar.scrolled .logo {
+    transform: none;
+  }
+
+  .logo :global(svg) {
+    height: 4.5rem;
     width: auto;
+    aspect-ratio: 2222 / 892;
     display: block;
+    /* grafika dochodzi do samej krawędzi pliku — bez tego krzywe by się ścinały */
+    overflow: visible;
     transition: height 0.25s ease;
   }
 
-  .navbar.scrolled .logo img {
-    height: 2.4rem;
+  .navbar.scrolled .logo :global(svg) {
+    height: 3.2rem;
   }
 
   .nav {
@@ -129,8 +138,13 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
   .nav-link {
     color: var(--color-white);
     text-decoration: none;
+    /* Barlow Light — podobny do Bahnschrift z „NATI” w logo, ale dostarczany
+       ze stroną, więc wygląda tak samo na każdym urządzeniu */
+    font-family: "Barlow", var(--font-family-body);
     font-size: var(--font-size-p);
-    font-weight: 400;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     white-space: nowrap;
     transition: color 0.2s ease;
   }
@@ -143,7 +157,7 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
   /* bieżąca podstrona: kolor energy i pełna grubość */
   .nav-link.active {
     color: var(--color-energy);
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .nav-cta {
@@ -234,7 +248,8 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
     transform: rotate(-45deg);
   }
 
-  @media (max-width: 640px) {
+  /* poniżej tej szerokości menu nie mieści się w jednym wierszu */
+  @media (max-width: 1099px) {
     .nav-toggle-label {
       display: flex;
       margin-left: auto;
@@ -276,11 +291,6 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
       padding: 1.1rem 1rem;
       text-align: center;
       border-bottom: 1px solid var(--color-border);
-    }
-
-    .nav-link,
-    .nav-link.active {
-      font-weight: 700;
     }
 
     /* bieżąca podstrona: delikatnie jaśniejszy pas */
