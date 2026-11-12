@@ -42,7 +42,7 @@ Dane osobowe Użytkownika na Stronie mogą być przetwarzane w następujących c
 1. w celu realizacji usługi lub odpowiedzi na zapytanie przesłane przez formularz kontaktowy – na podstawie art. 6 ust. 1 lit. b RODO (niezbędność do zawarcia i/lub wykonania umowy lub podjęcie działań na żądanie);
 2. w celu wystawienia faktury, rachunku i spełnienia innych obowiązków wynikających z przepisów prawa podatkowego – na podstawie art. 6 ust. 1 lit. c RODO (obowiązek wynikający z przepisów prawa);
 3. w celu ustalenia, dochodzenia lub obrony przed roszczeniami – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora);
-4. w celach analitycznych i statystycznych, polegających na analizie danych zbieranych automatycznie przy korzystaniu ze strony internetowej, w tym cookies – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora);
+4. w celach analitycznych i statystycznych, polegających na analizie danych zbieranych przy korzystaniu ze strony internetowej za pomocą plików cookies statystycznych – na podstawie art. 6 ust. 1 lit. a RODO (zgoda Użytkownika, którą można w każdej chwili wycofać);
 5. w celu zarządzania stroną internetową – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora).
 
 **W jaki sposób zbierane są dane?**
@@ -84,17 +84,15 @@ Jeżeli Użytkownik korzysta z usług dostawców zewnętrznych, takich jak Googl
 
 ## §5 POLITYKA PLIKÓW COOKIES
 
-Podobnie jak większość stron internetowych, Strona Administratora korzysta z tzw. technologii śledzących, czyli plików cookies („ciasteczek"), co umożliwia ulepszanie strony pod kątem potrzeb użytkowników ją odwiedzających.
-
-Strona nie zbiera w sposób automatyczny żadnych informacji, z wyjątkiem informacji zawartych w plikach cookies.
+Strona Administratora korzysta z plików cookies („ciasteczek") i podobnych technologii, takich jak pamięć przeglądarki. Część z nich jest niezbędna do działania Strony, a pozostałe, służące do tworzenia statystyk, są używane wyłącznie po wyrażeniu zgody przez Użytkownika.
 
 Pliki cookies to niewielkie pliki tekstowe, które przechowywane są na urządzeniu końcowym Użytkownika podczas korzystania ze Strony. Mogą to być cookies własne (pochodzące bezpośrednio z mojej strony internetowej) oraz cookies podmiotów trzecich (pochodzące z innych stron internetowych niż moja strona).
 
-Pliki cookies pozwalają na dostosowanie zawartości strony do indywidualnych potrzeb Użytkownika oraz umożliwiają tworzenie statystyk, które pokazują, w jaki sposób użytkownicy korzystają ze strony. Dzięki temu mogę ulepszać moją stronę internetową, jej zawartość, strukturę i wygląd.
+**Niezbędne** – zawsze włączone. Służą do zapamiętania wyboru dotyczącego cookies i działania formularzy. Nie wymagają zgody.
 
-Użytkownik korzystając ze strony wyraża zgodę na instalację plików cookies na swoim urządzeniu końcowym.
+**Statystyki** – używane wyłącznie po wyrażeniu zgody. Pokazują, w jaki sposób użytkownicy korzystają ze strony. Dzięki temu mogę ulepszać moją stronę internetową, jej zawartość, strukturę i wygląd.
 
-**Wbudowany kod Google Analytics** – w celu analizy statystyk Strony. Google Analytics korzysta z własnych plików cookies do analizowania działań i zachowań Użytkowników Strony. Pliki te służą do przechowywania informacji, np. z jakiej strony Użytkownik trafił na bieżącą stronę internetową. Działania podejmowane w ramach korzystania z kodu Google Analytics opierają się na prawnie uzasadnionym interesie Administratora polegającym na tworzeniu i korzystaniu ze statystyk, co następnie umożliwia ulepszanie usług Administratora i optymalizację Strony.
+**Google Analytics** – do analizy statystyk Strony może być używany kod Google Analytics, uruchamiany wyłącznie po wyrażeniu zgody na statystyki. Google Analytics korzysta z własnych plików cookies do analizowania działań i zachowań Użytkowników Strony. Pliki te służą do przechowywania informacji, np. z jakiej strony Użytkownik trafił na bieżącą stronę internetową. Podstawą korzystania z tego narzędzia jest zgoda Użytkownika.
 
 W ramach korzystania z narzędzia Google Analytics Administrator nie przetwarza jakichkolwiek danych Użytkownika umożliwiających jego identyfikację.
 
@@ -102,8 +100,12 @@ Administrator zaleca zapoznanie się ze szczegółami związanymi z użyciem nar
 
 ### Zgoda na cookies
 
-Podczas pierwszego wejścia na Stronę musisz wyrazić zgodę na cookies lub podjąć inne możliwe działania wskazane w komunikacie, żeby móc dalej korzystać z zawartości Strony. Korzystanie ze Strony oznacza wyrażenie zgody. Jeżeli nie chcesz takiej zgody wyrazić – opuść Stronę. Zawsze też możesz zmienić ustawienia swojej przeglądarki, wyłączyć lub usunąć pliki cookies. W zakładce „pomoc" w przeglądarce Użytkownika znajdują się niezbędne informacje.
+Podczas pierwszego wejścia na Stronę wyświetla się okno, w którym możesz zaakceptować wszystkie pliki cookies albo zapisać własny wybór. Statystyki są domyślnie wyłączone, a ze Strony możesz korzystać także bez wyrażania na nie zgody.
+
+Swoją decyzję możesz zmienić lub wycofać zgodę w każdej chwili, klikając „Ustawienia cookies" w stopce Strony. Wycofanie zgody nie wpływa na zgodność z prawem działań wykonanych przed jej wycofaniem. Możesz też zmienić ustawienia swojej przeglądarki, wyłączyć lub usunąć pliki cookies. W zakładce „pomoc" w przeglądarce Użytkownika znajdują się niezbędne informacje.
 
 ---
 
 **Data publikacji Polityki Prywatności:** 25.07.2025
+
+**Data ostatniej aktualizacji:** 05.11.2026

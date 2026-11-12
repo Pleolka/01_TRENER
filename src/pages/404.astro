@@ -1,0 +1,18 @@
+---
+// Strona „nie ma takiej strony” — Netlify pokazuje ją automatycznie
+// (z kodem 404) dla każdego nieistniejącego adresu.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageSection from '../components/PageSection.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<BaseLayout title="Nie ma takiej strony" description="Ta strona nie istnieje albo została przeniesiona." noindex>
+	<PageSection
+		badge="Błąd 404"
+		title="Tej strony tu nie ma"
+		description="Mogła zostać przeniesiona albo w adresie jest literówka. Zacznij od strony głównej albo napisz do mnie — pomogę znaleźć to, czego szukasz."
+	>
+		<Button href="/">Strona główna</Button>
+		<Button href="/kontakt" variant="outline">Kontakt</Button>
+	</PageSection>
+</BaseLayout>

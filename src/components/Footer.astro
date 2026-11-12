@@ -7,9 +7,8 @@ import facebookIcon from '@phosphor-icons/core/assets/regular/facebook-logo.svg?
 import youtubeIcon from '@phosphor-icons/core/assets/regular/youtube-logo.svg?raw';
 import { getSiteConfig } from '../lib/datocms';
 
-// linki do social mediów z CMS-u (model „Ustawienia strony”).
-// Tymczasowo: ikony wyświetlają się zawsze — dopóki pole w CMS-ie jest
-// puste, ikona prowadzi na stronę główną (external = prawdziwy link z CMS-u).
+// linki do social mediów z CMS-u (model „Ustawienia strony”) — ikona
+// pokazuje się tylko wtedy, gdy pole w CMS-ie jest wypełnione.
 const config = await getSiteConfig();
 // e-mail i telefon z CMS-u; plik assets/data/kontakt.js tylko jako zapas
 const email = config?.email || info.mail;
@@ -21,7 +20,7 @@ const socials = [
 	{ name: 'Instagram', url: config?.instagramUrl, icon: instagramIcon },
 	{ name: 'Facebook', url: config?.facebookUrl, icon: facebookIcon },
 	{ name: 'YouTube', url: config?.youtubeUrl, icon: youtubeIcon },
-].map((s) => ({ ...s, external: Boolean(s.url), url: s.url || '/' }));
+].filter((s): s is typeof s & { url: string } => Boolean(s.url));
 
 const legalLinks = [
 	{ name: 'Regulamin', path: '/regulamin' },
@@ -60,8 +59,8 @@ const year = new Date().getFullYear();
 						<li>
 							<a
 								href={s.url}
-								target={s.external ? '_blank' : undefined}
-								rel={s.external ? 'noopener noreferrer' : undefined}
+								target="_blank"
+								rel="noopener noreferrer"
 								aria-label={s.name}
 								set:html={s.icon}
 							/>
@@ -79,6 +78,9 @@ const year = new Date().getFullYear();
 					</li>
 				))
 			}
+			<li>
+				<button type="button" data-cookie-settings>Ustawienia cookies</button>
+			</li>
 		</ul>
 	</div>
 
@@ -183,15 +185,20 @@ const year = new Date().getFullYear();
 		gap: 1.5rem;
 	}
 
-	.footer-legal a {
+	.footer-legal :is(a, button) {
+		padding: 0;
+		font: inherit;
 		color: var(--color-white);
+		background: none;
+		border: 0;
+		cursor: pointer;
 		opacity: 0.75;
 		text-decoration: none;
 		font-size: var(--font-size-label);
 		transition: opacity 0.2s ease;
 	}
 
-	.footer-legal a:hover {
+	.footer-legal :is(a, button):hover {
 		opacity: 1;
 	}
 

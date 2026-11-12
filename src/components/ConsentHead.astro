@@ -1,0 +1,39 @@
+---
+// Google Consent Mode v2: domyślnie wszystko odrzucone, GTM ładowany dopiero po zgodzie.
+// Bez PUBLIC_GTM_ID w ustawieniach Netlify żaden skrypt Google się nie ładuje.
+import { CONSENT_STORAGE_KEY } from '../lib/consent';
+
+const gtmId = import.meta.env.PUBLIC_GTM_ID ?? '';
+---
+
+<script is:inline define:vars={{ gtmId, storageKey: CONSENT_STORAGE_KEY }}>
+	window.dataLayer = window.dataLayer || [];
+	window.gtag = function () {
+		window.dataLayer.push(arguments);
+	};
+	window.gtag('consent', 'default', {
+		ad_storage: 'denied',
+		ad_user_data: 'denied',
+		ad_personalization: 'denied',
+		analytics_storage: 'denied',
+	});
+
+	window.loadGtm = function () {
+		if (!gtmId || window.gtmLoaded) return;
+		window.gtmLoaded = true;
+		window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+		var script = document.createElement('script');
+		script.async = true;
+		script.src = 'https://www.googletagmanager.com/gtm.js?id=' + encodeURIComponent(gtmId);
+		document.head.appendChild(script);
+	};
+
+	var consent = null;
+	try {
+		consent = localStorage.getItem(storageKey);
+	} catch (e) {}
+	if (consent === 'granted') {
+		window.gtag('consent', 'update', { analytics_storage: 'granted' });
+		window.loadGtm();
+	}
+</script>

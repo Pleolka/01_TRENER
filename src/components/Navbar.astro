@@ -50,10 +50,32 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
 </div>
 
 <script>
-  const navbar = document.querySelector(".navbar");
+  const navbar = document.querySelector<HTMLElement>(".navbar");
+  const bar = document.querySelector<HTMLElement>(".bar");
+  const toggle = document.querySelector<HTMLInputElement>("#nav-toggle");
   const update = () => navbar?.classList.toggle("scrolled", window.scrollY > 10);
   update();
   window.addEventListener("scroll", update, { passive: true });
+
+  // menu mobilne: zajmuje cały ekran pod paskiem — wysokość liczona od dołu
+  // paska (pasek zmienia wysokość po przewinięciu)
+  const setOffset = () => {
+    if (bar && navbar) navbar.style.setProperty("--nav-offset", `${bar.getBoundingClientRect().bottom}px`);
+  };
+  const close = () => {
+    if (toggle) toggle.checked = false;
+  };
+  toggle?.addEventListener("change", setOffset);
+  window.addEventListener("resize", () => {
+    setOffset();
+    // po obróceniu / poszerzeniu ekranu do wersji desktopowej menu się zamyka
+    if (window.matchMedia("(min-width: 1100px)").matches) close();
+  });
+  // kliknięcie pozycji menu (także kotwicy na tej samej stronie) i Escape zamykają menu
+  document.querySelectorAll(".nav a").forEach((link) => link.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
 </script>
 
 <style>
@@ -74,7 +96,7 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
   /* po przewinięciu treść przesuwa się pod paskiem — mocniejsze
      przyciemnienie i rozmycie trzymają czytelność linków */
   .navbar.scrolled {
-    background: rgba(2, 0, 36, 0.7);
+    background: rgba(2, 0, 36, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
@@ -90,6 +112,15 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
 
   .navbar.scrolled .bar {
     padding: 0.4rem 0;
+  }
+
+  /* otwarte menu mobilne: pełne tło paska i blokada przewijania strony pod spodem */
+  .navbar:has(.nav-toggle:checked) {
+    background: var(--color-page);
+  }
+
+  :global(html:has(#nav-toggle:checked)) {
+    overflow: hidden;
   }
 
   .logo {
@@ -261,12 +292,15 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
       top: 100%;
       left: calc(-1 * var(--container-gutter));
       right: calc(-1 * var(--container-gutter));
+      /* na cały ekran pod paskiem; przy niskim ekranie przewija się samo menu */
+      height: calc(100dvh - var(--nav-offset, 5.5rem));
+      overflow-y: auto;
+      overscroll-behavior: contain;
       flex-direction: column;
       align-items: center;
       gap: 0;
-      padding: 0 0 1.25rem;
+      padding: 0 0 2rem;
       background: var(--color-page);
-      border-bottom: 1px solid var(--color-border);
     }
 
     .nav-cta {
@@ -280,7 +314,10 @@ const isActive = (path: string) => currentPath === path || currentPath.startsWit
     /* pozycje menu: pełna szerokość, oddzielone liniami — klikalny cały pas,
        nie tylko napis */
     .nav-links {
+      flex: 0 0 auto;
       flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
       align-self: stretch;
       gap: 0;
     }

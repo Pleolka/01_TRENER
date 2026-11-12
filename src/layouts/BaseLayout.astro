@@ -18,6 +18,8 @@ const preloadFonts = [playfairLatin, playfairLatinExt, montserratLatin, montserr
 
 import { getSiteConfig } from '../lib/datocms';
 import { siteGraph, BUSINESS_DESCRIPTION } from '../lib/structuredData';
+import ConsentHead from '../components/ConsentHead.astro';
+import CookieBanner from '../components/CookieBanner.astro';
 
 interface Props {
 	title: string;
@@ -27,9 +29,11 @@ interface Props {
 	image?: string | null;
 	/* dane strukturalne właściwe dla podstrony (FAQ, produkt, wpis…) */
 	jsonLd?: (object | null)[];
+	/* strony bez sensu w wyszukiwarce (np. 404) */
+	noindex?: boolean;
 }
 
-const { title, description, image, jsonLd = [] } = Astro.props;
+const { title, description, image, jsonLd = [], noindex = false } = Astro.props;
 
 // obrazek przy udostępnianiu (Facebook, Messenger, LinkedIn, X):
 // 1200×630 w JPG — rozmiar i format, które wszystkie serwisy obsługują
@@ -37,7 +41,8 @@ const config = await getSiteConfig();
 const shareSource = image || config?.defaultSeoImage?.url;
 const shareImage = shareSource ? `${shareSource}?w=1200&h=630&fit=crop&fm=jpg&q=80` : null;
 
-const pageTitle = `${title} — Natalia Figas`;
+// „ — Natalia Figas” na końcu, chyba że tytuł z CMS-u już zawiera nazwisko
+const pageTitle = /natalia figas/i.test(title) ? title : `${title} — Natalia Figas`;
 
 // JSON-LD: wspólny opis (strona, Natalia, działalność) + dane podstrony
 const structuredData = {
@@ -50,6 +55,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <html lang="pl">
 	<head>
 		<meta charset="utf-8" />
+		<ConsentHead />
 		<!-- favicon: pliki w public/, tworzone z src/images/favicon.svg -->
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -61,6 +67,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
+		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="canonical" href={canonicalURL} />
 
 		<meta property="og:type" content="website" />
@@ -89,5 +96,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 	</head>
 	<body>
 		<slot />
+		<CookieBanner />
 	</body>
 </html>

@@ -54,7 +54,25 @@ const { items, numbered = false, icons = false, columns } = Astro.props;
 		list-style: none;
 	}
 
-	/* stała liczba kolumn — wszystkie karty w jednym rzędzie, jak długo się da */
+	/* stała liczba kolumn: na telefonie 1, na tablecie 2 (ostatnia nieparzysta
+	   karta wyśrodkowana, bez sieroty przy lewej krawędzi), od 980 px wszystkie
+	   karty w jednym rzędzie */
+	.fixed {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	@media (min-width: 560px) and (max-width: 979px) {
+		.fixed {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.fixed .feature:last-child:nth-child(odd) {
+			grid-column: 1 / -1;
+			justify-self: center;
+			width: calc((100% - 1.5rem) / 2);
+		}
+	}
+
 	@media (min-width: 980px) {
 		.fixed {
 			grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
