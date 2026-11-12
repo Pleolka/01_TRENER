@@ -75,6 +75,7 @@ const pillars = lines(content.pillars).map((l) => {
 								width={heroImage.width}
 								height={heroImage.height}
 								loading="eager"
+								fetchpriority="high"
 							/>
 						) : (
 							<Image src={natalia} alt="Natalia Figas — trenerka personalna" widths={[400, 700, 1000]} sizes="(max-width: 900px) 90vw, 50vw" loading="eager" fetchpriority="high" />
@@ -94,7 +95,7 @@ const pillars = lines(content.pillars).map((l) => {
 			</div>
 			<div class="teasers" style={`--count:${pillars.length}`}>
 				{
-					pillars.map((pillar, i) => (
+					pillars.map((pillar) => (
 						<div class="teaser">
 							<span class="teaser-icon" set:html={iconFor(pillar.title)} />
 							<h3>{pillar.title}</h3>
@@ -253,11 +254,30 @@ const pillars = lines(content.pillars).map((l) => {
 			padding-bottom: var(--space-actions);
 		}
 
-		/* zdjęcie pod tekstem, na dole sekcji */
+		/* telefon i tablet: zdjęcie na górze, od pasa w górę, rozmyte ku dołowi —
+		   Natalia widoczna od razu, nagłówek lekko na nie nachodzi */
 		.hero-image {
-			max-width: 18rem;
+			order: -1;
 			width: 100%;
-			margin-inline: auto;
+			height: min(46svh, 26rem);
+			overflow: hidden;
+			-webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+			mask-image: linear-gradient(to bottom, #000 62%, transparent);
+		}
+
+		.hero-image img,
+		.hero-image :global(img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center top;
+		}
+
+		.hero-content {
+			position: relative;
+			z-index: 1;
+			margin-top: -3rem;
+			padding-bottom: var(--section-py);
 		}
 
 		.hero-actions {

@@ -1,3 +1,19 @@
 [build]
   command = "npm run build"
   publish = "dist"
+
+# nagłówki bezpieczeństwa dla całej strony (PageSpeed → Sprawdzone metody)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# pliki z /_astro/ mają hash w nazwie — przeglądarka może je trzymać na stałe
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

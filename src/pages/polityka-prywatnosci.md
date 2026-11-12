@@ -44,6 +44,7 @@ Dane osobowe Użytkownika na Stronie mogą być przetwarzane w następujących c
 3. w celu ustalenia, dochodzenia lub obrony przed roszczeniami – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora);
 4. w celach analitycznych i statystycznych, polegających na analizie danych zbieranych przy korzystaniu ze strony internetowej za pomocą plików cookies statystycznych – na podstawie art. 6 ust. 1 lit. a RODO (zgoda Użytkownika, którą można w każdej chwili wycofać);
 5. w celu zarządzania stroną internetową – na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora).
+6. w celach marketingowych — pomiaru skuteczności reklam i ich dopasowania w serwisach Meta (Facebook, Instagram) i Google, za pomocą piksela Meta i tagu Google Ads — na podstawie art. 6 ust. 1 lit. a RODO (zgoda Użytkownika, którą można w każdej chwili wycofać).
 
 **W jaki sposób zbierane są dane?**
 
@@ -84,7 +85,7 @@ Jeżeli Użytkownik korzysta z usług dostawców zewnętrznych, takich jak Googl
 
 ## §5 POLITYKA PLIKÓW COOKIES
 
-Strona Administratora korzysta z plików cookies („ciasteczek") i podobnych technologii, takich jak pamięć przeglądarki. Część z nich jest niezbędna do działania Strony, a pozostałe, służące do tworzenia statystyk, są używane wyłącznie po wyrażeniu zgody przez Użytkownika.
+Strona Administratora korzysta z plików cookies („ciasteczek") i podobnych technologii, takich jak pamięć przeglądarki. Część z nich jest niezbędna do działania Strony, a pozostałe, służące do tworzenia statystyk i do celów marketingowych, są używane wyłącznie po wyrażeniu zgody przez Użytkownika.
 
 Pliki cookies to niewielkie pliki tekstowe, które przechowywane są na urządzeniu końcowym Użytkownika podczas korzystania ze Strony. Mogą to być cookies własne (pochodzące bezpośrednio z mojej strony internetowej) oraz cookies podmiotów trzecich (pochodzące z innych stron internetowych niż moja strona).
 
@@ -92,15 +93,19 @@ Pliki cookies to niewielkie pliki tekstowe, które przechowywane są na urządze
 
 **Statystyki** – używane wyłącznie po wyrażeniu zgody. Pokazują, w jaki sposób użytkownicy korzystają ze strony. Dzięki temu mogę ulepszać moją stronę internetową, jej zawartość, strukturę i wygląd.
 
+**Marketing** – używane wyłącznie po wyrażeniu zgody. Pozwalają mierzyć skuteczność reklam Administratora w serwisach Meta (Facebook, Instagram) i Google oraz wyświetlać reklamy osobom, które odwiedziły Stronę.
+
 **Google Analytics** – do analizy statystyk Strony może być używany kod Google Analytics, uruchamiany wyłącznie po wyrażeniu zgody na statystyki. Google Analytics korzysta z własnych plików cookies do analizowania działań i zachowań Użytkowników Strony. Pliki te służą do przechowywania informacji, np. z jakiej strony Użytkownik trafił na bieżącą stronę internetową. Podstawą korzystania z tego narzędzia jest zgoda Użytkownika.
 
 W ramach korzystania z narzędzia Google Analytics Administrator nie przetwarza jakichkolwiek danych Użytkownika umożliwiających jego identyfikację.
 
 Administrator zaleca zapoznanie się ze szczegółami związanymi z użyciem narzędzia Google Analytics, możliwością wyłączenia kodu śledzącego i ewentualnie zadanie pytań dostawcy tego narzędzia pod linkiem: [https://support.google.com/analytics#topic=3544906](https://support.google.com/analytics#topic=3544906).
 
+**Piksel Meta i Google Ads** – po wyrażeniu zgody na marketing Strona może uruchamiać piksel Meta (Meta Platforms Ireland Ltd.) oraz tag Google Ads (Google Ireland Ltd.). Narzędzia te zapisują pliki cookies i przekazują tym podmiotom informacje o wizycie na Stronie i wykonanych działaniach (np. wysłaniu formularza, zapisie na newsletter, zakupie), aby mierzyć skuteczność reklam i dopasowywać je do odbiorców. Podstawą jest zgoda Użytkownika (art. 6 ust. 1 lit. a RODO). Dane mogą być przekazywane poza Europejski Obszar Gospodarczy na zasadach określonych przez tych dostawców. Szczegóły: [polityka prywatności Meta](https://www.facebook.com/privacy/policy/) i [polityka prywatności Google](https://policies.google.com/privacy).
+
 ### Zgoda na cookies
 
-Podczas pierwszego wejścia na Stronę wyświetla się okno, w którym możesz zaakceptować wszystkie pliki cookies albo zapisać własny wybór. Statystyki są domyślnie wyłączone, a ze Strony możesz korzystać także bez wyrażania na nie zgody.
+Podczas pierwszego wejścia na Stronę wyświetla się okno, w którym możesz zaakceptować wszystkie pliki cookies albo zapisać własny wybór. Statystyki i marketing są domyślnie wyłączone, a ze Strony możesz korzystać także bez wyrażania na nie zgody.
 
 Swoją decyzję możesz zmienić lub wycofać zgodę w każdej chwili, klikając „Ustawienia cookies" w stopce Strony. Wycofanie zgody nie wpływa na zgodność z prawem działań wykonanych przed jej wycofaniem. Możesz też zmienić ustawienia swojej przeglądarki, wyłączyć lub usunąć pliki cookies. W zakładce „pomoc" w przeglądarce Użytkownika znajdują się niezbędne informacje.
 

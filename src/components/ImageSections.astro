@@ -25,7 +25,7 @@ const { sections } = Astro.props;
 			<Section pb={section.image ? 0 : undefined} bgcolor={i % 2 === 1 ? 'var(--color-section-alt)' : 'var(--color-bg)'}>
 				{/* bez dolnego marginesu kontenera — zdjęcie stoi na samym dole sekcji */}
 				<Container mb={section.image ? '0' : undefined}>
-					<div class:list={['image-section', { 'image-left': imageLeft, 'no-image': !section.image }]}>
+					<div class:list={['image-section', { 'image-left': imageLeft, 'no-image': !section.image, 'lead-section': i === 0 && section.image }]}>
 						<div class="text stack">
 							{section.badge && <p class="eyebrow">{section.badge}</p>}
 							<Heading set:html={accent(section.heading)} />
@@ -46,6 +46,7 @@ const { sections } = Astro.props;
 									width={section.image.width}
 									height={section.image.height}
 									loading={i === 0 ? 'eager' : 'lazy'}
+									fetchpriority={i === 0 ? 'high' : undefined}
 								/>
 							</figure>
 						)}
@@ -168,6 +169,30 @@ const { sections } = Astro.props;
 			max-width: 18rem;
 			width: 100%;
 			margin-inline: auto;
+		}
+
+		/* pierwsza sekcja (hero podstrony): zdjęcie na górze, od pasa w górę,
+		   rozmyte ku dołowi, tekst lekko na nie nachodzi — jak na stronie głównej */
+		.lead-section .media {
+			order: -1;
+			max-width: none;
+			height: min(46svh, 26rem);
+			overflow: hidden;
+			-webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+			mask-image: linear-gradient(to bottom, #000 62%, transparent);
+		}
+
+		.lead-section .media img {
+			height: 100%;
+			object-fit: cover;
+			object-position: center top;
+		}
+
+		.lead-section .text {
+			position: relative;
+			z-index: 1;
+			margin-top: -3rem;
+			padding-bottom: var(--section-py);
 		}
 	}
 </style>

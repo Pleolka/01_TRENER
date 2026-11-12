@@ -31,7 +31,10 @@ const {
 	posts = [],
 } = Astro.props;
 
-const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
+// filtry z kategorii, które naprawdę mają wpisy (pole „Kategoria” w DatoCMS),
+// w kolejności pierwszego wystąpienia; jedna kategoria lub brak = bez filtrów
+const postCategories = [...new Set(posts.map((p) => p.category).filter((c): c is string => Boolean(c)))];
+const categories = postCategories.length > 1 ? ['Wszystkie wpisy', ...postCategories] : [];
 ---
 
 <SiteChrome heroBg={Astro.props.heroBg} heroAspect={Astro.props.heroAspect}>
@@ -41,15 +44,17 @@ const categories = ['Wszystkie wpisy', 'Trening', 'Odżywianie', 'Styl życia'];
 				{badge && <SectionBadge text={badge} />}
 				<h1 set:html={accent(heading || 'Blog')} />
 				{lead && <p class="lead">{lead}</p>}
-				<div class="filters stack-gap">
-					{
-						categories.map((cat, i) => (
-							<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={i === 0 ? 'all' : cat}>
-								{cat}
-							</button>
-						))
-					}
-				</div>
+				{
+					categories.length > 0 && (
+						<div class="filters stack-gap">
+							{categories.map((cat, i) => (
+								<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={i === 0 ? 'all' : cat}>
+									{cat}
+								</button>
+							))}
+						</div>
+					)
+				}
 			</div>
 		</Container>
 	</Section>

@@ -31,12 +31,21 @@ const {
 // Produkty to oferty z ceną — oferty bez ceny (stare podstrony) nie są pokazywane.
 const products = offers.filter((offer) => offer.price);
 
-const categories = [
-	{ key: 'all', label: 'Wszystko' },
-	{ key: 'programy', label: 'Programy online' },
-	{ key: 'aplikacja', label: 'Aplikacja' },
-	{ key: 'ebooki', label: 'Ebooki' },
-];
+// filtry z kategorii produktów w DatoCMS (pole „Kategoria”), tylko te, które
+// mają produkty; znane klucze dostają ładną nazwę, nowe — swoją nazwę z CMS-u
+const CATEGORY_LABELS: Record<string, string> = {
+	programy: 'Programy online',
+	aplikacja: 'Aplikacja',
+	ebooki: 'Ebooki',
+};
+const productCategories = [...new Set(products.map((p) => p.category).filter((c): c is string => Boolean(c)))];
+const categories =
+	productCategories.length > 1
+		? [
+				{ key: 'all', label: 'Wszystko' },
+				...productCategories.map((key) => ({ key, label: CATEGORY_LABELS[key] ?? key.charAt(0).toUpperCase() + key.slice(1) })),
+			]
+		: [];
 ---
 
 <SiteChrome heroBg={Astro.props.heroBg} heroAspect={Astro.props.heroAspect}>
@@ -55,15 +64,17 @@ const categories = [
 			<div class="shop-head stack">
 				{listHeading && <h2>{listHeading}</h2>}
 				{listSubheading && <p class="shop-sub">{listSubheading}</p>}
-				<div class="filters stack-gap" role="tablist">
-					{
-						categories.map((cat, i) => (
-							<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={cat.key}>
-								{cat.label}
-							</button>
-						))
-					}
-				</div>
+				{
+					categories.length > 0 && (
+						<div class="filters stack-gap" role="tablist">
+							{categories.map((cat, i) => (
+								<button type="button" class:list={['filter', { active: i === 0 }]} data-filter={cat.key}>
+									{cat.label}
+								</button>
+							))}
+						</div>
+					)
+				}
 			</div>
 
 			<div class="grid">

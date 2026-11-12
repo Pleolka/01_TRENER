@@ -261,6 +261,8 @@ export interface CmsAboutPage {
 
 export async function getAboutPage(): Promise<CmsAboutPage | null> {
   try {
+    // pola sectionN* są składane dynamicznie (section1Badge, section2Badge…) — typ luźny celowo
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = await executeQuery<{ aboutPage: Record<string, any> | null }>(ABOUT_PAGE_QUERY, {
       token: import.meta.env.DATOCMS_API_TOKEN,
     });

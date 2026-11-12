@@ -1,14 +1,15 @@
 ---
 // Okno zgody: karta w lewym dolnym rogu. Tytuł, krótki opis, lista zgód (niezbędne zawsze
-// włączone, statystyki do wyboru) i dwa przyciski: „Akceptuję wszystkie” albo „Zapisz wybór”
-// (bez zaznaczenia = tylko niezbędne). Link „Ustawienia cookies” w stopce otwiera okno ponownie.
+// włączone, statystyki i marketing do wyboru) i dwa przyciski: „Akceptuję wszystkie” albo
+// „Zapisz wybór” (bez zaznaczenia = tylko niezbędne). Link „Ustawienia cookies” w stopce otwiera okno ponownie.
 ---
 
 <div class="cookie-banner" role="dialog" aria-live="polite" aria-labelledby="cookie-banner-title" hidden data-cookie-banner>
 	<form class="cookie-inner" data-cookie-panel>
 		<p class="cookie-title" id="cookie-banner-title">Pliki cookies</p>
 		<p class="cookie-text">
-			Pomóż mi ulepszać stronę — statystyki pokazują, które treści są przydatne. Bez zgody działają tylko pliki niezbędne.
+			Pomóż mi ulepszać stronę — statystyki pokazują, które treści są przydatne, a pliki marketingowe pozwalają mierzyć
+			reklamy. Bez zgody działają tylko pliki niezbędne.
 			Szczegóły w <a href="/polityka-prywatnosci">polityce prywatności</a>.
 		</p>
 
@@ -31,6 +32,15 @@
 					</span>
 				</label>
 			</li>
+			<li>
+				<label class="cookie-option">
+					<input type="checkbox" name="marketing" />
+					<span>
+						<strong class="cookie-option-label">Marketing</strong>
+						<span class="cookie-option-text">piksel Meta (Facebook, Instagram) i Google Ads: pomiar skuteczności reklam i dopasowanie reklam</span>
+					</span>
+				</label>
+			</li>
 		</ul>
 
 		<div class="cookie-actions">
@@ -41,31 +51,39 @@
 </div>
 
 <script>
-	import { CONSENT_STORAGE_KEY, type Consent } from '../lib/consent';
+	import { CONSENT_STORAGE_KEY, consentModeState, type ConsentChoice } from '../lib/consent';
 
 	const banner = document.querySelector<HTMLElement>('[data-cookie-banner]')!;
 	const panel = banner.querySelector<HTMLFormElement>('[data-cookie-panel]')!;
 	const analytics = panel.querySelector<HTMLInputElement>('input[name="analytics"]')!;
+	const marketing = panel.querySelector<HTMLInputElement>('input[name="marketing"]')!;
 
-	const read = (): Consent | null => {
+	const read = (): ConsentChoice | null => {
 		try {
-			return localStorage.getItem(CONSENT_STORAGE_KEY) as Consent | null;
+			const value = JSON.parse(localStorage.getItem(CONSENT_STORAGE_KEY) ?? 'null');
+			return value && typeof value === 'object' ? { analytics: Boolean(value.analytics), marketing: Boolean(value.marketing) } : null;
 		} catch {
 			return null;
 		}
 	};
 
-	const save = (value: Consent) => {
+	const save = (choice: ConsentChoice) => {
 		try {
-			localStorage.setItem(CONSENT_STORAGE_KEY, value);
-		} catch {}
-		window.gtag('consent', 'update', { analytics_storage: value });
-		if (value === 'granted') window.loadGtm();
+			localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(choice));
+		} catch {
+			// prywatne okno / zablokowane dane strony — wybór działa do końca wizyty
+		}
+		window.gtag('consent', 'update', consentModeState(choice));
+		// zdarzenie dla GTM — tagi z warunkiem zgody (GA4, piksel Meta) odpalają się od razu po kliknięciu
+		window.dataLayer.push({ event: 'cookie_consent_update', ...choice });
+		if (choice.analytics || choice.marketing) window.loadGtm();
 		banner.hidden = true;
 	};
 
 	const open = () => {
-		analytics.checked = read() === 'granted';
+		const choice = read();
+		analytics.checked = Boolean(choice?.analytics);
+		marketing.checked = Boolean(choice?.marketing);
 		banner.hidden = false;
 	};
 
@@ -73,10 +91,12 @@
 	const FIRST_SHOW_DELAY_MS = 1000;
 	if (!read()) window.setTimeout(open, FIRST_SHOW_DELAY_MS);
 
-	banner.querySelector<HTMLButtonElement>('[data-consent="granted"]')!.addEventListener('click', () => save('granted'));
+	banner
+		.querySelector<HTMLButtonElement>('[data-consent="granted"]')!
+		.addEventListener('click', () => save({ analytics: true, marketing: true }));
 	panel.addEventListener('submit', (event) => {
 		event.preventDefault();
-		save(analytics.checked ? 'granted' : 'denied');
+		save({ analytics: analytics.checked, marketing: marketing.checked });
 	});
 	document.querySelectorAll('[data-cookie-settings]').forEach((el) => el.addEventListener('click', open));
 </script>

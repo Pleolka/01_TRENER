@@ -1,5 +1,6 @@
 ---
-// Google Consent Mode v2: domyślnie wszystko odrzucone, GTM ładowany dopiero po zgodzie.
+// Google Consent Mode v2: domyślnie wszystko odrzucone, GTM ładowany dopiero po zgodzie
+// (statystyki → GA4, marketing → piksel Meta i Google Ads — tagi w GTM sprawdzają zgody).
 // Bez PUBLIC_GTM_ID w ustawieniach Netlify żaden skrypt Google się nie ładuje.
 import { CONSENT_STORAGE_KEY } from '../lib/consent';
 
@@ -7,6 +8,7 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID ?? '';
 ---
 
 <script is:inline define:vars={{ gtmId, storageKey: CONSENT_STORAGE_KEY }}>
+	/* eslint-disable prefer-rest-params, no-var -- skrypt w <head> bez bundlera; gtag musi wkładać do dataLayer obiekt arguments (wymóg Google) */
 	window.dataLayer = window.dataLayer || [];
 	window.gtag = function () {
 		window.dataLayer.push(arguments);
@@ -28,12 +30,22 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID ?? '';
 		document.head.appendChild(script);
 	};
 
-	var consent = null;
+	// zapisany wybór (JSON { analytics, marketing }) — przywracany przed GTM,
+	// żeby tagi od razu znały zgody. GTM ładuje się, gdy jest choć jedna zgoda.
+	var choice = null;
 	try {
-		consent = localStorage.getItem(storageKey);
-	} catch (e) {}
-	if (consent === 'granted') {
-		window.gtag('consent', 'update', { analytics_storage: 'granted' });
+		choice = JSON.parse(localStorage.getItem(storageKey) || 'null');
+	} catch {
+		choice = null;
+	}
+	if (choice && (choice.analytics || choice.marketing)) {
+		var ads = choice.marketing ? 'granted' : 'denied';
+		window.gtag('consent', 'update', {
+			analytics_storage: choice.analytics ? 'granted' : 'denied',
+			ad_storage: ads,
+			ad_user_data: ads,
+			ad_personalization: ads,
+		});
 		window.loadGtm();
 	}
 </script>
